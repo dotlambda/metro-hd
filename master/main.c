@@ -9,9 +9,39 @@
 #include "adc.h"
 #include "timer.h"
 #include "buttons.h"
+#include "display.h"
 
 
 void init();
+
+
+void full(uint8_t x) {
+	page(x,5,0xFF);
+	page(x,5+1,0xFf);
+	page(x+1,5,0xFF);
+	page(x+1,5+1,0xFf);
+}
+void empty(uint8_t x) {
+	page(x,5,0xF0);
+	page(x,5+1,0xF0);
+	page(x+1,5,0xF0);
+	page(x+1,5+1,0xF0);
+}
+
+void batteryMeter() {
+	uint8_t x=0; 
+	uint16_t adc=getADCValue(0);
+	for(x=0; x< 50; x++)
+	{
+		if (x < (adc / 20))
+			full (x*3);
+		else
+			empty(x*3);
+	}
+	
+}
+
+
 
 int main(void)
 {
@@ -21,11 +51,17 @@ int main(void)
 
 	uart_putc(80);
 	_delay_ms(1000);
+		
 	uart_putc(10);
 	_delay_ms(1000);
 
 
+
+
+
+	
 	while (1) {
+		batteryMeter();
 		if(B_SELECT)
 			uart_putc(20);
 		if(B_PAUSE)
@@ -55,4 +91,5 @@ void init()
 	ADCInit(0);   // Analoge Werte einlesen
 	timerInit();  // "Systemzeit" initialisieren
 	buttonsInit();
+	displayInit();
 }
