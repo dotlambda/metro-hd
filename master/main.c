@@ -31,12 +31,17 @@ void empty(uint8_t x) {
 void batteryMeter() {
 	uint8_t x=0; 
 	uint16_t adc=getADCValue(0);
+	uint16_t low=696;//778; // (1024.*34./50.);
+	uint16_t high=962; //(1024.*47./50.);
+	uint8_t bars = 50 *(adc-low)/(high-low);
+	//~ bars=adc/20;
 	for(x=0; x< 50; x++)
 	{
-		if (x < (adc / 20))
+		if (x < bars) {
 			full (x*3);
-		else
+		} else {
 			empty(x*3);
+		}
 	}
 	
 }

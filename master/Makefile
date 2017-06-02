@@ -147,7 +147,7 @@ prog-diamexusb: all #usb programmer
 
 .PHONY: fuse
 fuse:
-ifeq ($(MCU),atmega168)
+ifeq ($(MCU),atmega328p)
 #	avrdude -p $(MCU) -c stk500v2 -P $(DIAMEXPORT) -U lfuse:w:0xff:m -U hfuse:w:0xd7:m
 	avrdude -p $(MCU) -c avrispmkII -P usb -U lfuse:w:0xff:m -U hfuse:w:0xd7:m
 else
