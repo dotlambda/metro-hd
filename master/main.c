@@ -11,85 +11,60 @@
 #include "buttons.h"
 #include "display.h"
 
-
 void init();
-
-
-void full(uint8_t x) {
-	page(x,5,0xFF);
-	page(x,5+1,0xFf);
-	page(x+1,5,0xFF);
-	page(x+1,5+1,0xFf);
-}
-void empty(uint8_t x) {
-	page(x,5,0xF0);
-	page(x,5+1,0xF0);
-	page(x+1,5,0xF0);
-	page(x+1,5+1,0xF0);
-}
-
-void batteryMeter() {
-	uint8_t x=0; 
-	uint16_t adc=getADCValue(0);
-	uint16_t low=696;//778; // (1024.*34./50.);
-	uint16_t high=962; //(1024.*47./50.);
-	uint8_t bars = 50 *(adc-low)/(high-low);
-	//~ bars=adc/20;
-	for(x=0; x< 50; x++)
-	{
-		if (x < bars) {
-			full (x*3);
-		} else {
-			empty(x*3);
-		}
-	}
-	
-}
-
-
 
 int main(void)
 {
-	//Initialisierung ausfuehren
-	
 	init();
-
-	uart_putc(80);
-	_delay_ms(1000);
-		
-	uart_putc(10);
-	_delay_ms(1000);
-
-
-
-
-
-	
+	int x = 100;
+    int y = 100;
 	while (1) {
-		batteryMeter();
-		if(B_SELECT)
-			uart_putc(20);
-		if(B_PAUSE)
-			uart_putc(30);
+        switch(y % 4) {
+            case 0:
+                page(x, y/4, 0b00000011);
+                break;
+            case 1:
+                page(x, y/4, 0b00001100);
+                break;
+            case 2:
+                page(x, y/4, 0b00110000);
+                break;
+            case 3:
+                page(x, y/4, 0b11000000);
+                break;
+        }
 		if(B_UP)
-			uart_putc(50);
+        {
+            _delay_ms(100);
+            page(x, y/4, 0x00);
+            if (y > 0)
+                y -= 1;
+        }
 		if(B_DOWN)
-			uart_putc(60);
+        {
+            _delay_ms(100);
+            page(x, y/4, 0x00);
+			if (y < 104)
+                y += 1;
+        }
 		if(B_RIGHT)
-			uart_putc(70);
+        {
+            _delay_ms(100);
+            page(x, y/4, 0x00);
+			if (x < 208)
+                x += 1;
+        }
 		if(B_LEFT)
-			uart_putc(80);
-
-		if(B_A)
-			uart_putc(90);
-		if(B_B)
-			uart_putc(100);
-
-	}	
+        {
+            _delay_ms(100);
+            page(x, y/4, 0x00);
+			if (x > 0)
+                x -= 1;
+        }
+	}
 }
 
 
-//INIT
 void init()
 {
 	uartInit();   // serielle Ausgabe an PC
