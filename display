@@ -1,0 +1,28 @@
+ x->
+y
+|
+v
+
+0<=x<=207
+0<=y<=25
+
+display size 208x104
+
+
+a page looks like this:
+
+    4
+    3
+    2
+    1
+
+it can be written to using page(x, y, h) where h is 1 byte
+    aabbccdd
+and aa is the color of pixel 1, bb the color of pixel 2, etc.
+00  off
+01  gray
+10  dark gray
+11  black
+
+To write a binary literal in C, use
+    page(x, y, 0baabbccdd);
