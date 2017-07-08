@@ -26,3 +26,9 @@ and aa is the color of pixel 1, bb the color of pixel 2, etc.
 
 To write a binary literal in C, use
     page(x, y, 0baabbccdd);
+
+Colors in hexadecimal:
+0x00 off
+0x55 gray
+0xAA dark gray
+0xFF black
