@@ -52,12 +52,19 @@ void drawfloor()
     }
 }
 
+uint32_t platforms;
 void drawplatform()
 {
     for(int i = 0; i<8; i++)
     {
-        page(i+50, 20, 0xFF);
+        page(i+48, 20, 0xFF);
+        platforms |= 1 << (48 / 8);
     }
+}
+
+uint32_t hasplatform(int x)
+{
+    return platforms & (1 << (x / 8));
 }
     
 int main(void)
@@ -67,7 +74,7 @@ int main(void)
     drawplatform();
     int x = 10;
     int y = 22;
-    int i = 0;
+    int jumpcounter = 0;
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
     while(1)
@@ -91,12 +98,16 @@ int main(void)
                 nextmoveevent = getMsTimer() + 50;
             }
         }
-        if (i != 0)
+        if (jumpcounter != 0)
         {
             if (nextjumpevent < getMsTimer())
             {
-                if (i < 6)
+                
+                if (jumpcounter < 6)
                 {
+                    
+                    if(!hasplatform(x))
+                    {
                     page(x, y+1, 0x00);
                     page(x+1, y+2, 0x00);
                     page(x+2, y+2, 0x00);
@@ -105,8 +116,9 @@ int main(void)
                     page(x+5, y+2, 0x00);
                     page(x+6, y+1, 0x00);
                     drawmonster(x, --y);
+                    }
                 }
-                else
+                else if ((jumpcounter >= 6 && !hasplatform(x)) || (jumpcounter < 6 && hasplatform(x)))
                 {
                     page(x, y, 0x00);
                     page(x+1, y, 0x00);
@@ -117,13 +129,13 @@ int main(void)
                     page(x+6, y, 0x00);
                     drawmonster(x, ++y);
                 }
-                i = (i+1) % 11;
+                jumpcounter = (jumpcounter+1) % 11;
                 nextjumpevent = getMsTimer() + 150;
             }
         }
         else if (B_UP)
         {
-            i = 1;
+            jumpcounter = 1;
             nextjumpevent = getMsTimer();
         }
     }
