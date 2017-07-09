@@ -2,9 +2,7 @@
  *	Basis
  *	2009 Benjamin Reh und Joachim Schleicher
  */
-#include <avr/io.h>
-#include <inttypes.h>
-#include <util/delay.h>
+#include <stdlib.h>
 #include "uart.h"
 #include "adc.h"
 #include "timer.h"
@@ -39,13 +37,11 @@ void drawmonster(int x, int y)
     page(x+4, y+2, 0xFF);
     page(x+5, y+2, 0b11000011);
     page(x+6, y+2, 0b11000000);
-    
-    
 }
 
 void drawfloor()
 {
-    for (int x = 0; x < 208; x+=8)
+    for (int x = 0; x < DISPLAY_WIDTH; x+=8)
     {
         page(x,   25, 0xFF);
         page(x+1, 25, 0xFF);
@@ -58,20 +54,26 @@ void drawfloor()
     }
 }
 
-uint32_t platforms;
+long platforms;
 void drawplatform()
 {
-    for(int i = 0; i<8; i++)
+    platforms = random();
+    for(uint8_t pos = 0; pos < DISPLAY_WIDTH/8; ++pos) // draw random platforms at 20 possible positions
     {
-        page(i+48, 20, 0xFF);
-        platforms |= 1 << (48 / 8);
+        if (platforms & (1l << pos))
+        {
+            for (short i = 0; i < 8; ++i)
+            {
+                page(8*pos + i, 20, 0xFF);
+            }
+        }
     }
 }
 
-uint32_t platform(int x, int y)
+long platform(int x, int y)
 {
     if (y == 20)
-        return platforms & (1 << (x / 8));
+        return platforms & (1l << (x / 8));
     else
         return 0;
 }
@@ -83,6 +85,7 @@ int main(void)
     drawplatform();
     int x = 10;
     int y = 22;
+    drawmonster(x,y);
     int jumpcounter = ON_THE_GROUND;
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
@@ -90,19 +93,32 @@ int main(void)
     {
         if (nextmoveevent < getMsTimer())
         {
-            if (B_RIGHT && !platform(x+7,y) &&!platform(x+7, y+1)&&!platform(x+7, y+2))
+            // wenn er nicht rechts gegen eine Plattform stoeßt
+            if (B_RIGHT)
             {
-                //falls er am rechten Ende von Plattform
-                if (platform(x,y+3) && !platform(x+1,y+3))
-                {    
-                    jumpcounter = FALLING_DOWN;
+                if (x + 7 == DISPLAY_WIDTH)
+                {
+                    clear();
+                    drawfloor();
+                    drawplatform();
+                    x = 0;
+                    //y = 22;
+                    drawmonster(x,y);
                 }
-                page(x, y, 0x00);
-                page(x, y+1, 0x00);
-                page(x, y+2, 0x00);
-                drawmonster(++x, y);
-                nextmoveevent = getMsTimer() + 50;
-            }
+                else if (!platform(x+7,y) &&!platform(x+7, y+1)&&!platform(x+7, y+2))
+                {
+                    //falls er am rechten Ende von Plattform
+                    if (platform(x,y+3) && !platform(x+1,y+3))
+                    {    
+                        jumpcounter = FALLING_DOWN;
+                    }
+                    page(x, y, 0x00);
+                    page(x, y+1, 0x00);
+                    page(x, y+2, 0x00);
+                    drawmonster(++x, y);
+                    nextmoveevent = getMsTimer() + 50;
+                }
+        }
             if (B_LEFT &&!platform(x-1,y) &&!platform(x-1, y+1)&&!platform(x-1, y+2))
             {
                 if (platform(x+6,y+3) && !platform(x+5,y+3))

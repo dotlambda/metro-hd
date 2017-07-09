@@ -1,6 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#define DISPLAY_WIDTH 160
 
 void displayInit(void);
 void clear(void);

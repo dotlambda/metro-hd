@@ -3,10 +3,10 @@ y
 |
 v
 
-0<=x<=207
+0<=x<=159
 0<=y<=25
 
-display size 208x104
+display size 160x104
 
 
 a page looks like this:
