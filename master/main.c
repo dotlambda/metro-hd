@@ -11,6 +11,9 @@
 #include "buttons.h"
 #include "display.h"
 
+#define ON_THE_GROUND 0
+#define FALLING_DOWN 7
+
 void init();
 
 void drawmonster(int x, int y)
@@ -29,11 +32,14 @@ void drawmonster(int x, int y)
     page(x+4, y+1, 0b00001111);
     page(x+5, y+1, 0b11001111);
     page(x+6, y+1, 0xFF);
-    page(x+1, y+2, 0b00000011);
+    page(x, y+2, 0b11000000);
+    page(x+1, y+2, 0b11000011);
     page(x+2, y+2, 0xFF);
     page(x+3, y+2, 0b00000011);
     page(x+4, y+2, 0xFF);
-    page(x+5, y+2, 0b00000011);
+    page(x+5, y+2, 0b11000011);
+    page(x+6, y+2, 0b11000000);
+    
     
 }
 
@@ -62,9 +68,12 @@ void drawplatform()
     }
 }
 
-uint32_t hasplatform(int x)
+uint32_t platform(int x, int y)
 {
-    return platforms & (1 << (x / 8));
+    if (y == 20)
+        return platforms & (1 << (x / 8));
+    else
+        return 0;
 }
     
 int main(void)
@@ -74,69 +83,88 @@ int main(void)
     drawplatform();
     int x = 10;
     int y = 22;
-    int jumpcounter = 0;
+    int jumpcounter = ON_THE_GROUND;
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
-    while(1)
+    while (1)
     {
         if (nextmoveevent < getMsTimer())
         {
-            if (B_RIGHT)
+            if (B_RIGHT && !platform(x+7,y) &&!platform(x+7, y+1)&&!platform(x+7, y+2))
             {
+                //falls er am rechten Ende von Plattform
+                if (platform(x,y+3) && !platform(x+1,y+3))
+                {    
+                    jumpcounter = FALLING_DOWN;
+                }
                 page(x, y, 0x00);
                 page(x, y+1, 0x00);
-                page(x+1, y+2, 0x00);
+                page(x, y+2, 0x00);
                 drawmonster(++x, y);
                 nextmoveevent = getMsTimer() + 50;
             }
-            if (B_LEFT)
+            if (B_LEFT &&!platform(x-1,y) &&!platform(x-1, y+1)&&!platform(x-1, y+2))
             {
+                if (platform(x+6,y+3) && !platform(x+5,y+3))
+                {
+                    jumpcounter = FALLING_DOWN;
+                }
                 page(x+6, y, 0x00);
                 page(x+6, y+1, 0x00);
-                page(x+5, y+2, 0x00);
+                page(x+6, y+2, 0x00);
                 drawmonster(--x, y);
                 nextmoveevent = getMsTimer() + 50;
             }
         }
-        if (jumpcounter != 0)
+        if (jumpcounter != ON_THE_GROUND)
         {
             if (nextjumpevent < getMsTimer())
             {
-                
-                if (jumpcounter < 6)
+                //Plattform direkt über dem Monster
+                if (platform(x, y-1) || platform(x+6, y-1))
                 {
-                    
-                    if(!hasplatform(x))
-                    {
-                    page(x, y+1, 0x00);
+                    jumpcounter = FALLING_DOWN;
+                }
+                if (jumpcounter != FALLING_DOWN) // if we are moving upwards
+                {
+                    page(x, y+2, 0x00);
                     page(x+1, y+2, 0x00);
                     page(x+2, y+2, 0x00);
                     page(x+3, y+2, 0x00);
                     page(x+4, y+2, 0x00);
                     page(x+5, y+2, 0x00);
-                    page(x+6, y+1, 0x00);
-                    drawmonster(x, --y);
+                    page(x+6, y+2, 0x00);
+                    y = y - 1;
+                    drawmonster(x, y);
+                    ++jumpcounter;
+                }
+                else //fallen
+                {
+                    //noch kein boden, keine Plattform
+                    if (y+3 != 25 && !platform(x, y+3) && !platform(x+6, y+3))
+                    {
+                        page(x, y, 0x00);
+                        page(x+1, y, 0x00);
+                        page(x+2, y, 0x00);
+                        page(x+3, y, 0x00);
+                        page(x+4, y, 0x00);
+                        page(x+5, y, 0x00);
+                        page(x+6, y, 0x00);
+                        ++y;
+                        drawmonster(x, y);
+                    }
+                    else //boden oder Plattform erreicht
+                    {
+                        jumpcounter = ON_THE_GROUND;
                     }
                 }
-                else if ((jumpcounter >= 6 && !hasplatform(x)) || (jumpcounter < 6 && hasplatform(x)))
-                {
-                    page(x, y, 0x00);
-                    page(x+1, y, 0x00);
-                    page(x+2, y, 0x00);
-                    page(x+3, y, 0x00);
-                    page(x+4, y, 0x00);
-                    page(x+5, y, 0x00);
-                    page(x+6, y, 0x00);
-                    drawmonster(x, ++y);
-                }
-                jumpcounter = (jumpcounter+1) % 11;
+                
                 nextjumpevent = getMsTimer() + 150;
             }
         }
         else if (B_UP)
         {
             jumpcounter = 1;
-            nextjumpevent = getMsTimer();
         }
     }
 }
