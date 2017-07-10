@@ -1,0 +1,11 @@
+1. Wie bewegt sich das Monster? 
+Eigenschaften von Monstern? Kann Monster schießen, springen usw? 
+-> Monster bleiben in einem Bildschirm
+2. Wie kann Charakter schießen? verschiedene Waffen? Wie viel Munition?
+-> Wenn Charakter gegen Monster läuft: Leben verlieren (Wie viele Leben?)
+-> Wenn Charakter von Monster getroffen wird: Leben verlieren
+-> Wenn Charkter Monster tötet: Belohnung? 
+3. Wie viele Türen gibt es, wie erreicht man diese sicher? in welche Richtung läuft man? 
+
+Design: 
+Umrandung, Plattformen, Charakter, Monster, Boden, Türen

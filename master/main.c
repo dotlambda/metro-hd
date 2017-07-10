@@ -9,12 +9,60 @@
 #include "buttons.h"
 #include "display.h"
 
+#define LEVEL_WIDTH 320 // 2*DISPLAY_WIDTH
+
 #define ON_THE_GROUND 0
 #define FALLING_DOWN 7
 
 void init();
 
 void drawmonster(int x, int y)
+{
+    page(x, y, 0b11010000);
+    page(x+1, y, 0b11110000);
+    page(x+2, y, 0b11111100);
+    page(x+3, y, 0b11110111);
+    page(x+4, y, 0b11110111);
+    page(x+5, y, 0b00110111);
+    page(x+6, y, 0b00000011);
+    page(x, y+1, 0b00000111);
+    page(x+1, y+1, 0xFF);
+    page(x+2, y+1, 0xFF);
+    page(x+3, y+1, 0xFF);
+    page(x+4, y+1, 0xFF);
+    page(x+5, y+1, 0b00001111);
+    page(x+6, y+1, 0b00000101);
+    page(x, y+2, 0b11010000);
+    page(x+1, y+2, 0b11111101);
+    page(x+2, y+2, 0b11001111);
+    page(x+3, y+2, 0b00000011);
+    page(x+4, y+2, 0b11010011);
+    page(x+5, y+2, 0xFF);
+    page(x+6, y+2, 0b11001100);
+}
+    
+
+void drawdoor()
+{
+    page(0,24, 0xFF);
+    page(1,24, 0xFF);
+    page(2,24, 0xFF);
+    page(0,23, 0xFF);
+    page(1,23, 0xFF);
+    page(2,23, 0xFF);
+    page(0,22, 0xFF);
+    page(1,22, 0xFF);
+    page(2,22, 0xFF);
+    page(0,21, 0xFF);
+    page(1,21, 0xFF);
+    page(2,21, 0xFF);
+    page(0,20, 0xFF);
+    page(1,20, 0xFF);
+    page(2,20, 0xFF);
+    
+}
+
+void drawcharacter(int x, int y)
 {
     page(x, y, 0xFF);
     page(x+1, y, 0b11010011);
@@ -54,9 +102,12 @@ void drawfloor()
     }
 }
 
+long level_seed;
+long level_pos = 0;
 long platforms;
 void drawplatform()
 {
+    srandom(level_seed + level_pos);
     platforms = random();
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/8; ++pos) // draw random platforms at 20 possible positions
     {
@@ -77,15 +128,24 @@ long platform(int x, int y)
     else
         return 0;
 }
+
+void redraw()
+{
+    clear();
+    drawfloor();
+    drawplatform();
+}
     
 int main(void)
 {
 	init();
-    drawfloor();
-    drawplatform();
+    level_seed = random();
+    redraw();
+    drawdoor();
+    drawmonster(140, 22);
     int x = 10;
     int y = 22;
-    drawmonster(x,y);
+    drawcharacter(x,y);
     int jumpcounter = ON_THE_GROUND;
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
@@ -98,12 +158,11 @@ int main(void)
             {
                 if (x + 7 == DISPLAY_WIDTH)
                 {
-                    clear();
-                    drawfloor();
-                    drawplatform();
+                    ++level_pos;
+                    redraw();
                     x = 0;
                     //y = 22;
-                    drawmonster(x,y);
+                    drawcharacter(x,y);
                 }
                 else if (!platform(x+7,y) &&!platform(x+7, y+1)&&!platform(x+7, y+2))
                 {
@@ -115,12 +174,20 @@ int main(void)
                     page(x, y, 0x00);
                     page(x, y+1, 0x00);
                     page(x, y+2, 0x00);
-                    drawmonster(++x, y);
+                    drawcharacter(++x, y);
                     nextmoveevent = getMsTimer() + 50;
                 }
         }
             if (B_LEFT &&!platform(x-1,y) &&!platform(x-1, y+1)&&!platform(x-1, y+2))
             {
+                if (x == 0)
+                {
+                    --level_pos;
+                    redraw();
+                    x = 153;
+                    //y = 22;
+                    drawcharacter(x,y);
+                }
                 if (platform(x+6,y+3) && !platform(x+5,y+3))
                 {
                     jumpcounter = FALLING_DOWN;
@@ -128,7 +195,7 @@ int main(void)
                 page(x+6, y, 0x00);
                 page(x+6, y+1, 0x00);
                 page(x+6, y+2, 0x00);
-                drawmonster(--x, y);
+                drawcharacter(--x, y);
                 nextmoveevent = getMsTimer() + 50;
             }
         }
@@ -151,7 +218,7 @@ int main(void)
                     page(x+5, y+2, 0x00);
                     page(x+6, y+2, 0x00);
                     y = y - 1;
-                    drawmonster(x, y);
+                    drawcharacter(x, y);
                     ++jumpcounter;
                 }
                 else //fallen
@@ -167,7 +234,7 @@ int main(void)
                         page(x+5, y, 0x00);
                         page(x+6, y, 0x00);
                         ++y;
-                        drawmonster(x, y);
+                        drawcharacter(x, y);
                     }
                     else //boden oder Plattform erreicht
                     {
