@@ -16,6 +16,13 @@
 
 void init();
 
+// x1,y1 - x1+6,y1+2
+int collision(int x1, int y1, int x2, int y2)
+{
+    return x1 < x2+6 && x1+6 > x2
+           && y1 < y2+2 && y1+2 > y2;
+}
+
 void drawmonster(int x, int y)
 {
     page(x, y, 0b11010000);
@@ -142,15 +149,51 @@ int main(void)
     level_seed = random();
     redraw();
     drawdoor();
-    drawmonster(140, 22);
+    int a = 50;
+    int b = 22;
+    drawmonster(a, b);
+    int direction = 0;
     int x = 10;
     int y = 22;
     drawcharacter(x,y);
+    
     int jumpcounter = ON_THE_GROUND;
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
+    uint32_t nextmonsterevent = 0;
     while (1)
     {
+        //monster in Bewegung
+        if(nextmonsterevent < getMsTimer())
+        {
+            if (a != 0 && direction == 0)
+            {
+                page(a + 6, b, 0x00);
+                page(a + 6, b + 1, 0x00);
+                page(a + 6, b + 2, 0x00);
+                a = a - 1;
+                drawmonster(a,b);
+            }
+            else if (a == 0)
+            {
+                direction = 1;
+            }
+            if (a != DISPLAY_WIDTH - 7 && direction == 1)
+            {
+                page(a, b, 0x00);
+                page(a, b + 1, 0x00);
+                page(a, b + 2, 0x00);
+                a = a + 1;
+                drawmonster(a,b);
+            }
+            else if (a == DISPLAY_WIDTH - 7)
+            { 
+                direction = 0;
+            }
+            nextmonsterevent = getMsTimer() + 100;
+        }
+        
+        //Character kann sich bewegen
         if (nextmoveevent < getMsTimer())
         {
             // wenn er nicht rechts gegen eine Plattform stoeßt
@@ -249,6 +292,13 @@ int main(void)
         {
             jumpcounter = 1;
         }
+        
+        //falls sich Monster und Character begegnen
+        if (collision(x, y, a, b))
+        {
+            clear();
+        }
+        
     }
 }
 
