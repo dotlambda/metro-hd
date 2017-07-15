@@ -23,32 +23,6 @@ int collision(int x1, int y1, int x2, int y2)
            && y1 < y2+2 && y1+2 > y2;
 }
 
-void drawmonster(int x, int y)
-{
-    page(x, y, 0b11010000);
-    page(x+1, y, 0b11110000);
-    page(x+2, y, 0b11111100);
-    page(x+3, y, 0b11110111);
-    page(x+4, y, 0b11110111);
-    page(x+5, y, 0b00110111);
-    page(x+6, y, 0b00000011);
-    page(x, y+1, 0b00000111);
-    page(x+1, y+1, 0xFF);
-    page(x+2, y+1, 0xFF);
-    page(x+3, y+1, 0xFF);
-    page(x+4, y+1, 0xFF);
-    page(x+5, y+1, 0b00001111);
-    page(x+6, y+1, 0b00000101);
-    page(x, y+2, 0b11010000);
-    page(x+1, y+2, 0b11111101);
-    page(x+2, y+2, 0b11001111);
-    page(x+3, y+2, 0b00000011);
-    page(x+4, y+2, 0b11010011);
-    page(x+5, y+2, 0xFF);
-    page(x+6, y+2, 0b11001100);
-}
-    
-
 void drawdoor()
 {
     page(0,24, 0xFF);
