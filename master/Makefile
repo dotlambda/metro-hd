@@ -6,7 +6,7 @@
 PROJECT = basis
 
 # Sourcefiles
-SOURCE =main.c
+SOURCE = main.c character.c globals.c
 # Files from basis
 SOURCE += adc.c timer.c uart.c display.c
 # Libraries
