@@ -103,6 +103,9 @@ int main(void)
     level_seed = random();
     redraw();
     //drawdoor();
+    uint8_t projectile_x;
+    uint8_t projectile_y;
+    uint8_t projectile_direction = 0;
 
     struct Character protagonist_;
     protagonist = &protagonist_;
@@ -123,6 +126,7 @@ int main(void)
 
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
+    uint32_t nextprojectilevent = 0;
     uint32_t nextmonsterevent = 0;
     while (1)
     {
@@ -189,6 +193,43 @@ int main(void)
             clear();
         }*/
         
+        if (!projectile_direction && B_A)
+        {
+            if (protagonist->direction == DIRECTION_LEFT)
+            {
+                projectile_x = protagonist->x - 2;
+                projectile_y = protagonist->y + 1;
+                
+                projectile_direction = -1;
+                nextprojectilevent = getMsTimer();
+            }
+            else
+            {
+                projectile_x = protagonist->x + protagonist->width;
+                projectile_y = protagonist->y + 1;
+                page(projectile_x, projectile_y, 0b11110000);
+                projectile_direction = 1;
+            }
+            page(projectile_x,     projectile_y, 0b11110000);
+            page(projectile_x + 1, projectile_y, 0b11110000);
+            nextprojectilevent = getMsTimer();
+        }
+        if (projectile_direction && nextprojectilevent < getMsTimer())
+        {
+            page(projectile_x,     projectile_y, 0x00);
+            page(projectile_x + 1, projectile_y, 0x00);
+            if (projectile_x == 0 || projectile_x == DISPLAY_WIDTH - 2)
+            {
+                projectile_direction = 0;
+            }
+            else
+            {
+                projectile_x += projectile_direction;
+                page(projectile_x,     projectile_y, 0b00001111);
+                page(projectile_x + 1, projectile_y, 0b00001111);
+            }
+            nextprojectilevent = getMsTimer() + 35;
+        }
     }
 }
 

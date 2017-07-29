@@ -90,6 +90,7 @@ uint8_t moveleft(struct Character* character)
         if (!feet_on_ground)
             character->jumpstate = FALLING_DOWN;
     }
+    character->direction = DIRECTION_LEFT;
 
     return 1;
 }
@@ -116,7 +117,8 @@ uint8_t moveright(struct Character* character)
         if (!feet_on_ground)
             character->jumpstate = FALLING_DOWN;
     }
-
+    character->direction = DIRECTION_RIGHT;
+    
     return 1;
 }
 
