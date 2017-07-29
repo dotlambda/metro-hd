@@ -12,6 +12,7 @@ void initcharacter(struct Character* character)
             character->height = 3;
             break;
     }
+    character->jumpstate = ON_THE_GROUND;
 }
 
 void draw(struct Character* character)
@@ -76,16 +77,19 @@ uint8_t moveleft(struct Character* character)
             return 0;
     }
 
-    for (uint8_t y = 0; y < character->height; ++y)
+    for (uint8_t y = character->y; y < character->y + character->height; ++y)
         page(character->x + character->width - 1, y, 0x00);
-    --character->x;
+    character->x--;
     draw(character);
 
-    long feet_on_ground = 0l;
-    for (uint8_t x = character->x; x < character->x + character->width; ++x)
-        feet_on_ground |= obstacle(x, character->y + character->height);
-    if (!feet_on_ground)
-        character->jumpstate = FALLING_DOWN;
+    if (character->jumpstate == ON_THE_GROUND)
+    {
+        long feet_on_ground = 0l;
+        for (uint8_t x = character->x; x < character->x + character->width; ++x)
+            feet_on_ground |= obstacle(x, character->y + character->height);
+        if (!feet_on_ground)
+            character->jumpstate = FALLING_DOWN;
+    }
 
     return 1;
 }
@@ -101,14 +105,17 @@ uint8_t moveright(struct Character* character)
 
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
         page(character->x, y, 0x00);
-    ++character->x;
+    character->x++;
     draw(character);
 
-    long feet_on_ground = 0l;
-    for (uint8_t x = character->x; x < character->x + character->width; ++x)
-        feet_on_ground |= obstacle(x, character->y + character->height);
-    if (!feet_on_ground)
-        character->jumpstate = FALLING_DOWN;
+    if (character->jumpstate == ON_THE_GROUND)
+    {
+        long feet_on_ground = 0l;
+        for (uint8_t x = character->x; x < character->x + character->width; ++x)
+            feet_on_ground |= obstacle(x, character->y + character->height);
+        if (!feet_on_ground)
+            character->jumpstate = FALLING_DOWN;
+    }
 
     return 1;
 }
@@ -159,7 +166,7 @@ void jump(struct Character* character)
         if (!moveup(character))
             character->jumpstate = FALLING_DOWN;
         else
-            ++character->jumpstate;
+            character->jumpstate++;
     }
 }
 
@@ -169,9 +176,13 @@ void move(struct Character* monster)
     if (monster->followsprotagonist) // follow protagonist
     {
         if (protagonist->x < monster->x)
+        {
             moveleft(monster);
+        }
         else if (protagonist->x > monster->x)
+        {
             moveright(monster);
+        }
     }
     else // move from left to right
     {

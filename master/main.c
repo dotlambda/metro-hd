@@ -60,16 +60,33 @@ long level_pos = 0;
 void drawplatform()
 {
     srandom(level_seed + level_pos);
-    platforms = random();
-    for(uint8_t pos = 0; pos < DISPLAY_WIDTH/8; ++pos) // draw random platforms at 20 possible positions
+    platforms_20 = random();
+    platforms_15 = random();
+//    platforms_10 = random();
+    
+    for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
-        if (platforms & (1l << pos))
+        if (!(platforms_20 & (3l << 2 * pos)))
         {
-            for (short i = 0; i < 8; ++i)
+            for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(8*pos + i, 20, 0xFF);
+                page(PLATFORM_WIDTH * pos + i, 20, 0xFF);
             }
         }
+        if (!(platforms_15 & (3l << 2 * pos)))
+        {
+            for (short i = 0; i < PLATFORM_WIDTH; ++i)
+            {
+                page(PLATFORM_WIDTH * pos + i, 15, 0xFF);
+            }
+        }
+//         if (!(platforms_10 & (3l << 2 * pos)))
+//         {
+//             for (short i = 0; i < PLATFORM_WIDTH; ++i)
+//             {
+//                 page(PLATFORM_WIDTH * pos + i, 10, 0xFF);
+//             }
+//         }
     }
 }
 
@@ -88,7 +105,7 @@ int main(void)
     //drawdoor();
 
     struct Character protagonist_;
-    struct Character* protagonist = &protagonist_;
+    protagonist = &protagonist_;
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
     protagonist->x = 10;
@@ -98,11 +115,12 @@ int main(void)
     struct Character monster_;
     struct Character* monster = &monster_;
     monster->look = LOOK_MONSTER_1;
+    initcharacter(monster);
+    monster->followsprotagonist = 1;
     monster->x = 50;
     monster->y = 22;
     draw(monster);
 
-    int jumpcounter = ON_THE_GROUND;
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
     uint32_t nextmonsterevent = 0;
@@ -112,6 +130,7 @@ int main(void)
         if(nextmonsterevent < getMsTimer())
         {
             move(monster);
+            nextmonsterevent = getMsTimer() + 100;
         }
         
         //Protagonist kann sich bewegen
@@ -151,7 +170,7 @@ int main(void)
                 nextmoveevent = getMsTimer() + 50;
             }
         }
-        if (jumpcounter != ON_THE_GROUND)
+        if (protagonist->jumpstate != ON_THE_GROUND)
         {
             if (nextjumpevent < getMsTimer())
             {
