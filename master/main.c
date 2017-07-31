@@ -218,20 +218,28 @@ int main(void)
         
         if (projectile->movement == HIDDEN && B_A)
         {
+            uint8_t enough_space = 1;
             projectile->direction = protagonist->direction;
             if (protagonist->direction == DIRECTION_LEFT)
             {
+                if (protagonist->x < projectile->width)
+                    enough_space = 0;
                 projectile->x = protagonist->x - projectile->width;
                 projectile->y = protagonist->y + 1;
             }
             else
             {
+                if (protagonist->x + protagonist->width + projectile->width >= DISPLAY_WIDTH)
+                    enough_space = 0;
                 projectile->x = protagonist->x + protagonist->width;
                 projectile->y = protagonist->y + 1;
             }
-            projectile->movement = PROJECTILE;
-            draw(projectile);
-            nextprojectilevent = getMsTimer() + 35;
+            if (enough_space)
+            {
+                projectile->movement = PROJECTILE;
+                draw(projectile);
+                nextprojectilevent = getMsTimer() + 35;
+            }
         }
         else if (projectile->movement != HIDDEN && nextprojectilevent < getMsTimer())
         {

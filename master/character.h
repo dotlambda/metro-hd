@@ -10,8 +10,8 @@
 
 struct Character
 {
-    int16_t x;
-    int16_t y;
+    uint8_t x;
+    uint8_t y;
     enum {LOOK_PROTAGONIST, LOOK_MONSTER_1, LOOK_MONSTER_2, LOOK_EYEMONSTER, LOOK_ROCKET} look;
     uint8_t width;  // in pixels
     uint8_t height; // in pages
