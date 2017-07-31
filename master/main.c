@@ -217,7 +217,7 @@ int main(void)
             projectile->direction = protagonist->direction;
             if (protagonist->direction == DIRECTION_LEFT)
             {
-                projectile->x = protagonist->x - 2;
+                projectile->x = protagonist->x - projectile->width;
                 projectile->y = protagonist->y + 1;
             }
             else
@@ -227,7 +227,7 @@ int main(void)
             }
             projectile->movement = PROJECTILE;
             draw(projectile);
-            nextprojectilevent = getMsTimer();
+            nextprojectilevent = getMsTimer() + 35;
         }
         else if (projectile->movement != HIDDEN && nextprojectilevent < getMsTimer())
         {
