@@ -134,11 +134,11 @@ int main(void)
     
     struct Character monster_;
     struct Character* monster = &monster_;
-    monster->look = LOOK_ROCKET;
+    monster->look = LOOK_MONSTER_2;
     initcharacter(monster);
     monster->movement = FOLLOW_PROTAGONIST;
     monster->x = 50;
-    monster->y = 21;
+    monster->y = 23;
     draw(monster);
 
     struct Character projectile_;
@@ -221,7 +221,7 @@ int main(void)
             projectile->direction = protagonist->direction;
             if (protagonist->direction == DIRECTION_LEFT)
             {
-                projectile->x = protagonist->x - 2;
+                projectile->x = protagonist->x - projectile->width;
                 projectile->y = protagonist->y + 1;
             }
             else
@@ -231,7 +231,7 @@ int main(void)
             }
             projectile->movement = PROJECTILE;
             draw(projectile);
-            nextprojectilevent = getMsTimer();
+            nextprojectilevent = getMsTimer() + 35;
         }
         else if (projectile->movement != HIDDEN && nextprojectilevent < getMsTimer())
         {

@@ -22,6 +22,7 @@ void initcharacter(struct Character* character)
         case LOOK_ROCKET:
             character->width = 13;
             character->height = 2;
+            break;
     }
     character->jumpstate = ON_THE_GROUND;
 }
@@ -182,11 +183,12 @@ void draw(struct Character* character)
 void hide(struct Character* character)
 {
     character->movement = HIDDEN;
-    for (uint8_t x = character->x; x < character->x + character->width; ++x)
+    for (int16_t x = character->x; x < character->x + character->width; ++x)
     {
-        for (uint8_t y = character->y; y < character->y + character->height; ++y)
+        for (int16_t y = character->y; y < character->y + character->height; ++y)
         {
-            page(x, y, 0x00);
+            if (x >= 0 && y >= 0 && x < DISPLAY_WIDTH)
+                page(x, y, 0x00);
         }
     }
 }
@@ -307,22 +309,19 @@ void move(struct Character* character)
                 moveright(character);
             break;
         case BACK_AND_FORTH:
-        case PROJECTILE:
-            if (character->x == 0)
-            {
-                if (character->movement == PROJECTILE)
-                    hide(character);
-                else
-                    character->direction = DIRECTION_RIGHT;
-            }
-            else if (character->x + character->width == DISPLAY_WIDTH)
-            {
-                if (character->movement == PROJECTILE)
-                    hide(character);
-                else
-                    character->direction = DIRECTION_LEFT;
-            }
+            if (character->x <= 0)
+                character->direction = DIRECTION_RIGHT;
+            else if (character->x + character->width >= DISPLAY_WIDTH)
+                character->direction = DIRECTION_LEFT;
             if (character->direction == DIRECTION_LEFT)
+                moveleft(character);
+            else
+                moveright(character);
+            break;
+        case PROJECTILE:
+            if (character->x <= 0 || character->x + character->width == DISPLAY_WIDTH)
+                hide(character);
+            else if (character->direction == DIRECTION_LEFT)
                 moveleft(character);
             else
                 moveright(character);
