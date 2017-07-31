@@ -179,6 +179,18 @@ void draw(struct Character* character)
     }
 }
 
+void hide(struct Character* character)
+{
+    character->movement = HIDDEN;
+    for (uint8_t x = character->x; x < character->x + character->width; ++x)
+    {
+        for (uint8_t y = character->y; y < character->y + character->height; ++y)
+        {
+            page(x, y, 0x00);
+        }
+    }
+}
+
 uint8_t moveleft(struct Character* character)
 {
     // don't move if there is an obstacle to the left
@@ -283,29 +295,39 @@ void jump(struct Character* character)
     }
 }
 
-// determine the direction in which a monster should move
-void move(struct Character* monster)
+// determine the direction in which a monster or projectile should move
+void move(struct Character* character)
 {
-    if (monster->followsprotagonist) // follow protagonist
+    switch (character->movement)
     {
-        if (protagonist->x < monster->x)
-        {
-            moveleft(monster);
-        }
-        else if (protagonist->x > monster->x)
-        {
-            moveright(monster);
-        }
-    }
-    else // move from left to right
-    {
-        if (monster->x == 0)
-            monster->direction = DIRECTION_RIGHT;
-        else if (monster->x + monster->width == DISPLAY_WIDTH)
-            monster->direction = DIRECTION_LEFT;
-        if (monster->direction == DIRECTION_LEFT)
-            moveleft(monster);
-        else
-            moveright(monster);
+        case FOLLOW_PROTAGONIST:
+            if (protagonist->x < character->x)
+                moveleft(character);
+            else if (protagonist->x > character->x)
+                moveright(character);
+            break;
+        case BACK_AND_FORTH:
+        case PROJECTILE:
+            if (character->x == 0)
+            {
+                if (character->movement == PROJECTILE)
+                    hide(character);
+                else
+                    character->direction = DIRECTION_RIGHT;
+            }
+            else if (character->x + character->width == DISPLAY_WIDTH)
+            {
+                if (character->movement == PROJECTILE)
+                    hide(character);
+                else
+                    character->direction = DIRECTION_LEFT;
+            }
+            if (character->direction == DIRECTION_LEFT)
+                moveleft(character);
+            else
+                moveright(character);
+            break;
+        case HIDDEN:
+            break;
     }
 }

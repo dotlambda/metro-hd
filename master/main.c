@@ -123,9 +123,6 @@ int main(void)
     level_seed = random();
     redraw();
     //drawdoor();
-    uint8_t projectile_x;
-    uint8_t projectile_y;
-    uint8_t projectile_direction = 0;
 
     struct Character protagonist_;
     protagonist = &protagonist_;
@@ -139,12 +136,16 @@ int main(void)
     struct Character* monster = &monster_;
     monster->look = LOOK_ROCKET;
     initcharacter(monster);
-    monster->followsprotagonist = 1;
+    monster->movement = FOLLOW_PROTAGONIST;
     monster->x = 50;
     monster->y = 21;
     draw(monster);
-    
-    
+
+    struct Character projectile_;
+    struct Character* projectile = &projectile_;
+    projectile->look = LOOK_ROCKET;
+    initcharacter(projectile);
+    projectile->movement = HIDDEN;
     
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
@@ -215,41 +216,26 @@ int main(void)
             clear();
         }*/
         
-        if (!projectile_direction && B_A)
+        if (projectile->movement == HIDDEN && B_A)
         {
+            projectile->direction = protagonist->direction;
             if (protagonist->direction == DIRECTION_LEFT)
             {
-                projectile_x = protagonist->x - 2;
-                projectile_y = protagonist->y + 1;
-                
-                projectile_direction = -1;
-                nextprojectilevent = getMsTimer();
+                projectile->x = protagonist->x - 2;
+                projectile->y = protagonist->y + 1;
             }
             else
             {
-                projectile_x = protagonist->x + protagonist->width;
-                projectile_y = protagonist->y + 1;
-                page(projectile_x, projectile_y, 0b11110000);
-                projectile_direction = 1;
+                projectile->x = protagonist->x + protagonist->width;
+                projectile->y = protagonist->y + 1;
             }
-            page(projectile_x,     projectile_y, 0b11110000);
-            page(projectile_x + 1, projectile_y, 0b11110000);
+            projectile->movement = PROJECTILE;
+            draw(projectile);
             nextprojectilevent = getMsTimer();
         }
-        if (projectile_direction && nextprojectilevent < getMsTimer())
+        else if (projectile->movement != HIDDEN && nextprojectilevent < getMsTimer())
         {
-            page(projectile_x,     projectile_y, 0x00);
-            page(projectile_x + 1, projectile_y, 0x00);
-            if (projectile_x == 0 || projectile_x == DISPLAY_WIDTH - 2)
-            {
-                projectile_direction = 0;
-            }
-            else
-            {
-                projectile_x += projectile_direction;
-                page(projectile_x,     projectile_y, 0b00001111);
-                page(projectile_x + 1, projectile_y, 0b00001111);
-            }
+            move(projectile);
             nextprojectilevent = getMsTimer() + 35;
         }
     }
