@@ -42,7 +42,7 @@ void drawdoor()
 
 void drawfloor()
 {
-    for (int x = 0; x < DISPLAY_WIDTH; x+=8)
+   /* for (int x = 0; x < DISPLAY_WIDTH; x+=8)
     {
         page(x,   25, 0xFF);
         page(x+1, 25, 0xFF);
@@ -52,7 +52,27 @@ void drawfloor()
         page(x+5, 25, 0x55);
         page(x+6, 25, 0x55);
         page(x+7, 25, 0x55);
+    }*/
+    for (int x = 0; x < DISPLAY_WIDTH; x+=16)
+    {
+        page(x, 25, 0b01010110);
+        page(x+1, 25, 0b10100110);
+        page(x+2, 25, 0b01010110);
+        page(x+3, 25, 0b10101010);
+        page(x+4, 25, 0b10010101);
+        page(x+5, 25, 0b10011010);
+        page(x+6, 25, 0b10010101);
+        page(x+7, 25, 0b10101010);
+        page(x+8, 25, 0b01100110);
+        page(x+9, 25, 0b01100110);
+        page(x+10, 25, 0b01010110);
+        page(x+11, 25, 0b10101010);
+        page(x+12, 25, 0b10010101);
+        page(x+13, 25, 0b10101001);
+        page(x+14, 25, 0b10010101);
+        page(x+15, 25, 0b10101010);
     }
+    
 }
 
 long level_seed;
@@ -117,13 +137,15 @@ int main(void)
     
     struct Character monster_;
     struct Character* monster = &monster_;
-    monster->look = LOOK_MONSTER_1;
+    monster->look = LOOK_ROCKET;
     initcharacter(monster);
     monster->followsprotagonist = 1;
     monster->x = 50;
-    monster->y = 22;
+    monster->y = 21;
     draw(monster);
-
+    
+    
+    
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
     uint32_t nextprojectilevent = 0;
