@@ -42,17 +42,6 @@ void drawdoor()
 
 void drawfloor()
 {
-   /* for (int x = 0; x < DISPLAY_WIDTH; x+=8)
-    {
-        page(x,   25, 0xFF);
-        page(x+1, 25, 0xFF);
-        page(x+2, 25, 0xFF);
-        page(x+3, 25, 0xFF);
-        page(x+4, 25, 0x55);
-        page(x+5, 25, 0x55);
-        page(x+6, 25, 0x55);
-        page(x+7, 25, 0x55);
-    }*/
     for (int x = 0; x < DISPLAY_WIDTH; x+=16)
     {
         page(x, 25, 0b01010110);
@@ -82,6 +71,7 @@ void drawplatform()
     srandom(level_seed + level_pos);
     platforms_20 = random();
     platforms_15 = random();
+    platforms_24 = random();
 //    platforms_10 = random();
     
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
@@ -100,13 +90,19 @@ void drawplatform()
                 page(PLATFORM_WIDTH * pos + i, 15, 0xFF);
             }
         }
-//         if (!(platforms_10 & (3l << 2 * pos)))
-//         {
-//             for (short i = 0; i < PLATFORM_WIDTH; ++i)
-//             {
-//                 page(PLATFORM_WIDTH * pos + i, 10, 0xFF);
-//             }
-//         }
+        if (!(platforms_24 & (3l << 2 * pos)))
+        {
+            page(PLATFORM_WIDTH * pos, 24, 0b01010110);
+            page(PLATFORM_WIDTH * pos+1, 24, 0b10100110);
+            page(PLATFORM_WIDTH * pos+2, 24, 0b01010110);
+            page(PLATFORM_WIDTH * pos+3, 24, 0b10101010);
+            page(PLATFORM_WIDTH * pos+4, 24, 0b10010101);
+            page(PLATFORM_WIDTH * pos+5, 24, 0b10011010);
+            page(PLATFORM_WIDTH * pos+6, 24, 0b10010101);
+            page(PLATFORM_WIDTH * pos+7, 24, 0b10101010);
+            page(PLATFORM_WIDTH * pos+8, 24, 0b01100110);
+            page(PLATFORM_WIDTH * pos+9, 24, 0b01100110);
+        }
     }
 }
 
@@ -134,11 +130,11 @@ int main(void)
     
     struct Character monster_;
     struct Character* monster = &monster_;
-    monster->look = LOOK_ROCKET;
+    monster->look = LOOK_MONSTER_2;
     initcharacter(monster);
     monster->movement = FOLLOW_PROTAGONIST;
     monster->x = 50;
-    monster->y = 21;
+    monster->y = 23;
     draw(monster);
 
     struct Character projectile_;
