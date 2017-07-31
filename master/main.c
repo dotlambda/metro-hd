@@ -126,6 +126,7 @@ int main(void)
     initcharacter(protagonist);
     protagonist->x = 10;
     protagonist->y = 22;
+    protagonist->direction = DIRECTION_RIGHT;
     draw(protagonist);
     
     struct Character monster_;
@@ -162,7 +163,7 @@ int main(void)
             // wenn er nicht rechts gegen eine Plattform stoeßt
             if (B_RIGHT)
             {
-                if (protagonist->x + 7 == DISPLAY_WIDTH)
+                if (protagonist->x + protagonist->width == DISPLAY_WIDTH)
                 {
                     ++level_pos;
                     redraw();
