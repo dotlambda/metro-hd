@@ -21,24 +21,59 @@ int collision(int x1, int y1, int x2, int y2)
            && y1 < y2+2 && y1+2 > y2;
 }
 
-void drawdoor()
+void drawdoor_closed(int x, int y)
 {
-    page(0,24, 0xFF);
-    page(1,24, 0xFF);
-    page(2,24, 0xFF);
-    page(0,23, 0xFF);
-    page(1,23, 0xFF);
-    page(2,23, 0xFF);
-    page(0,22, 0xFF);
-    page(1,22, 0xFF);
-    page(2,22, 0xFF);
-    page(0,21, 0xFF);
-    page(1,21, 0xFF);
-    page(2,21, 0xFF);
-    page(0,20, 0xFF);
-    page(1,20, 0xFF);
-    page(2,20, 0xFF);
-    
+    page(x,y, 0xFF);
+    page(x+1,y, 0xFF);
+    page(x+2,y, 0b11101010);
+    page(x+3,y, 0b11111010);
+    page(x+4,y, 0b00001110);
+    page(x+5,y, 0b00000011);
+
+    page(x,y+1, 0xFF);
+    page(x+1,y+1, 0xFF);
+    page(x+2,y+1, 0b10111111);
+    page(x+3,y+1, 0b10101010);
+    page(x+4,y+1, 0b10100101);
+    page(x+5,y+1, 0b10010101);
+
+    page(x,y+2, 0xFF);
+    page(x+1,y+2, 0xFF);
+    page(x+2,y+2, 0b11111110);
+    page(x+3,y+2, 0b10101010);
+    page(x+4,y+2, 0b01011010);
+    page(x+5,y+2, 0b01010110);
+
+    page(x,y+3, 0xFF);
+    page(x+1,y+3, 0xFF);
+    page(x+2,y+3, 0b10101011);
+    page(x+3,y+3, 0b10101111);
+    page(x+4,y+3, 0b10110000);
+    page(x+5,y+3, 0b11000000);
+}
+
+void drawdoor_open(int x, int y)
+{
+    page(x,y, 0xFF);
+    page(x+1,y, 0xFF);
+    page(x+2,y, 0b11101010);
+    page(x+3,y, 0b11111000);
+
+    page(x,y+1, 0xFF);
+    page(x+1,y+1, 0xFF);
+    page(x+2,y+1, 0b10111111);
+    page(x+3,y+1, 0b00000000);
+
+    page(x,y+2, 0xFF);
+    page(x+1,y+2, 0xFF);
+    page(x+2,y+2, 0b11111110);
+    page(x+3,y+2, 0b00000000);
+
+    page(x,y+3, 0xFF);
+    page(x+1,y+3, 0xFF);
+    page(x+2,y+3, 0b10101011);
+    page(x+3,y+3, 0b00101111);
+
 }
 
 void drawfloor()
