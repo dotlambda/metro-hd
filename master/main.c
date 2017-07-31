@@ -10,6 +10,7 @@
 
 #define LEVEL_WIDTH 320 // 2*DISPLAY_WIDTH
 
+struct Character* monster;
 
 void init();
 
@@ -64,7 +65,7 @@ void drawfloor()
     
 }
 
-long level_seed;
+long level_seed = 3451627918l;
 long level_pos = 0;
 void drawplatform()
 {
@@ -111,15 +112,17 @@ void redraw()
     clear();
     drawfloor();
     drawplatform();
+    
+    monster->look = random() % NUM_MONSTER_LOOKS;
+    initcharacter(monster);
+    monster->y = 25 - monster->height;
+    draw(monster);
 }
     
 int main(void)
 {
 	init();
-    level_seed = random();
-    redraw();
-    //drawdoor();
-
+    
     struct Character protagonist_;
     protagonist = &protagonist_;
     protagonist->look = LOOK_PROTAGONIST;
@@ -130,19 +133,18 @@ int main(void)
     draw(protagonist);
     
     struct Character monster_;
-    struct Character* monster = &monster_;
-    monster->look = LOOK_MONSTER_2;
-    initcharacter(monster);
+    monster = &monster_;
     monster->movement = FOLLOW_PROTAGONIST;
     monster->x = 50;
-    monster->y = 23;
-    draw(monster);
-
+ 
     struct Character projectile_;
     struct Character* projectile = &projectile_;
     projectile->look = LOOK_ROCKET;
     initcharacter(projectile);
     projectile->movement = HIDDEN;
+
+    redraw();
+    //drawdoor();
     
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;

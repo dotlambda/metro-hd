@@ -6,13 +6,15 @@
 #define ON_THE_GROUND 0
 #define FALLING_DOWN 7
 
+#define NUM_MONSTER_LOOKS 3
+
 #include <inttypes.h>
 
 struct Character
 {
     uint8_t x;
     uint8_t y;
-    enum {LOOK_PROTAGONIST, LOOK_MONSTER_1, LOOK_MONSTER_2, LOOK_EYEMONSTER, LOOK_ROCKET} look;
+    enum {LOOK_MONSTER_1, LOOK_MONSTER_2, LOOK_EYEMONSTER, LOOK_PROTAGONIST, LOOK_ROCKET} look;
     uint8_t width;  // in pixels
     uint8_t height; // in pages
     uint8_t direction;
