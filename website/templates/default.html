@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>$title$</title>
+
+<style type="text/css">code{white-space: pre;}</style>
+$for(css)$
+<link rel="stylesheet" href="$css$">
+$if(highlighting-css)$
+<style type="text/css">
+$highlighting-css$
+</style>
+$endif$
+$endfor$
+</head>
+
+<body>
+<div id="wrap" style="width:850px">
+<div id="container" style="width:560px">
+<div class="entry">
+$body$
+</div>
+</div>
+
+<div id="sidebar">
+<h1>$title$</h1>
+$if(toc)$
+$toc$
+$endif$
+</div>
+</div>
+</body>
+</html>
