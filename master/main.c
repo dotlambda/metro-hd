@@ -23,56 +23,56 @@ int collision(int x1, int y1, int x2, int y2)
 
 void drawdoor_closed(int x, int y)
 {
-    page(x,y, 0xFF);
-    page(x+1,y, 0xFF);
-    page(x+2,y, 0b11101010);
-    page(x+3,y, 0b11111010);
-    page(x+4,y, 0b00001110);
-    page(x+5,y, 0b00000011);
-
-    page(x,y+1, 0xFF);
-    page(x+1,y+1, 0xFF);
-    page(x+2,y+1, 0b10111111);
-    page(x+3,y+1, 0b10101010);
-    page(x+4,y+1, 0b10100101);
-    page(x+5,y+1, 0b10010101);
-
-    page(x,y+2, 0xFF);
-    page(x+1,y+2, 0xFF);
-    page(x+2,y+2, 0b11111110);
-    page(x+3,y+2, 0b10101010);
-    page(x+4,y+2, 0b01011010);
-    page(x+5,y+2, 0b01010110);
-
-    page(x,y+3, 0xFF);
-    page(x+1,y+3, 0xFF);
-    page(x+2,y+3, 0b10101011);
-    page(x+3,y+3, 0b10101111);
-    page(x+4,y+3, 0b10110000);
-    page(x+5,y+3, 0b11000000);
+    page(x,     y, 0xFF);
+    page(x + 1, y, 0xFF);
+    page(x + 2, y, 0b10101011);
+    page(x + 3, y, 0b10101111);
+    page(x + 4, y, 0b10110000);
+    page(x + 5, y, 0b11000000);
+    
+    page(x,     y + 1, 0xFF);
+    page(x + 1, y + 1, 0xFF);
+    page(x + 2, y + 1, 0b11111110);
+    page(x + 3, y + 1, 0b10101010);
+    page(x + 4, y + 1, 0b01011010);
+    page(x + 5, y + 1, 0b01010110);
+    
+    page(x,     y + 2, 0xFF);
+    page(x + 1, y + 2, 0xFF);
+    page(x + 2, y + 2, 0b10111111);
+    page(x + 3, y + 2, 0b10101010);
+    page(x + 4, y + 2, 0b10100101);
+    page(x + 5, y + 2, 0b10010101);
+    
+    page(x,     y + 3, 0xFF);
+    page(x + 1, y + 3, 0xFF);
+    page(x + 2, y + 3, 0b11101010);
+    page(x + 3, y + 3, 0b11111010);
+    page(x + 4, y + 3, 0b00001110);
+    page(x + 5, y + 3, 0b00000011);
 }
 
 void drawdoor_open(int x, int y)
 {
-    page(x,y, 0xFF);
-    page(x+1,y, 0xFF);
-    page(x+2,y, 0b11101010);
-    page(x+3,y, 0b11111000);
+    page(x,     y + 3, 0xFF);
+    page(x + 1, y + 3, 0xFF);
+    page(x + 2, y + 3, 0b11101010);
+    page(x + 3, y + 3, 0b11111000);
 
-    page(x,y+1, 0xFF);
-    page(x+1,y+1, 0xFF);
-    page(x+2,y+1, 0b10111111);
-    page(x+3,y+1, 0b00000000);
+    page(x,     y + 2, 0xFF);
+    page(x + 1, y + 2, 0xFF);
+    page(x + 2, y + 2, 0b10111111);
+    page(x + 3, y + 2, 0b00000000);
 
-    page(x,y+2, 0xFF);
-    page(x+1,y+2, 0xFF);
-    page(x+2,y+2, 0b11111110);
-    page(x+3,y+2, 0b00000000);
+    page(x,     y + 1, 0xFF);
+    page(x + 1, y + 1, 0xFF);
+    page(x + 2, y + 1, 0b11111110);
+    page(x + 3, y + 1, 0b00000000);
 
-    page(x,y+3, 0xFF);
-    page(x+1,y+3, 0xFF);
-    page(x+2,y+3, 0b10101011);
-    page(x+3,y+3, 0b00101111);
+    page(x,     y, 0xFF);
+    page(x + 1, y, 0xFF);
+    page(x + 2, y, 0b10101011);
+    page(x + 3, y, 0b00101111);
 
 }
 
@@ -80,24 +80,23 @@ void drawfloor()
 {
     for (int x = 0; x < DISPLAY_WIDTH; x+=16)
     {
-        page(x, 25, 0b01010110);
-        page(x+1, 25, 0b10100110);
-        page(x+2, 25, 0b01010110);
-        page(x+3, 25, 0b10101010);
-        page(x+4, 25, 0b10010101);
-        page(x+5, 25, 0b10011010);
-        page(x+6, 25, 0b10010101);
-        page(x+7, 25, 0b10101010);
-        page(x+8, 25, 0b01100110);
-        page(x+9, 25, 0b01100110);
-        page(x+10, 25, 0b01010110);
-        page(x+11, 25, 0b10101010);
-        page(x+12, 25, 0b10010101);
-        page(x+13, 25, 0b10101001);
-        page(x+14, 25, 0b10010101);
-        page(x+15, 25, 0b10101010);
+        page(x,      25, 0b01010110);
+        page(x + 1,  25, 0b10100110);
+        page(x + 2,  25, 0b01010110);
+        page(x + 3,  25, 0b10101010);
+        page(x + 4,  25, 0b10010101);
+        page(x + 5,  25, 0b10011010);
+        page(x + 6,  25, 0b10010101);
+        page(x + 7,  25, 0b10101010);
+        page(x + 8,  25, 0b01100110);
+        page(x + 9,  25, 0b01100110);
+        page(x + 10, 25, 0b01010110);
+        page(x + 11, 25, 0b10101010);
+        page(x + 12, 25, 0b10010101);
+        page(x + 13, 25, 0b10101001);
+        page(x + 14, 25, 0b10010101);
+        page(x + 15, 25, 0b10101010);
     }
-    
 }
 
 long level_seed = 3451627918l;
@@ -108,7 +107,7 @@ void drawplatform()
     platforms_20 = random();
     platforms_15 = random();
     platforms_24 = random();
-//    platforms_10 = random();
+
     
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
@@ -179,7 +178,7 @@ int main(void)
     projectile->movement = HIDDEN;
 
     redraw();
-    //drawdoor();
+    drawdoor_closed(0, 21);
     
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
