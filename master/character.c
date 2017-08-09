@@ -10,10 +10,6 @@ void initcharacter(struct Character* character)
             character->width = 8;
             character->height = 4;
             break;
-        case LOOK_MONSTER_1:
-            character->width = 7;
-            character->height = 3;
-            break;
         case LOOK_MONSTER_2: 
             character->width = 8;
             character->height = 2;
@@ -22,6 +18,10 @@ void initcharacter(struct Character* character)
             character->width = 12;
             character->height = 4; 
             break;
+        case LOOK_MONSTER_ZOOMER:
+            character->width = 15;
+            character->height = 3;
+            break;
         case LOOK_ROCKET:
             character->width = 13;
             character->height = 2;
@@ -29,10 +29,6 @@ void initcharacter(struct Character* character)
         case LOOK_MONSTER_ZAZABI:
             character->width = 17;
             character->height = 8;
-            break;
-        case LOOK_MONSTER_MORPH:
-            character->width = 15;
-            character->height = 3;
             break;
     }
     character->jumpstate = ON_THE_GROUND;
@@ -121,31 +117,6 @@ void draw(struct Character* character)
                
             }
             break;
-            
-        case LOOK_MONSTER_1:
-            page(character->x,     character->y,     0xFF);
-            page(character->x + 1, character->y,     0b11010011);
-            page(character->x + 2, character->y,     0b11000011);
-            page(character->x + 3, character->y,     0xFF);
-            page(character->x + 4, character->y,     0b11010011);
-            page(character->x + 5, character->y,     0b11000011);
-            page(character->x + 6, character->y,     0xFF);
-            page(character->x,     character->y + 1, 0xFF);
-            page(character->x + 1, character->y + 1, 0b11001111);
-            page(character->x + 2, character->y + 1, 0b00001111);
-            page(character->x + 3, character->y + 1, 0b00001111);
-            page(character->x + 4, character->y + 1, 0b00001111);
-            page(character->x + 5, character->y + 1, 0b11001111);
-            page(character->x + 6, character->y + 1, 0xFF);
-            page(character->x,     character->y + 2, 0b11000000);
-            page(character->x + 1, character->y + 2, 0b11000011);
-            page(character->x + 2, character->y + 2, 0xFF);
-            page(character->x + 3, character->y + 2, 0b00000011);
-            page(character->x + 4, character->y + 2, 0xFF);
-            page(character->x + 5, character->y + 2, 0b11000011);
-            page(character->x + 6, character->y + 2, 0b11000000);
-            break;
-            
         case LOOK_MONSTER_2:
             page(character->x,     character->y,     0b00000100);
             page(character->x + 1, character->y,     0b00010100);
@@ -217,6 +188,56 @@ void draw(struct Character* character)
             page(character->x + 9,  character->y + 3, 0b00000000);
             page(character->x + 10, character->y + 3, 0b00000000);
             page(character->x + 11, character->y + 3, 0b00000000);
+            break;
+            
+            case LOOK_MONSTER_ZOOMER:
+            page(character->x,      character->y, 0b00000000);
+            page(character->x + 1,  character->y, 0b00100000);
+            page(character->x + 2,  character->y, 0b10000000);
+            page(character->x + 3,  character->y, 0b10000010);
+            page(character->x + 4,  character->y, 0b00101000);
+            page(character->x + 5,  character->y, 0b01101000);
+            page(character->x + 6,  character->y, 0b01010000);
+            page(character->x + 7,  character->y, 0b01011010);
+            page(character->x + 8,  character->y, 0b01010000);
+            page(character->x + 9,  character->y, 0b01101000);
+            page(character->x + 10, character->y, 0b00101000);
+            page(character->x + 11, character->y, 0b10000010);
+            page(character->x + 12, character->y, 0b10000000);
+            page(character->x + 13, character->y, 0b00100000);
+            page(character->x + 14, character->y, 0b00000000);
+            
+            page(character->x,      character->y + 1, 0b00001000);
+            page(character->x + 1,  character->y + 1, 0b10100000);
+            page(character->x + 2,  character->y + 1, 0b10100010);
+            page(character->x + 3,  character->y + 1, 0b10010110);
+            page(character->x + 4,  character->y + 1, 0b01100101);
+            page(character->x + 5,  character->y + 1, 0b01011001);
+            page(character->x + 6,  character->y + 1, 0b01010110);
+            page(character->x + 7,  character->y + 1, 0b01011010);
+            page(character->x + 8,  character->y + 1, 0b01010110);
+            page(character->x + 9,  character->y + 1, 0b01011001);
+            page(character->x + 10, character->y + 1, 0b01100101);
+            page(character->x + 11, character->y + 1, 0b10010110);
+            page(character->x + 12, character->y + 1, 0b10100010);
+            page(character->x + 13, character->y + 1, 0b10100000);
+            page(character->x + 14, character->y + 1, 0b00001000);
+            
+            page(character->x,      character->y + 2, 0b00000000);
+            page(character->x + 1,  character->y + 2, 0b00000000);
+            page(character->x + 2,  character->y + 2, 0b10101000);
+            page(character->x + 3,  character->y + 2, 0b11101010);
+            page(character->x + 4,  character->y + 2, 0b11111111);
+            page(character->x + 5,  character->y + 2, 0b11000011);
+            page(character->x + 6,  character->y + 2, 0b11001111);
+            page(character->x + 7,  character->y + 2, 0b11111101);
+            page(character->x + 8,  character->y + 2, 0b11001111);
+            page(character->x + 9,  character->y + 2, 0b11000011);
+            page(character->x + 10, character->y + 2, 0b11111111);
+            page(character->x + 11, character->y + 2, 0b11101010);
+            page(character->x + 12, character->y + 2, 0b10101000);
+            page(character->x + 13, character->y + 2, 0b00000000);
+            page(character->x + 14, character->y + 2, 0b00000000);
             break;
             
         case LOOK_ROCKET:
@@ -393,56 +414,6 @@ void draw(struct Character* character)
             page(character->x + 14, character->y + 7, 0b00101000);
             page(character->x + 15, character->y + 7, 0b00000000);
             page(character->x + 16, character->y + 7, 0b00000000);
-            break;
-            
-        case LOOK_MONSTER_MORPH:
-            page(character->x,      character->y, 0b00000000);
-            page(character->x + 1,  character->y, 0b00100000);
-            page(character->x + 2,  character->y, 0b10000000);
-            page(character->x + 3,  character->y, 0b10000010);
-            page(character->x + 4,  character->y, 0b00101000);
-            page(character->x + 5,  character->y, 0b01101000);
-            page(character->x + 6,  character->y, 0b01010000);
-            page(character->x + 7,  character->y, 0b01011010);
-            page(character->x + 8,  character->y, 0b01010000);
-            page(character->x + 9,  character->y, 0b01101000);
-            page(character->x + 10, character->y, 0b00101000);
-            page(character->x + 11, character->y, 0b10000010);
-            page(character->x + 12, character->y, 0b10000000);
-            page(character->x + 13, character->y, 0b00100000);
-            page(character->x + 14, character->y, 0b00000000);
-            
-            page(character->x,      character->y + 1, 0b00001000);
-            page(character->x + 1,  character->y + 1, 0b10100000);
-            page(character->x + 2,  character->y + 1, 0b10100010);
-            page(character->x + 3,  character->y + 1, 0b10010110);
-            page(character->x + 4,  character->y + 1, 0b01100101);
-            page(character->x + 5,  character->y + 1, 0b01011001);
-            page(character->x + 6,  character->y + 1, 0b01010110);
-            page(character->x + 7,  character->y + 1, 0b01011010);
-            page(character->x + 8,  character->y + 1, 0b01010110);
-            page(character->x + 9,  character->y + 1, 0b01011001);
-            page(character->x + 10, character->y + 1, 0b01100101);
-            page(character->x + 11, character->y + 1, 0b10010110);
-            page(character->x + 12, character->y + 1, 0b10100010);
-            page(character->x + 13, character->y + 1, 0b10100000);
-            page(character->x + 14, character->y + 1, 0b00001000);
-            
-            page(character->x,      character->y + 2, 0b00000000);
-            page(character->x + 1,  character->y + 2, 0b00000000);
-            page(character->x + 2,  character->y + 2, 0b10101000);
-            page(character->x + 3,  character->y + 2, 0b11101010);
-            page(character->x + 4,  character->y + 2, 0b11111111);
-            page(character->x + 5,  character->y + 2, 0b11000011);
-            page(character->x + 6,  character->y + 2, 0b11001111);
-            page(character->x + 7,  character->y + 2, 0b11111101);
-            page(character->x + 8,  character->y + 2, 0b11001111);
-            page(character->x + 9,  character->y + 2, 0b11000011);
-            page(character->x + 10, character->y + 2, 0b11111111);
-            page(character->x + 11, character->y + 2, 0b11101010);
-            page(character->x + 12, character->y + 2, 0b10101000);
-            page(character->x + 13, character->y + 2, 0b00000000);
-            page(character->x + 14, character->y + 2, 0b00000000);
             break;
     }
 }
