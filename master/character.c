@@ -38,6 +38,10 @@ void initcharacter(struct Character* character)
             character->width = 15;
             character->height = 2;
             break;
+        case LOOK_BOSS_DRAGON:
+            character->width = 30;
+            character->height = 9;
+            break;
     }
     character->lookstate = 0;
     character->jumpstate = ON_THE_GROUND;
@@ -503,6 +507,172 @@ void draw(struct Character* character)
             character->lookstate = 1 - character->lookstate;
             break;
         }
+
+        case LOOK_BOSS_DRAGON:
+            for (uint8_t i = 0; i < 19; ++i)
+                page(character->x + i, character->y, 0);
+            page(character->x + 19, character->y, 0b10000000);
+            page(character->x + 20, character->y, 0b10000000);
+            page(character->x + 21, character->y, 0b10100000);
+            page(character->x + 22, character->y, 0b10100000);
+            page(character->x + 23, character->y, 0b10101000);
+            page(character->x + 24, character->y, 0b10101000);
+            page(character->x + 25, character->y, 0b10101010);
+            page(character->x + 26, character->y, 0b10101010);
+            page(character->x + 27, character->y, 0b10101010);
+            page(character->x + 28, character->y, 0b11101010);
+            page(character->x + 29, character->y, 0b00101010);
+
+            for (uint8_t i = 0; i < 15; ++i)
+                page(character->x + i, character->y + 1, 0);
+            page(character->x + 15, character->y + 1, 0b10100000);
+            page(character->x + 16, character->y + 1, 0b10100000);
+            page(character->x + 17, character->y + 1, 0b10101000);
+            page(character->x + 18, character->y + 1, 0b11101010);
+            page(character->x + 19, character->y + 1, 0b11101010);
+            for (uint8_t i = 20; i < 24; ++i)
+                page(character->x + 20, character->y + 1, 0b10101010);
+            page(character->x + 24, character->y + 1, 0b00111010);
+            page(character->x + 25, character->y + 1, 0b00001110);
+            page(character->x + 26, character->y + 1, 0b00000010);
+            page(character->x + 27, character->y + 1, 0b00000011);
+            page(character->x + 28, character->y + 1, 0);
+            page(character->x + 29, character->y + 1, 0);
+
+            page(character->x,      character->y + 2, 0);
+            page(character->x + 1,  character->y + 2, 0b00110000);
+            for (uint8_t i = 2; i < 7; ++i)
+                page(character->x + i, character->y + 2, 0b01111100);
+            page(character->x + 7,  character->y + 2, 0b11110000);
+            page(character->x + 8,  character->y + 2, 0b11000000);
+            page(character->x + 9,  character->y + 2, 0b11000000);
+            page(character->x + 10, character->y + 2, 0);
+            page(character->x + 11, character->y + 2, 0);
+            page(character->x + 12, character->y + 2, 0b11000000);
+            page(character->x + 13, character->y + 2, 0b11110000);
+            page(character->x + 14, character->y + 2, 0b10100000);
+            for (uint8_t i = 15; i < 18; ++i)
+                page(character->x + i, character->y + 2, 0b10101010);
+            page(character->x + 18, character->y + 2, 0b10101011);
+            page(character->x + 19, character->y + 2, 0b10101000);
+            for (uint8_t i = 20; i < 24; ++i)
+                page(character->x + i, character->y + 2, 0b10101010);
+            page(character->x + 24, character->y + 2, 0b11000000);
+            for (uint8_t i = 25; i < 30; ++i)
+                page(character->x + i, character->y + 2, 0);
+
+            for (uint8_t i = 0; i < 3; ++i)
+                page(character->x + i, character->y + 3, 0);
+            page(character->x + 3,  character->y + 3, 0b00000111);
+            page(character->x + 4,  character->y + 3, 0b01010111);
+            page(character->x + 5,  character->y + 3, 0b11010111);
+            page(character->x + 6,  character->y + 3, 0b01110111);
+            page(character->x + 7,  character->y + 3, 0b01011111);
+            page(character->x + 8,  character->y + 3, 0b01011111);
+            page(character->x + 9,  character->y + 3, 0b11111111);
+            page(character->x + 10, character->y + 3, 0b10111100);
+            page(character->x + 11, character->y + 3, 0b10101111);
+            page(character->x + 12, character->y + 3, 0b10101011);
+            page(character->x + 13, character->y + 3, 0b10101010);
+            for (uint8_t i = 14; i < 18; ++i)
+                page(character->x + i, character->y + 3, 0b00001010);
+            for (uint8_t i = 18; i < 21; ++i)
+                page(character->x + i, character->y + 3, 0b00101010);
+            for (uint8_t i = 21; i < 25; ++i)
+                page(character->x + i, character->y + 3, 0b10101010);
+            page(character->x + 25, character->y + 3, 0b10101100);
+            page(character->x + 26, character->y + 3, 0b11000000);
+            for (uint8_t i = 27; i < 30; ++i)
+                page(character->x + i, character->y + 3, 0);
+
+            for (uint8_t i = 0; i < 4; ++i)
+                page(character->x + i, character->y + 4, 0);
+            page(character->x + 4,  character->y + 4, 0b00000011);
+            page(character->x + 5,  character->y + 4, 0b00000001);
+            page(character->x + 6,  character->y + 4, 0b00000101);
+            page(character->x + 7,  character->y + 4, 0b11010101);
+            page(character->x + 8,  character->y + 4, 0b11110101);
+            page(character->x + 9,  character->y + 4, 0b10111111);
+            for (uint8_t i = 10; i < 14; ++i)
+                page(character->x + i, character->y + 4, 0b10101010);
+            page(character->x + 14, character->y + 4, 0b10101000);
+            page(character->x + 15, character->y + 4, 0b10100000);
+            page(character->x + 16, character->y + 4, 0b10000000);
+            page(character->x + 17, character->y + 4, 0b10100000);
+            page(character->x + 18, character->y + 4, 0b00100000);
+            page(character->x + 19, character->y + 4, 0b10100000);
+            for (uint8_t i = 20; i < 23; ++i)
+                page(character->x + i, character->y + 4, 0);
+            page(character->x + 23, character->y + 4, 0b00000010);
+            page(character->x + 24, character->y + 4, 0b00000010);
+            page(character->x + 25, character->y + 4, 0b00001010);
+            page(character->x + 26, character->y + 4, 0b00001010);
+            page(character->x + 27, character->y + 4, 0b00101011);
+            page(character->x + 28, character->y + 4, 0b00101000);
+            page(character->x + 29, character->y + 4, 0);
+
+            page(character->x,      character->y + 5, 0b10100000);
+            page(character->x + 1,  character->y + 5, 0b10100000);
+            page(character->x + 2,  character->y + 5, 0b00100000);
+            for (uint8_t i = 3; i < 8; ++i)
+                page(character->x + i, character->y + 5, 0);
+            for (uint8_t i = 8; i < 14; ++i)
+                page(character->x + i, character->y + 5, 0b10101010);
+            page(character->x + 14, character->y + 5, 0);
+            page(character->x + 15, character->y + 5, 0);
+            page(character->x + 16, character->y + 5, 0b00000010);
+            page(character->x + 17, character->y + 5, 0b00001010);
+            page(character->x + 18, character->y + 5, 0b00001000);
+            for (uint8_t i = 19; i < 30; ++i)
+                page(character->x + i, character->y + 5, 0);
+
+            page(character->x,      character->y + 6, 0b00000010);
+            page(character->x + 1,  character->y + 6, 0);
+            page(character->x + 2,  character->y + 6, 0b00001010);
+            page(character->x + 3,  character->y + 6, 0b00101000);
+            page(character->x + 4,  character->y + 6, 0b00100000);
+            page(character->x + 5,  character->y + 6, 0b10100000);
+            page(character->x + 6,  character->y + 6, 0b10100000);
+            page(character->x + 7,  character->y + 6, 0b11111100);
+            page(character->x + 8,  character->y + 6, 0b11101010);
+            for (uint8_t i = 9; i < 14; ++i)
+                page(character->x + i, character->y + 6, 0b10101010);
+            page(character->x + 14, character->y + 6, 0b10101000);
+            page(character->x + 15, character->y + 6, 0b10100000);
+            for (uint8_t i = 16; i < 30; ++i)
+                page(character->x + i, character->y + 6, 0);
+
+            for (uint8_t i = 0; i < 8; ++i)
+                page(character->x + i, character->y + 7, 0);
+            page(character->x + 8,  character->y + 7, 0b00001111);
+            page(character->x + 9,  character->y + 7, 0b00111110);
+            page(character->x + 10, character->y + 7, 0b11111010);
+            page(character->x + 11, character->y + 7, 0b10111110);
+            page(character->x + 12, character->y + 7, 0b10101011);
+            page(character->x + 13, character->y + 7, 0b00101011);
+            page(character->x + 14, character->y + 7, 0b10101011);
+            page(character->x + 15, character->y + 7, 0b11101011);
+            page(character->x + 16, character->y + 7, 0b11111111);
+            page(character->x + 17, character->y + 7, 0b10000000);
+            for (uint8_t i = 18; i < 30; ++i)
+                page(character->x + i, character->y + 7, 0);
+
+            for (uint8_t i = 0; i < 7; ++i)
+                page(character->x + i, character->y + 8, 0);
+            page(character->x + 7,  character->y + 8, 0b10100000);
+            page(character->x + 8,  character->y + 8, 0b10101000);
+            page(character->x + 9,  character->y + 8, 0b10101010);
+            page(character->x + 10, character->y + 8, 0b00001010);
+            page(character->x + 11, character->y + 8, 0b00000010);
+            for (uint8_t i = 12; i < 16; ++i)
+                page(character->x + i, character->y + 8, 0);
+            page(character->x + 16, character->y + 8, 0b00000010);
+            page(character->x + 17, character->y + 8, 0b10101010);
+            page(character->x + 18, character->y + 8, 0b10101010);
+            page(character->x + 19, character->y + 8, 0b10101000);
+            for (uint8_t i = 20; i < 30; ++i)
+                page(character->x + i, character->y + 8, 0);
+            break;
     }
 }
 
