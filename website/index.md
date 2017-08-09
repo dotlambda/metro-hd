@@ -5,14 +5,23 @@ css:
 title: Metroid
 ---
 
-# Nur ein Test
-Wir sind Daniela, Stefan und Robert.
+# The Task
 
-# Zeitplan
-Unsere Milestones wurden alle erfüllt ;-)
+# Hardware
 
-# Unser Code
-Schööööööööner code!
+
+# About Us
+![](../steckbrief/team.jpg){width=100%}
+
+* Daniela Kilian
+    - BSc Applied Computer Science
+    - 6th semester
+* Stefan Müller
+    - BSc Applied Computer Science
+    - 6th semester
+* Robert Schütz
+    - BSc Mathematics
+    - 6th semester
 
 # Movement
 To make things simpler, we decided to move only whole pages in the vertical direction.
@@ -25,10 +34,10 @@ We use a single C `struct` for monsters, projectiles and the protagonist.
 This enables us to reuse the functions responsible for movement for all of them,
 which saves us quite some flash space.
 
-```{.c include=../master/character.h startline=13 endline=23}
+```{.c include=../master/character.h startline=13 endline=24}
 ```
 
-First, there are functions `moveleft`, `moveright`, `moveup` and `movedown`.
+First, there are the functions `moveleft`, `moveright`, `moveup` and `movedown`.
 These take care of
 
 - checking if there is an obstace, e.g. a platform, in the respective direction,
