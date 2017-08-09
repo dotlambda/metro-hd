@@ -30,7 +30,16 @@ void initcharacter(struct Character* character)
             character->width = 17;
             character->height = 8;
             break;
+        case LOOK_MONSTER_METROID:
+            character->width = 14;
+            character->height = 3;
+            break;
+        case LOOK_MONSTER_MEMU:
+            character->width = 15;
+            character->height = 2;
+            break;
     }
+    character->lookstate = 0;
     character->jumpstate = ON_THE_GROUND;
 }
 
@@ -190,7 +199,7 @@ void draw(struct Character* character)
             page(character->x + 11, character->y + 3, 0b00000000);
             break;
             
-            case LOOK_MONSTER_ZOOMER:
+        case LOOK_MONSTER_ZOOMER:
             page(character->x,      character->y, 0b00000000);
             page(character->x + 1,  character->y, 0b00100000);
             page(character->x + 2,  character->y, 0b10000000);
@@ -415,6 +424,85 @@ void draw(struct Character* character)
             page(character->x + 15, character->y + 7, 0b00000000);
             page(character->x + 16, character->y + 7, 0b00000000);
             break;
+
+        case LOOK_MONSTER_METROID:
+        {
+            // The metroid is symmetric, so it is drawn once,
+            // then mirrored and drawn again some pixels to the right.
+            void drawmetroid(int8_t i, uint8_t x)
+            {
+                page(x,         character->y,     0b00000000);
+                page(x + i * 1, character->y,     0b11000000);
+                page(x + i * 2, character->y,     0b10110000);
+                page(x + i * 3, character->y,     0b01101100);
+                page(x + i * 4, character->y,     0b10011011);
+                page(x + i * 5, character->y,     0b10011011);
+                page(x + i * 6, character->y,     0b10011011);
+                page(x,         character->y + 1, 0b11111100);
+                page(x + i * 1, character->y + 1, 0b10101011);
+                page(x + i * 2, character->y + 1, 0b01010110);
+                page(x + i * 3, character->y + 1, 0b10101001);
+                page(x + i * 4, character->y + 1, 0b00000110);
+                page(x + i * 5, character->y + 1, 0b11011011);
+                page(x + i * 6, character->y + 1, 0b01111011);
+                page(x,         character->y + 2, 0b00000000);
+                page(x + i * 1, character->y + 2, 0b00001111);
+                page(x + i * 2, character->y + 2, 0b00111010);
+                page(x + i * 3, character->y + 2, 0b10100101);
+                page(x + i * 4, character->y + 2, 0b01001010);
+                page(x + i * 5, character->y + 2, 0b00000111);
+                page(x + i * 6, character->y + 2, 0b00101101);
+            }
+
+            drawmetroid( 1, character->x);
+            drawmetroid(-1, character->x + 13);
+            break;
+        }
+
+        case LOOK_MONSTER_MEMU:
+        {
+            void drawmemu(int8_t i, uint8_t x)
+            {
+                if (character->lookstate) // wings down
+                {
+                    page(x,         character->y,     0b00000000);
+                    page(x + i * 1, character->y,     0b01000000);
+                    page(x + i * 2, character->y,     0b11010000);
+                    page(x + i * 3, character->y,     0b11010000);
+                    page(x,         character->y + 1, 0b00001110);
+                    page(x + i * 1, character->y + 1, 0b00000011);
+                    page(x + i * 2, character->y + 1, 0b00000000);
+                    page(x + i * 3, character->y + 1, 0b00000000);
+                }
+                else // wings up
+                {
+                    page(x,         character->y,     0b00000111);
+                    page(x + i * 1, character->y,     0b00000111);
+                    page(x + i * 2, character->y,     0b00001011);
+                    page(x + i * 3, character->y,     0b00101100);
+                    page(x + i * 2, character->y + 1, 0b00000000);
+                    page(x,         character->y + 1, 0b00000000);
+                    page(x + i * 1, character->y + 1, 0b00000000);
+                    page(x + i * 2, character->y + 1, 0b00000000);
+                    page(x + i * 3, character->y + 1, 0b00000000);
+                }
+                page(x + i * 4, character->y,     0b11110000);
+                page(x + i * 5, character->y,     0b00001100);
+                page(x + i * 6, character->y,     0b10100011);
+                page(x + i * 4, character->y + 1, 0b00111100);
+                page(x + i * 5, character->y + 1, 0b00000011);
+                page(x + i * 6, character->y + 1, 0b00001100);
+            }
+
+            drawmemu( 1, character->x);
+            drawmemu(-1, character->x + 14);
+            page(character->x + 7, character->y,     0b10100011);
+            page(character->x + 7, character->y + 1, 0b00110000);
+
+            // toggle wing state
+            character->lookstate = 1 - character->lookstate;
+            break;
+        }
     }
 }
 
@@ -545,6 +633,8 @@ void move(struct Character* character)
                 moveleft(character);
             else if (protagonist->x > character->x)
                 moveright(character);
+            else
+                draw(character);
             break;
         case BACK_AND_FORTH:
             if (character->x <= 0)
