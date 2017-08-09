@@ -138,6 +138,7 @@ void draw(struct Character* character)
                
             }
             break;
+
         case LOOK_MONSTER_2:
             page(character->x,     character->y,     0b00000100);
             page(character->x + 1, character->y,     0b00010100);
@@ -470,9 +471,9 @@ void draw(struct Character* character)
             drawmetroid(-1, character->x + 13);
             break;
         }
+
         case LOOK_MONSTER_HORNOAD:
-        {
-            if(character->lookstate)
+            if (character->direction == DIRECTION_LEFT)
             {
                 page(character->x,     character->y + 2, 0b00001000);
                 page(character->x + 1, character->y + 2, 0b00000110);
@@ -556,14 +557,14 @@ void draw(struct Character* character)
                 page(character->x + 3,character->y,0b11110000);
                 page(character->x + 2,character->y,0b11000000);
             }
-        }
-        case LOOK_MONSTER_SIDEHOPPER:
-        {
+            break;
 
-        }
+        case LOOK_MONSTER_SIDEHOPPER:
+            break;
+
         case LOOK_MONSTER_MEMU:
         {
-            void drawmemu(int8_t i, uint8_t x);
+            void drawmemu(int8_t i, uint8_t x)
             {
                 if (character->lookstate) // wings down
                 {

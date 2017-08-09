@@ -14,7 +14,7 @@ struct Character
 {
     uint8_t x;
     uint8_t y;
-    enum {LOOK_MONSTER_MEMU, LOOK_MONSTER_METROID, LOOK_MONSTER_2, LOOK_EYEMONSTER, LOOK_MONSTER_ZOOMER, LOOK_MONSTER_ZAZABI, LOOK_BOSS_DRAGON, LOOK_PROTAGONIST, LOOK_ROCKET} look;
+    enum {LOOK_MONSTER_MEMU, LOOK_MONSTER_METROID, LOOK_MONSTER_2, LOOK_EYEMONSTER, LOOK_MONSTER_ZOOMER, LOOK_MONSTER_HORNOAD, LOOK_MONSTER_SIDEHOPPER, LOOK_MONSTER_ZAZABI, LOOK_BOSS_DRAGON, LOOK_PROTAGONIST, LOOK_ROCKET} look;
     uint8_t lookstate; // to e.g. store whether the wings are turned upwards or downwards
     uint8_t width;  // in pixels
     uint8_t height; // in pages
