@@ -34,6 +34,14 @@ void initcharacter(struct Character* character)
             character->width = 14;
             character->height = 3;
             break;
+        case LOOK_MONSTER_HORNOAD:
+            character->width = 14;
+            character->height = 3;
+            break;
+        case LOOK_MONSTER_SIDEHOPPER:
+            character->width = 16;
+            character->height = 4;
+            break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
             character->height = 2;
@@ -462,10 +470,100 @@ void draw(struct Character* character)
             drawmetroid(-1, character->x + 13);
             break;
         }
+        case LOOK_MONSTER_HORNOAD:
+        {
+            if(character->lookstate)
+            {
+                page(character->x,     character->y + 2, 0b00001000);
+                page(character->x + 1, character->y + 2, 0b00000110);
+                page(character->x + 2, character->y + 2, 0b00000110);
+                page(character->x + 3, character->y + 2, 0b00010101);
+                page(character->x + 4, character->y + 2, 0b00010101);
+                page(character->x + 5, character->y + 2, 0b00010101);
+                page(character->x + 6, character->y + 2, 0b00010101);
+                page(character->x + 7, character->y + 2, 0b00010101);
+                page(character->x + 8, character->y + 2, 0b00000101);
+                page(character->x + 9, character->y + 2, 0b00000101);
+                page(character->x + 10,character->y + 2, 0b01000101);
+                page(character->x + 11,character->y + 2, 0b01010101);
+                page(character->x + 12,character->y + 2, 0b01010101);
 
+                page(character->x, character->y + 1,    0b00101100);
+                page(character->x + 1,character->y + 1, 0b00001111);
+                page(character->x + 2,character->y + 1, 0b00111101);
+                page(character->x + 3,character->y + 1, 0b10001101);
+                page(character->x + 4,character->y + 1, 0b01011111);
+                page(character->x + 5,character->y + 1, 0b00011111);
+                page(character->x + 6,character->y + 1, 0b01011111);
+                page(character->x + 7,character->y + 1, 0b01011111);
+                page(character->x + 8,character->y + 1, 0b01011111);
+                page(character->x + 9,character->y + 1, 0b01011111);
+                page(character->x + 10,character->y + 1,0b01011111);
+                page(character->x + 11,character->y + 1,0b01011111);
+                page(character->x + 12,character->y + 1,0b01010101);
+                page(character->x + 13,character->y + 1,0b00011100);
+
+                page(character->x + 2,character->y, 0b11000000);
+                page(character->x + 3,character->y, 0b10011000);
+                page(character->x + 4,character->y, 0b01111100);
+                page(character->x + 5,character->y, 0b11110000);
+                page(character->x + 6,character->y, 0b11111100);
+                page(character->x + 7,character->y, 0b11110000);
+                page(character->x + 8,character->y, 0b11111100);
+                page(character->x + 9,character->y, 0b11110000);
+                page(character->x + 10,character->y,0b11110000);
+                page(character->x + 11,character->y,0b11000000);
+            }
+            else
+            {
+                page(character->x + 12,character->y + 2,0b00001000);
+                page(character->x + 11,character->y + 2, 0b00000110);
+                page(character->x + 10,character->y + 2, 0b00000110);
+                page(character->x + 9, character->y + 2, 0b00010101);
+                page(character->x + 8, character->y + 2, 0b00010101);
+                page(character->x + 7, character->y + 2, 0b00010101);
+                page(character->x + 6, character->y + 2, 0b00010101);
+                page(character->x + 5, character->y + 2, 0b00010101);
+                page(character->x + 4, character->y + 2, 0b00000101);
+                page(character->x + 3, character->y + 2, 0b00000101);
+                page(character->x + 2, character->y + 2, 0b01000101);
+                page(character->x + 1, character->y + 2, 0b01010101);
+                page(character->x,     character->y + 2, 0b01010101);
+
+                page(character->x + 13,character->y + 1,0b00101100);
+                page(character->x + 12,character->y + 1,0b00001111);
+                page(character->x + 11,character->y + 1,0b00111101);
+                page(character->x + 10,character->y + 1,0b10001101);
+                page(character->x + 9,character->y + 1, 0b01011111);
+                page(character->x + 8,character->y + 1, 0b00011111);
+                page(character->x + 7,character->y + 1, 0b01011111);
+                page(character->x + 6,character->y + 1, 0b01011111);
+                page(character->x + 5,character->y + 1, 0b01011111);
+                page(character->x + 4,character->y + 1, 0b01011111);
+                page(character->x + 3,character->y + 1, 0b01011111);
+                page(character->x + 2,character->y + 1, 0b01011111);
+                page(character->x + 1,character->y + 1, 0b01010101);
+                page(character->x    ,character->y + 1, 0b00011100);
+
+                page(character->x + 11,character->y, 0b11000000);
+                page(character->x + 10,character->y, 0b10011000);
+                page(character->x + 9,character->y, 0b01111100);
+                page(character->x + 8,character->y, 0b11110000);
+                page(character->x + 7,character->y, 0b11111100);
+                page(character->x + 6,character->y, 0b11110000);
+                page(character->x + 5,character->y, 0b11111100);
+                page(character->x + 4,character->y, 0b11110000);
+                page(character->x + 3,character->y,0b11110000);
+                page(character->x + 2,character->y,0b11000000);
+            }
+        }
+        case LOOK_MONSTER_SIDEHOPPER:
+        {
+
+        }
         case LOOK_MONSTER_MEMU:
         {
-            void drawmemu(int8_t i, uint8_t x)
+            void drawmemu(int8_t i, uint8_t x);
             {
                 if (character->lookstate) // wings down
                 {
