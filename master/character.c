@@ -7,6 +7,9 @@ void initcharacter(struct Character* character)
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
+            character->width = 8;
+            character->height = 4;
+            break;
         case LOOK_MONSTER_1:
             character->width = 7;
             character->height = 3;
@@ -42,61 +45,71 @@ void draw(struct Character* character)
         case LOOK_PROTAGONIST:
             if (character->direction == DIRECTION_LEFT)
             {
-                page(character->x + 7, character->y + 3, 0b10001010);
-                page(character->x + 6, character->y + 3, 0b10101010);
-                page(character->x + 5, character->y + 3, 0b10100000);
-                page(character->x + 4, character->y + 3, 0b00000000);
-                page(character->x + 3, character->y + 3, 0b00000000);
-                page(character->x + 2, character->y + 3, 0b10001010);
-                page(character->x + 1, character->y + 3, 0b10101010);
+                page(character->x,     character->y, 0b00000000);
+                page(character->x + 1, character->y, 0b10101000);
+                page(character->x + 2, character->y, 0b11111100);
+                page(character->x + 3, character->y, 0b11111111);
+                page(character->x + 4, character->y, 0b11110111);
+                page(character->x + 5, character->y, 0b11110111);
+                page(character->x + 6, character->y, 0b00000000);
+                page(character->x + 7, character->y, 0b00000000);
+                
+                page(character->x,     character->y + 1, 0b00000000);
+                page(character->x + 1, character->y + 1, 0b10101010);
+                page(character->x + 2, character->y + 1, 0b10111111);
+                page(character->x + 3, character->y + 1, 0b11111111);
+                page(character->x + 4, character->y + 1, 0b11101011);
+                page(character->x + 5, character->y + 1, 0b11010100);
+                page(character->x + 6, character->y + 1, 0b00101000);
+                page(character->x + 7, character->y + 1, 0b00010000);
+                
+                page(character->x,     character->y + 2, 0b00000000);
+                page(character->x + 1, character->y + 2, 0b10000000);
+                page(character->x + 2, character->y + 2, 0b10101010);
+                page(character->x + 3, character->y + 2, 0b10101010);
+                page(character->x + 4, character->y + 2, 0b00101010);
+                page(character->x + 5, character->y + 2, 0b10101000);
+                page(character->x + 6, character->y + 2, 0b10100000);
+                page(character->x + 7, character->y + 2, 0b10000000);
+                
                 page(character->x,     character->y + 3, 0b10100000);
-                page(character->x + 7, character->y + 2, 0b00000000);
-                page(character->x + 6, character->y + 2, 0b10000000);
-                page(character->x + 5, character->y + 2, 0x10101000);
-                page(character->x + 4, character->y + 2, 0x10101010);
-                page(character->x + 3, character->y + 2, 0x00001010);
-                page(character->x + 2, character->y + 2, 0x10101010);
-                page(character->x + 1, character->y + 2, 0b10101000);
-                page(character->x,     character->y + 2, 0b10000000);
-                page(character->x + 2, character->y + 1, 0b10101010);
-                page(character->x + 3, character->y + 1, 0b10111111);
-                page(character->x + 4, character->y + 1, 0b11111111);
-                page(character->x + 5, character->y + 1, 0b11101011);
-                page(character->x + 6, character->y + 1, 0b11010100);
-                page(character->x + 7, character->y + 1, 0b00101000);
-                page(character->x + 8, character->y + 1, 0b00000100);
-                page(character->x + 6, character->y,     0b11110111);
-                page(character->x + 5, character->y,     0b11110111);
-                page(character->x + 4, character->y,     0b11111011);
-                page(character->x + 3, character->y,     0b11111000);
-                page(character->x + 2, character->y,     0b10101000);
-
-//                page(character->x + 8, character->y,     0b11010000);
-//                page(character->x + 7, character->y,     0b11010000);
-//                page(character->x + 6, character->y,     0b11010000);
-//                page(character->x + 5, character->y,     0b11110000);
-//                page(character->x + 4, character->y,     0b11111100);
-//                page(character->x + 3, character->y,     0b11110111);
-//                page(character->x + 2, character->y,     0b11110111);
-//                page(character->x + 1, character->y,     0b00110111);
-//                page(character->x,     character->y,     0b00000011);
-//                page(character->x + 6, character->y + 1, 0b00000111);
-//                page(character->x + 5, character->y + 1, 0xFF);
-//                page(character->x + 4, character->y + 1, 0xFF);
-//                page(character->x + 3, character->y + 1, 0xFF);
-//                page(character->x + 2, character->y + 1, 0xFF);
-//                page(character->x + 1, character->y + 1, 0b00001111);
-//                page(character->x,     character->y + 1, 0b00000101);
-//                page(character->x + 6, character->y + 2, 0b11010000);
-//                page(character->x + 5, character->y + 2, 0b11111101);
-//                page(character->x + 4, character->y + 2, 0b11001111);
-//                page(character->x + 3, character->y + 2, 0b00000011);
-//                page(character->x + 2, character->y + 2, 0b11010011);
-//                page(character->x + 1, character->y + 2, 0xFF);
-//                page(character->x,     character->y + 2, 0b11001100);
+                page(character->x + 1, character->y + 3, 0b10101010);
+                page(character->x + 2, character->y + 3, 0b10001010);
+                page(character->x + 3, character->y + 3, 0b00000000);
+                page(character->x + 4, character->y + 3, 0b00000000);
+                page(character->x + 5, character->y + 3, 0b10100000);
+                page(character->x + 6, character->y + 3, 0b10101010);
+                page(character->x + 7, character->y + 3, 0b10001010);
             }
             else
             {
+                page(character->x,     character->y, 0b00000000);
+                page(character->x + 1, character->y, 0b00000000);
+                page(character->x + 2, character->y, 0b11110111);
+                page(character->x + 3, character->y, 0b11110111);
+                page(character->x + 4, character->y, 0b11111111);
+                page(character->x + 5, character->y, 0b11111100);
+                page(character->x + 6, character->y, 0b10101000);
+                page(character->x + 7, character->y, 0b00000000);
+                
+                page(character->x,     character->y + 1, 0b00010000);
+                page(character->x + 1, character->y + 1, 0b00101000);
+                page(character->x + 2, character->y + 1, 0b11010100);
+                page(character->x + 3, character->y + 1, 0b11101011);
+                page(character->x + 4, character->y + 1, 0b11111111);
+                page(character->x + 5, character->y + 1, 0b10111111);
+                page(character->x + 6, character->y + 1, 0b10101010);
+                page(character->x + 7, character->y + 1, 0b00000000);
+                
+                page(character->x,     character->y + 2, 0b10000000);
+                page(character->x + 1, character->y + 2, 0b10100000);
+                page(character->x + 2, character->y + 2, 0b10101000);
+                page(character->x + 3, character->y + 2, 0b00101010);
+                page(character->x + 4, character->y + 2, 0b10101010);
+                page(character->x + 5, character->y + 2, 0b10101010);
+                page(character->x + 6, character->y + 2, 0b10000000);
+                page(character->x + 7, character->y + 2, 0b00000000);
+            
                 page(character->x,     character->y + 3, 0b10001010);
                 page(character->x + 1, character->y + 3, 0b10101010);
                 page(character->x + 2, character->y + 3, 0b10100000);
@@ -105,48 +118,7 @@ void draw(struct Character* character)
                 page(character->x + 5, character->y + 3, 0b10001010);
                 page(character->x + 6, character->y + 3, 0b10101010);
                 page(character->x + 7, character->y + 3, 0b10100000);
-                page(character->x,     character->y + 2, 0b00000000);
-                page(character->x + 1, character->y + 2, 0b10000000);
-                page(character->x + 2, character->y + 2, 0x10101000);
-                page(character->x + 3, character->y + 2, 0x10101010);
-                page(character->x + 4, character->y + 2, 0x00001010);
-                page(character->x + 5, character->y + 2, 0x10101010);
-                page(character->x + 6, character->y + 2, 0b10101000);
-                page(character->x + 7, character->y + 2, 0b10000000);
-                page(character->x + 8, character->y + 1, 0b10101010);
-                page(character->x + 7, character->y + 1, 0b10111111);
-                page(character->x + 6, character->y + 1, 0b11111111);
-                page(character->x + 5, character->y + 1, 0b11101011);
-                page(character->x + 4, character->y + 1, 0b11010100);
-                page(character->x + 3, character->y + 1, 0b00101000);
-                page(character->x + 2, character->y + 1, 0b00000100);
-                page(character->x + 2, character->y,     0b11110111);
-                page(character->x + 3, character->y,     0b11110111);
-                page(character->x + 4, character->y,     0b11111011);
-                page(character->x + 5, character->y,     0b11111000);
-                page(character->x + 6, character->y,     0b10101000);
-
-//                page(character->x,     character->y,     0b11010000);
-//                page(character->x + 1, character->y,     0b11110000);
-//                page(character->x + 2, character->y,     0b11111100);
-//                page(character->x + 3, character->y,     0b11110111);
-//                page(character->x + 4, character->y,     0b11110111);
-//                page(character->x + 5, character->y,     0b00110111);
-//                page(character->x + 6, character->y,     0b00000011);
-//                page(character->x,     character->y + 1, 0b00000111);
-//                page(character->x + 1, character->y + 1, 0xFF);
-//                page(character->x + 2, character->y + 1, 0xFF);
-//                page(character->x + 3, character->y + 1, 0xFF);
-//                page(character->x + 4, character->y + 1, 0xFF);
-//                page(character->x + 5, character->y + 1, 0b00001111);
-//                page(character->x + 6, character->y + 1, 0b00000101);
-//                page(character->x,     character->y + 2, 0b11010000);
-//                page(character->x + 2, character->y + 2, 0b11001111);
-//                page(character->x + 1, character->y + 2, 0b11111101);
-//                page(character->x + 3, character->y + 2, 0b00000011);
-//                page(character->x + 4, character->y + 2, 0b11010011);
-//                page(character->x + 5, character->y + 2, 0xFF);
-//                page(character->x + 6, character->y + 2, 0b11001100);
+               
             }
             break;
             
@@ -185,7 +157,7 @@ void draw(struct Character* character)
             page(character->x + 7, character->y,     0b00000100);
             page(character->x,     character->y + 1, 0b00000000);
             page(character->x + 1, character->y + 1, 0b11001000);
-            page(character->x + 2,  character->y + 1, 0b11111010);
+            page(character->x + 2, character->y + 1, 0b11111010);
             page(character->x + 3, character->y + 1, 0b11111001);
             page(character->x + 4, character->y + 1, 0b11111001);
             page(character->x + 5, character->y + 1, 0b11111010);
