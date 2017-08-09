@@ -34,6 +34,9 @@ void initcharacter(struct Character* character)
             character->width = 15;
             character->height = 3;
             break;
+        case LOOK_MONSTER_METROID:
+            character->width = 14;
+            character->height = 3;
     }
     character->jumpstate = ON_THE_GROUND;
 }
@@ -444,6 +447,41 @@ void draw(struct Character* character)
             page(character->x + 13, character->y + 2, 0b00000000);
             page(character->x + 14, character->y + 2, 0b00000000);
             break;
+
+        case LOOK_MONSTER_METROID:
+        {
+            // The metroid is symmetric, so it is drawn once,
+            // then mirrored and drawn again some pixels to the right.
+            void drawmetroid(int8_t i, uint8_t x)
+            {
+                page(x,         character->y,     0b00000000);
+                page(x + i * 1, character->y,     0b11000000);
+                page(x + i * 2, character->y,     0b10110000);
+                page(x + i * 3, character->y,     0b01101100);
+                page(x + i * 4, character->y,     0b10011011);
+                page(x + i * 5, character->y,     0b10011011);
+                page(x + i * 6, character->y,     0b10011011);
+                page(x,         character->y + 1, 0b11111100);
+                page(x + i * 1, character->y + 1, 0b10101011);
+                page(x + i * 2, character->y + 1, 0b01010110);
+                page(x + i * 3, character->y + 1, 0b10101001);
+                page(x + i * 4, character->y + 1, 0b00000110);
+                page(x + i * 5, character->y + 1, 0b11011011);
+                page(x + i * 6, character->y + 1, 0b01111011);
+                page(x,         character->y + 2, 0b00000000);
+                page(x + i * 1, character->y + 2, 0b00001111);
+                page(x + i * 2, character->y + 2, 0b00111010);
+                page(x + i * 3, character->y + 2, 0b10100101);
+                page(x + i * 4, character->y + 2, 0b01001010);
+                page(x + i * 5, character->y + 2, 0b00000111);
+                page(x + i * 6, character->y + 2, 0b00101101);
+            }
+
+            drawmetroid(1,  character->x);
+            drawmetroid(-1, character->x + 13);
+            break;
+        }
+
     }
 }
 
