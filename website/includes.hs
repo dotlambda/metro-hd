@@ -13,8 +13,8 @@ doInclude cb@(CodeBlock (id, classes, namevals) contents) =
        Nothing -> return cb
        Just f  -> do filecontent <- readFile f
                      let startline = (fromMaybe 0 . fmap (subtract 1) . fmap read) (lookup "startline" namevals)
-                     let endline = (fromMaybe (length (lines filecontent)) . fmap (subtract 1) . fmap read) (lookup "endline" namevals)
-                     return ((CodeBlock (id, classes, namevals)) ((intercalate "\n" . slice startline endline . lines) filecontent))
+                     let endline = (subtract 1 . fromMaybe (length (lines filecontent)) . fmap read) (lookup "endline" namevals)
+                     return (CodeBlock (id, classes, namevals) ((intercalate "\n" . slice startline endline . lines) filecontent))
 doInclude x = return x
 
 main :: IO ()

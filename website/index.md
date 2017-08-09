@@ -3,7 +3,6 @@ css:
     - css/main.css
 
 title: Metroid
-logo: images/lambda.png
 ---
 
 # Nur ein Test
