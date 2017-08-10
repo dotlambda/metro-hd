@@ -1,6 +1,7 @@
 #include "character.h"
 #include "globals.h"
 #include "display.h"
+#include "sprites.h"
 
 void initcharacter(struct Character* character)
 {
@@ -10,7 +11,7 @@ void initcharacter(struct Character* character)
             character->width = 8;
             character->height = 4;
             break;
-        case LOOK_MONSTER_2: 
+        case LOOK_MONSTER_LITTLE: 
             character->width = 8;
             character->height = 2;
             break;
@@ -57,721 +58,86 @@ void initcharacter(struct Character* character)
 
 void draw(struct Character* character)
 {
+    uint8_t* sprite;
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
             if (character->direction == DIRECTION_LEFT)
             {
-                page(character->x,     character->y, 0b00000000);
-                page(character->x + 1, character->y, 0b10101000);
-                page(character->x + 2, character->y, 0b11111100);
-                page(character->x + 3, character->y, 0b11111111);
-                page(character->x + 4, character->y, 0b11110111);
-                page(character->x + 5, character->y, 0b11110111);
-                page(character->x + 6, character->y, 0b00000000);
-                page(character->x + 7, character->y, 0b00000000);
-                
-                page(character->x,     character->y + 1, 0b00000000);
-                page(character->x + 1, character->y + 1, 0b10101010);
-                page(character->x + 2, character->y + 1, 0b10111111);
-                page(character->x + 3, character->y + 1, 0b11111111);
-                page(character->x + 4, character->y + 1, 0b11101011);
-                page(character->x + 5, character->y + 1, 0b11010100);
-                page(character->x + 6, character->y + 1, 0b00101000);
-                page(character->x + 7, character->y + 1, 0b00010000);
-                
-                page(character->x,     character->y + 2, 0b00000000);
-                page(character->x + 1, character->y + 2, 0b10000000);
-                page(character->x + 2, character->y + 2, 0b10101010);
-                page(character->x + 3, character->y + 2, 0b10101010);
-                page(character->x + 4, character->y + 2, 0b00101010);
-                page(character->x + 5, character->y + 2, 0b10101000);
-                page(character->x + 6, character->y + 2, 0b10100000);
-                page(character->x + 7, character->y + 2, 0b10000000);
-                
-                page(character->x,     character->y + 3, 0b10100000);
-                page(character->x + 1, character->y + 3, 0b10101010);
-                page(character->x + 2, character->y + 3, 0b10001010);
-                page(character->x + 3, character->y + 3, 0b00000000);
-                page(character->x + 4, character->y + 3, 0b00000000);
-                page(character->x + 5, character->y + 3, 0b10100000);
-                page(character->x + 6, character->y + 3, 0b10101010);
-                page(character->x + 7, character->y + 3, 0b10001010);
+                sprite = protagonistleft;
             }
             else
             {
-                page(character->x,     character->y, 0b00000000);
-                page(character->x + 1, character->y, 0b00000000);
-                page(character->x + 2, character->y, 0b11110111);
-                page(character->x + 3, character->y, 0b11110111);
-                page(character->x + 4, character->y, 0b11111111);
-                page(character->x + 5, character->y, 0b11111100);
-                page(character->x + 6, character->y, 0b10101000);
-                page(character->x + 7, character->y, 0b00000000);
-                
-                page(character->x,     character->y + 1, 0b00010000);
-                page(character->x + 1, character->y + 1, 0b00101000);
-                page(character->x + 2, character->y + 1, 0b11010100);
-                page(character->x + 3, character->y + 1, 0b11101011);
-                page(character->x + 4, character->y + 1, 0b11111111);
-                page(character->x + 5, character->y + 1, 0b10111111);
-                page(character->x + 6, character->y + 1, 0b10101010);
-                page(character->x + 7, character->y + 1, 0b00000000);
-                
-                page(character->x,     character->y + 2, 0b10000000);
-                page(character->x + 1, character->y + 2, 0b10100000);
-                page(character->x + 2, character->y + 2, 0b10101000);
-                page(character->x + 3, character->y + 2, 0b00101010);
-                page(character->x + 4, character->y + 2, 0b10101010);
-                page(character->x + 5, character->y + 2, 0b10101010);
-                page(character->x + 6, character->y + 2, 0b10000000);
-                page(character->x + 7, character->y + 2, 0b00000000);
-            
-                page(character->x,     character->y + 3, 0b10001010);
-                page(character->x + 1, character->y + 3, 0b10101010);
-                page(character->x + 2, character->y + 3, 0b10100000);
-                page(character->x + 3, character->y + 3, 0b00000000);
-                page(character->x + 4, character->y + 3, 0b00000000);
-                page(character->x + 5, character->y + 3, 0b10001010);
-                page(character->x + 6, character->y + 3, 0b10101010);
-                page(character->x + 7, character->y + 3, 0b10100000);
-               
+                sprite = protagonistright;
             }
             break;
 
-        case LOOK_MONSTER_2:
-            page(character->x,     character->y,     0b00000100);
-            page(character->x + 1, character->y,     0b00010100);
-            page(character->x + 2, character->y,     0b10010000);
-            page(character->x + 3, character->y,     0b10000000);
-            page(character->x + 4, character->y,     0b10000000);
-            page(character->x + 5, character->y,     0b10010000);
-            page(character->x + 6, character->y,     0b00010100);
-            page(character->x + 7, character->y,     0b00000100);
-            page(character->x,     character->y + 1, 0b00000000);
-            page(character->x + 1, character->y + 1, 0b11001000);
-            page(character->x + 2, character->y + 1, 0b11111010);
-            page(character->x + 3, character->y + 1, 0b11111001);
-            page(character->x + 4, character->y + 1, 0b11111001);
-            page(character->x + 5, character->y + 1, 0b11111010);
-            page(character->x + 6, character->y + 1, 0b11001000);
-            page(character->x + 7, character->y + 1, 0b00000000);
+        case LOOK_MONSTER_LITTLE:
+            sprite = little;
             break;
             
         case LOOK_EYEMONSTER:
-            page(character->x,      character->y, 0b00000000);
-            page(character->x + 1,  character->y, 0b00000000);
-            page(character->x + 2,  character->y, 0b01000000);
-            page(character->x + 3,  character->y, 0b11000000);
-            page(character->x + 4,  character->y, 0b10110100);
-            page(character->x + 5,  character->y, 0b10110101);
-            page(character->x + 6,  character->y, 0b10110100);
-            page(character->x + 7,  character->y, 0b11000000);
-            page(character->x + 8,  character->y, 0b01000000);
-            page(character->x + 9,  character->y, 0b01000000);
-            page(character->x + 10, character->y, 0b00000000);
-            page(character->x + 11, character->y, 0b00000000);
-            
-            page(character->x,      character->y + 1, 0b00010000);
-            page(character->x + 1,  character->y + 1, 0b11111100);
-            page(character->x + 2,  character->y + 1, 0b01011111);
-            page(character->x + 3,  character->y + 1, 0b01011110);
-            page(character->x + 4,  character->y + 1, 0b11111100);
-            page(character->x + 5,  character->y + 1, 0b00000000);
-            page(character->x + 6,  character->y + 1, 0b01010000);
-            page(character->x + 7,  character->y + 1, 0b01000010);
-            page(character->x + 8,  character->y + 1, 0b10101011);
-            page(character->x + 9,  character->y + 1, 0b11111101);
-            page(character->x + 10, character->y + 1, 0b01010000);
-            page(character->x + 11, character->y + 1, 0b01000000);
-            
-            page(character->x,      character->y + 2, 0b00000000);
-            page(character->x + 1,  character->y + 2, 0b00000011);
-            page(character->x + 2,  character->y + 2, 0b00011111);
-            page(character->x + 3,  character->y + 2, 0b00111011);
-            page(character->x + 4,  character->y + 2, 0b11100011);
-            page(character->x + 5,  character->y + 2, 0b11100000);
-            page(character->x + 6,  character->y + 2, 0b11100001);
-            page(character->x + 7,  character->y + 2, 0b01111100);
-            page(character->x + 8,  character->y + 2, 0b01011110);
-            page(character->x + 9,  character->y + 2, 0b00000011);
-            page(character->x + 10, character->y + 2, 0b00000001);
-            page(character->x + 11, character->y + 2, 0b00000000);
-            
-            page(character->x,      character->y + 3, 0b00000000);
-            page(character->x + 1,  character->y + 3, 0b00000000);
-            page(character->x + 2,  character->y + 3, 0b00000000);
-            page(character->x + 3,  character->y + 3, 0b00000000);
-            page(character->x + 4,  character->y + 3, 0b00000001);
-            page(character->x + 5,  character->y + 3, 0b00000101);
-            page(character->x + 6,  character->y + 3, 0b00000001);
-            page(character->x + 7,  character->y + 3, 0b00000000);
-            page(character->x + 8,  character->y + 3, 0b00000000);
-            page(character->x + 9,  character->y + 3, 0b00000000);
-            page(character->x + 10, character->y + 3, 0b00000000);
-            page(character->x + 11, character->y + 3, 0b00000000);
+            sprite = eyemonster;
             break;
             
         case LOOK_MONSTER_ZOOMER:
-            page(character->x,      character->y, 0b00000000);
-            page(character->x + 1,  character->y, 0b00100000);
-            page(character->x + 2,  character->y, 0b10000000);
-            page(character->x + 3,  character->y, 0b10000010);
-            page(character->x + 4,  character->y, 0b00101000);
-            page(character->x + 5,  character->y, 0b01101000);
-            page(character->x + 6,  character->y, 0b01010000);
-            page(character->x + 7,  character->y, 0b01011010);
-            page(character->x + 8,  character->y, 0b01010000);
-            page(character->x + 9,  character->y, 0b01101000);
-            page(character->x + 10, character->y, 0b00101000);
-            page(character->x + 11, character->y, 0b10000010);
-            page(character->x + 12, character->y, 0b10000000);
-            page(character->x + 13, character->y, 0b00100000);
-            page(character->x + 14, character->y, 0b00000000);
-            
-            page(character->x,      character->y + 1, 0b00001000);
-            page(character->x + 1,  character->y + 1, 0b10100000);
-            page(character->x + 2,  character->y + 1, 0b10100010);
-            page(character->x + 3,  character->y + 1, 0b10010110);
-            page(character->x + 4,  character->y + 1, 0b01100101);
-            page(character->x + 5,  character->y + 1, 0b01011001);
-            page(character->x + 6,  character->y + 1, 0b01010110);
-            page(character->x + 7,  character->y + 1, 0b01011010);
-            page(character->x + 8,  character->y + 1, 0b01010110);
-            page(character->x + 9,  character->y + 1, 0b01011001);
-            page(character->x + 10, character->y + 1, 0b01100101);
-            page(character->x + 11, character->y + 1, 0b10010110);
-            page(character->x + 12, character->y + 1, 0b10100010);
-            page(character->x + 13, character->y + 1, 0b10100000);
-            page(character->x + 14, character->y + 1, 0b00001000);
-            
-            page(character->x,      character->y + 2, 0b00000000);
-            page(character->x + 1,  character->y + 2, 0b00000000);
-            page(character->x + 2,  character->y + 2, 0b10101000);
-            page(character->x + 3,  character->y + 2, 0b11101010);
-            page(character->x + 4,  character->y + 2, 0b11111111);
-            page(character->x + 5,  character->y + 2, 0b11000011);
-            page(character->x + 6,  character->y + 2, 0b11001111);
-            page(character->x + 7,  character->y + 2, 0b11111101);
-            page(character->x + 8,  character->y + 2, 0b11001111);
-            page(character->x + 9,  character->y + 2, 0b11000011);
-            page(character->x + 10, character->y + 2, 0b11111111);
-            page(character->x + 11, character->y + 2, 0b11101010);
-            page(character->x + 12, character->y + 2, 0b10101000);
-            page(character->x + 13, character->y + 2, 0b00000000);
-            page(character->x + 14, character->y + 2, 0b00000000);
+            sprite = zoomer;
             break;
             
         case LOOK_ROCKET:
-            page(character->x,      character->y, 0b11000000);
-            page(character->x + 1,  character->y, 0b10110000);
-            page(character->x + 2,  character->y, 0b00110000);
-            page(character->x + 3,  character->y, 0b00110000);
-            page(character->x + 4,  character->y, 0b00110000);
-            page(character->x + 5,  character->y, 0b10110000);
-            page(character->x + 6,  character->y, 0b00101100);
-            page(character->x + 7,  character->y, 0b00100100);
-            page(character->x + 8,  character->y, 0b01111100);
-            page(character->x + 9,  character->y, 0b00000100);
-            page(character->x + 10, character->y, 0b00010100);
-            page(character->x + 11, character->y, 0b01010000);
-            page(character->x + 12, character->y, 0b01000000);
-            
-            page(character->x,      character->y + 1, 0b00000011);
-            page(character->x + 1,  character->y + 1, 0b00001110);
-            page(character->x + 2,  character->y + 1, 0b00001110);
-            page(character->x + 3,  character->y + 1, 0b00001110);
-            page(character->x + 4,  character->y + 1, 0b00001110);
-            page(character->x + 5,  character->y + 1, 0b00001110);
-            page(character->x + 6,  character->y + 1, 0b00111010);
-            page(character->x + 7,  character->y + 1, 0b00011010);
-            page(character->x + 8,  character->y + 1, 0b00111101);
-            page(character->x + 9,  character->y + 1, 0b00010000);
-            page(character->x + 10, character->y + 1, 0b00010100);
-            page(character->x + 11, character->y + 1, 0b00000101);
-            page(character->x + 12, character->y + 1, 0b00000001);
+            sprite = rocket;
             break;
             
         case LOOK_MONSTER_ZAZABI:
-            page(character->x,      character->y, 0b00000000);
-            page(character->x + 1,  character->y, 0b00000000);
-            page(character->x + 2,  character->y, 0b00100000);
-            page(character->x + 3,  character->y, 0b00100000);
-            page(character->x + 4,  character->y, 0b10000000);
-            page(character->x + 5,  character->y, 0b00000000);
-            page(character->x + 6,  character->y, 0b00000000);
-            page(character->x + 7,  character->y, 0b00000000);
-            page(character->x + 8,  character->y, 0b10100000);
-            page(character->x + 9,  character->y, 0b00001010);
-            page(character->x + 10, character->y, 0b00000010);
-            page(character->x + 11, character->y, 0b00000000);
-            page(character->x + 12, character->y, 0b10000000);
-            page(character->x + 13, character->y, 0b00100000);
-            page(character->x + 14, character->y, 0b00100000);
-            page(character->x + 15, character->y, 0b00000000);
-            page(character->x + 16, character->y, 0b00000000);
-            
-            page(character->x,      character->y + 1, 0b00001000);
-            page(character->x + 1,  character->y + 1, 0b00001000);
-            page(character->x + 2,  character->y + 1, 0b00100000);
-            page(character->x + 3,  character->y + 1, 0b10000000);
-            page(character->x + 4,  character->y + 1, 0b10000000);
-            page(character->x + 5,  character->y + 1, 0b00000010);
-            page(character->x + 6,  character->y + 1, 0b01101000);
-            page(character->x + 7,  character->y + 1, 0b01010000);
-            page(character->x + 8,  character->y + 1, 0b11011010);
-            page(character->x + 9,  character->y + 1, 0b01010000);
-            page(character->x + 10, character->y + 1, 0b01101000);
-            page(character->x + 11, character->y + 1, 0b00000010);
-            page(character->x + 12, character->y + 1, 0b10000000);
-            page(character->x + 13, character->y + 1, 0b10000000);
-            page(character->x + 14, character->y + 1, 0b00100000);
-            page(character->x + 15, character->y + 1, 0b00001000);
-            page(character->x + 16, character->y + 1, 0b00001000);
-            
-            page(character->x,      character->y + 2, 0b00000000);
-            page(character->x + 1,  character->y + 2, 0b00000000);
-            page(character->x + 2,  character->y + 2, 0b00000000);
-            page(character->x + 3,  character->y + 2, 0b01000000);
-            page(character->x + 4,  character->y + 2, 0b01010110);
-            page(character->x + 5,  character->y + 2, 0b11110110);
-            page(character->x + 6,  character->y + 2, 0b00001110);
-            page(character->x + 7,  character->y + 2, 0b00000011);
-            page(character->x + 8,  character->y + 2, 0b11110000);
-            page(character->x + 9,  character->y + 2, 0b00000011);
-            page(character->x + 10, character->y + 2, 0b00001110);
-            page(character->x + 11, character->y + 2, 0b11110110);
-            page(character->x + 12, character->y + 2, 0b01010110);
-            page(character->x + 13, character->y + 2, 0b01000000);
-            page(character->x + 14, character->y + 2, 0b00000000);
-            page(character->x + 15, character->y + 2, 0b00000000);
-            page(character->x + 16, character->y + 2, 0b00000000);
-         
-            page(character->x,      character->y + 3, 0b00000000);
-            page(character->x + 1,  character->y + 3, 0b00000000);
-            page(character->x + 2,  character->y + 3, 0b00000000);
-            page(character->x + 3,  character->y + 3, 0b00001001);
-            page(character->x + 4,  character->y + 3, 0b10010110);
-            page(character->x + 5,  character->y + 3, 0b01010110);
-            page(character->x + 6,  character->y + 3, 0b01010111);
-            page(character->x + 7,  character->y + 3, 0b01011100);
-            page(character->x + 8,  character->y + 3, 0b01110000);
-            page(character->x + 9,  character->y + 3, 0b01011100);
-            page(character->x + 10, character->y + 3, 0b01010111);
-            page(character->x + 11, character->y + 3, 0b01010110);
-            page(character->x + 12, character->y + 3, 0b10010110);
-            page(character->x + 13, character->y + 3, 0b00001001);
-            page(character->x + 14, character->y + 3, 0b00000000);
-            page(character->x + 15, character->y + 3, 0b00000000);
-            page(character->x + 16, character->y + 3, 0b00000000);
-            
-            page(character->x,      character->y + 4, 0b00000000);
-            page(character->x + 1,  character->y + 4, 0b00000000);
-            page(character->x + 2,  character->y + 4, 0b00000000);
-            page(character->x + 3,  character->y + 4, 0b00000000);
-            page(character->x + 4,  character->y + 4, 0b00100000);
-            page(character->x + 5,  character->y + 4, 0b01011001);
-            page(character->x + 6,  character->y + 4, 0b01010110);
-            page(character->x + 7,  character->y + 4, 0b01010110);
-            page(character->x + 8,  character->y + 4, 0b01010110);
-            page(character->x + 9,  character->y + 4, 0b01010110);
-            page(character->x + 10, character->y + 4, 0b01010110);
-            page(character->x + 11, character->y + 4, 0b01011001);
-            page(character->x + 12, character->y + 4, 0b00100000);
-            page(character->x + 13, character->y + 4, 0b00000000);
-            page(character->x + 14, character->y + 4, 0b00000000);
-            page(character->x + 15, character->y + 4, 0b00000000);
-            page(character->x + 16, character->y + 4, 0b00000000);
-            
-            page(character->x,      character->y + 5, 0b00000000);
-            page(character->x + 1,  character->y + 5, 0b00000000);
-            page(character->x + 2,  character->y + 5, 0b00000000);
-            page(character->x + 3,  character->y + 5, 0b00000000);
-            page(character->x + 4,  character->y + 5, 0b00100000);
-            page(character->x + 5,  character->y + 5, 0b01011001);
-            page(character->x + 6,  character->y + 5, 0b01010110);
-            page(character->x + 7,  character->y + 5, 0b01010110);
-            page(character->x + 8,  character->y + 5, 0b01010110);
-            page(character->x + 9,  character->y + 5, 0b01010110);
-            page(character->x + 10, character->y + 5, 0b01010110);
-            page(character->x + 11, character->y + 5, 0b01011001);
-            page(character->x + 12, character->y + 5, 0b00100000);
-            page(character->x + 13, character->y + 5, 0b00000000);
-            page(character->x + 14, character->y + 5, 0b00000000);
-            page(character->x + 15, character->y + 5, 0b00000000);
-            page(character->x + 16, character->y + 5, 0b00000000);
-            
-            page(character->x,      character->y + 6, 0b00000000);
-            page(character->x + 1,  character->y + 6, 0b00000000);
-            page(character->x + 2,  character->y + 6, 0b00000000);
-            page(character->x + 3,  character->y + 6, 0b00000000);
-            page(character->x + 4,  character->y + 6, 0b01010000);
-            page(character->x + 5,  character->y + 6, 0b00011001);
-            page(character->x + 6,  character->y + 6, 0b01010110);
-            page(character->x + 7,  character->y + 6, 0b00010110);
-            page(character->x + 8,  character->y + 6, 0b01010110);
-            page(character->x + 9,  character->y + 6, 0b00010110);
-            page(character->x + 10, character->y + 6, 0b01010110);
-            page(character->x + 11, character->y + 6, 0b00011001);
-            page(character->x + 12, character->y + 6, 0b01010000);
-            page(character->x + 13, character->y + 6, 0b00000000);
-            page(character->x + 14, character->y + 6, 0b00000000);
-            page(character->x + 15, character->y + 6, 0b00000000);
-            page(character->x + 16, character->y + 6, 0b00000000);
-            
-            page(character->x,      character->y + 7, 0b00000000);
-            page(character->x + 1,  character->y + 7, 0b00000000);
-            page(character->x + 2,  character->y + 7, 0b00101000);
-            page(character->x + 3,  character->y + 7, 0b00000010);
-            page(character->x + 4,  character->y + 7, 0b00000000);
-            page(character->x + 5,  character->y + 7, 0b00101000);
-            page(character->x + 6,  character->y + 7, 0b00000010);
-            page(character->x + 7,  character->y + 7, 0b00000000);
-            page(character->x + 8,  character->y + 7, 0b00101010);
-            page(character->x + 9,  character->y + 7, 0b00000000);
-            page(character->x + 10, character->y + 7, 0b00000010);
-            page(character->x + 11, character->y + 7, 0b00101000);
-            page(character->x + 12, character->y + 7, 0b00000000);
-            page(character->x + 13, character->y + 7, 0b00000010);
-            page(character->x + 14, character->y + 7, 0b00101000);
-            page(character->x + 15, character->y + 7, 0b00000000);
-            page(character->x + 16, character->y + 7, 0b00000000);
+            sprite = zazabi;
             break;
 
         case LOOK_MONSTER_METROID:
-        {
-            // The metroid is symmetric, so it is drawn once,
-            // then mirrored and drawn again some pixels to the right.
-            void drawmetroid(int8_t i, uint8_t x)
-            {
-                page(x,         character->y,     0b00000000);
-                page(x + i * 1, character->y,     0b11000000);
-                page(x + i * 2, character->y,     0b10110000);
-                page(x + i * 3, character->y,     0b01101100);
-                page(x + i * 4, character->y,     0b10011011);
-                page(x + i * 5, character->y,     0b10011011);
-                page(x + i * 6, character->y,     0b10011011);
-                page(x,         character->y + 1, 0b11111100);
-                page(x + i * 1, character->y + 1, 0b10101011);
-                page(x + i * 2, character->y + 1, 0b01010110);
-                page(x + i * 3, character->y + 1, 0b10101001);
-                page(x + i * 4, character->y + 1, 0b00000110);
-                page(x + i * 5, character->y + 1, 0b11011011);
-                page(x + i * 6, character->y + 1, 0b01111011);
-                page(x,         character->y + 2, 0b00000000);
-                page(x + i * 1, character->y + 2, 0b00001111);
-                page(x + i * 2, character->y + 2, 0b00111010);
-                page(x + i * 3, character->y + 2, 0b10100101);
-                page(x + i * 4, character->y + 2, 0b01001010);
-                page(x + i * 5, character->y + 2, 0b00000111);
-                page(x + i * 6, character->y + 2, 0b00101101);
-            }
-
-            drawmetroid( 1, character->x);
-            drawmetroid(-1, character->x + 13);
+            sprite = metroid;
             break;
-        }
+        
 
         case LOOK_MONSTER_HORNOAD:
             if (character->direction == DIRECTION_LEFT)
             {
-                page(character->x,     character->y + 2, 0b00001000);
-                page(character->x + 1, character->y + 2, 0b00000110);
-                page(character->x + 2, character->y + 2, 0b00000110);
-                page(character->x + 3, character->y + 2, 0b00010101);
-                page(character->x + 4, character->y + 2, 0b00010101);
-                page(character->x + 5, character->y + 2, 0b00010101);
-                page(character->x + 6, character->y + 2, 0b00010101);
-                page(character->x + 7, character->y + 2, 0b00010101);
-                page(character->x + 8, character->y + 2, 0b00000101);
-                page(character->x + 9, character->y + 2, 0b00000101);
-                page(character->x + 10,character->y + 2, 0b01000101);
-                page(character->x + 11,character->y + 2, 0b01010101);
-                page(character->x + 12,character->y + 2, 0b01010101);
-
-                page(character->x, character->y + 1,    0b00101100);
-                page(character->x + 1,character->y + 1, 0b00001111);
-                page(character->x + 2,character->y + 1, 0b00111101);
-                page(character->x + 3,character->y + 1, 0b10001101);
-                page(character->x + 4,character->y + 1, 0b01011111);
-                page(character->x + 5,character->y + 1, 0b00011111);
-                page(character->x + 6,character->y + 1, 0b01011111);
-                page(character->x + 7,character->y + 1, 0b01011111);
-                page(character->x + 8,character->y + 1, 0b01011111);
-                page(character->x + 9,character->y + 1, 0b01011111);
-                page(character->x + 10,character->y + 1,0b01011111);
-                page(character->x + 11,character->y + 1,0b01011111);
-                page(character->x + 12,character->y + 1,0b01010101);
-                page(character->x + 13,character->y + 1,0b00011100);
-
-                page(character->x + 2,character->y, 0b11000000);
-                page(character->x + 3,character->y, 0b10011000);
-                page(character->x + 4,character->y, 0b01111100);
-                page(character->x + 5,character->y, 0b11110000);
-                page(character->x + 6,character->y, 0b11111100);
-                page(character->x + 7,character->y, 0b11110000);
-                page(character->x + 8,character->y, 0b11111100);
-                page(character->x + 9,character->y, 0b11110000);
-                page(character->x + 10,character->y,0b11110000);
-                page(character->x + 11,character->y,0b11000000);
+                sprite = hornoadleft;
             }
             else
             {
-                page(character->x + 12,character->y + 2,0b00001000);
-                page(character->x + 11,character->y + 2, 0b00000110);
-                page(character->x + 10,character->y + 2, 0b00000110);
-                page(character->x + 9, character->y + 2, 0b00010101);
-                page(character->x + 8, character->y + 2, 0b00010101);
-                page(character->x + 7, character->y + 2, 0b00010101);
-                page(character->x + 6, character->y + 2, 0b00010101);
-                page(character->x + 5, character->y + 2, 0b00010101);
-                page(character->x + 4, character->y + 2, 0b00000101);
-                page(character->x + 3, character->y + 2, 0b00000101);
-                page(character->x + 2, character->y + 2, 0b01000101);
-                page(character->x + 1, character->y + 2, 0b01010101);
-                page(character->x,     character->y + 2, 0b01010101);
-
-                page(character->x + 13,character->y + 1,0b00101100);
-                page(character->x + 12,character->y + 1,0b00001111);
-                page(character->x + 11,character->y + 1,0b00111101);
-                page(character->x + 10,character->y + 1,0b10001101);
-                page(character->x + 9,character->y + 1, 0b01011111);
-                page(character->x + 8,character->y + 1, 0b00011111);
-                page(character->x + 7,character->y + 1, 0b01011111);
-                page(character->x + 6,character->y + 1, 0b01011111);
-                page(character->x + 5,character->y + 1, 0b01011111);
-                page(character->x + 4,character->y + 1, 0b01011111);
-                page(character->x + 3,character->y + 1, 0b01011111);
-                page(character->x + 2,character->y + 1, 0b01011111);
-                page(character->x + 1,character->y + 1, 0b01010101);
-                page(character->x    ,character->y + 1, 0b00011100);
-
-                page(character->x + 11,character->y, 0b11000000);
-                page(character->x + 10,character->y, 0b10011000);
-                page(character->x + 9,character->y, 0b01111100);
-                page(character->x + 8,character->y, 0b11110000);
-                page(character->x + 7,character->y, 0b11111100);
-                page(character->x + 6,character->y, 0b11110000);
-                page(character->x + 5,character->y, 0b11111100);
-                page(character->x + 4,character->y, 0b11110000);
-                page(character->x + 3,character->y,0b11110000);
-                page(character->x + 2,character->y,0b11000000);
+                sprite = hornoadleft;
             }
             break;
 
         case LOOK_MONSTER_SIDEHOPPER:
+            sprite = sidehopper;
             break;
 
         case LOOK_MONSTER_MEMU:
-        {
-            void drawmemu(int8_t i, uint8_t x)
+            if (character->lookstate) // wings down
             {
-                if (character->lookstate) // wings down
-                {
-                    page(x,         character->y,     0b00000000);
-                    page(x + i * 1, character->y,     0b01000000);
-                    page(x + i * 2, character->y,     0b11010000);
-                    page(x + i * 3, character->y,     0b11010000);
-                    page(x,         character->y + 1, 0b00001110);
-                    page(x + i * 1, character->y + 1, 0b00000011);
-                    page(x + i * 2, character->y + 1, 0b00000000);
-                    page(x + i * 3, character->y + 1, 0b00000000);
-                }
-                else // wings up
-                {
-                    page(x,         character->y,     0b00000111);
-                    page(x + i * 1, character->y,     0b00000111);
-                    page(x + i * 2, character->y,     0b00001011);
-                    page(x + i * 3, character->y,     0b00101100);
-                    page(x + i * 2, character->y + 1, 0b00000000);
-                    page(x,         character->y + 1, 0b00000000);
-                    page(x + i * 1, character->y + 1, 0b00000000);
-                    page(x + i * 2, character->y + 1, 0b00000000);
-                    page(x + i * 3, character->y + 1, 0b00000000);
-                }
-                page(x + i * 4, character->y,     0b11110000);
-                page(x + i * 5, character->y,     0b00001100);
-                page(x + i * 6, character->y,     0b10100011);
-                page(x + i * 4, character->y + 1, 0b00111100);
-                page(x + i * 5, character->y + 1, 0b00000011);
-                page(x + i * 6, character->y + 1, 0b00001100);
+                sprite = memu0;
             }
-
-            drawmemu( 1, character->x);
-            drawmemu(-1, character->x + 14);
-            page(character->x + 7, character->y,     0b10100011);
-            page(character->x + 7, character->y + 1, 0b00110000);
-
+            else // wings up
+            {
+                sprite = memu1;
+            }
             // toggle wing state
             character->lookstate = 1 - character->lookstate;
             break;
-        }
 
         case LOOK_BOSS_DRAGON:
-            for (uint8_t i = 0; i < 19; ++i)
-                page(character->x + i, character->y, 0);
-            page(character->x + 19, character->y, 0b10000000);
-            page(character->x + 20, character->y, 0b10000000);
-            page(character->x + 21, character->y, 0b10100000);
-            page(character->x + 22, character->y, 0b10100000);
-            page(character->x + 23, character->y, 0b10101000);
-            page(character->x + 24, character->y, 0b10101000);
-            page(character->x + 25, character->y, 0b10101010);
-            page(character->x + 26, character->y, 0b10101010);
-            page(character->x + 27, character->y, 0b10101010);
-            page(character->x + 28, character->y, 0b11101010);
-            page(character->x + 29, character->y, 0b00101010);
-
-            for (uint8_t i = 0; i < 15; ++i)
-                page(character->x + i, character->y + 1, 0);
-            page(character->x + 15, character->y + 1, 0b10100000);
-            page(character->x + 16, character->y + 1, 0b10100000);
-            page(character->x + 17, character->y + 1, 0b10101000);
-            page(character->x + 18, character->y + 1, 0b11101010);
-            page(character->x + 19, character->y + 1, 0b11101010);
-            for (uint8_t i = 20; i < 24; ++i)
-                page(character->x + 20, character->y + 1, 0b10101010);
-            page(character->x + 24, character->y + 1, 0b00111010);
-            page(character->x + 25, character->y + 1, 0b00001110);
-            page(character->x + 26, character->y + 1, 0b00000010);
-            page(character->x + 27, character->y + 1, 0b00000011);
-            page(character->x + 28, character->y + 1, 0);
-            page(character->x + 29, character->y + 1, 0);
-
-            page(character->x,      character->y + 2, 0);
-            page(character->x + 1,  character->y + 2, 0b00110000);
-            for (uint8_t i = 2; i < 7; ++i)
-                page(character->x + i, character->y + 2, 0b01111100);
-            page(character->x + 7,  character->y + 2, 0b11110000);
-            page(character->x + 8,  character->y + 2, 0b11000000);
-            page(character->x + 9,  character->y + 2, 0b11000000);
-            page(character->x + 10, character->y + 2, 0);
-            page(character->x + 11, character->y + 2, 0);
-            page(character->x + 12, character->y + 2, 0b11000000);
-            page(character->x + 13, character->y + 2, 0b11110000);
-            page(character->x + 14, character->y + 2, 0b10100000);
-            for (uint8_t i = 15; i < 18; ++i)
-                page(character->x + i, character->y + 2, 0b10101010);
-            page(character->x + 18, character->y + 2, 0b10101011);
-            page(character->x + 19, character->y + 2, 0b10101000);
-            for (uint8_t i = 20; i < 24; ++i)
-                page(character->x + i, character->y + 2, 0b10101010);
-            page(character->x + 24, character->y + 2, 0b11000000);
-            for (uint8_t i = 25; i < 30; ++i)
-                page(character->x + i, character->y + 2, 0);
-
-            for (uint8_t i = 0; i < 3; ++i)
-                page(character->x + i, character->y + 3, 0);
-            page(character->x + 3,  character->y + 3, 0b00000111);
-            page(character->x + 4,  character->y + 3, 0b01010111);
-            page(character->x + 5,  character->y + 3, 0b11010111);
-            page(character->x + 6,  character->y + 3, 0b01110111);
-            page(character->x + 7,  character->y + 3, 0b01011111);
-            page(character->x + 8,  character->y + 3, 0b01011111);
-            page(character->x + 9,  character->y + 3, 0b11111111);
-            page(character->x + 10, character->y + 3, 0b10111100);
-            page(character->x + 11, character->y + 3, 0b10101111);
-            page(character->x + 12, character->y + 3, 0b10101011);
-            page(character->x + 13, character->y + 3, 0b10101010);
-            for (uint8_t i = 14; i < 18; ++i)
-                page(character->x + i, character->y + 3, 0b00001010);
-            for (uint8_t i = 18; i < 21; ++i)
-                page(character->x + i, character->y + 3, 0b00101010);
-            for (uint8_t i = 21; i < 25; ++i)
-                page(character->x + i, character->y + 3, 0b10101010);
-            page(character->x + 25, character->y + 3, 0b10101100);
-            page(character->x + 26, character->y + 3, 0b11000000);
-            for (uint8_t i = 27; i < 30; ++i)
-                page(character->x + i, character->y + 3, 0);
-
-            for (uint8_t i = 0; i < 4; ++i)
-                page(character->x + i, character->y + 4, 0);
-            page(character->x + 4,  character->y + 4, 0b00000011);
-            page(character->x + 5,  character->y + 4, 0b00000001);
-            page(character->x + 6,  character->y + 4, 0b00000101);
-            page(character->x + 7,  character->y + 4, 0b11010101);
-            page(character->x + 8,  character->y + 4, 0b11110101);
-            page(character->x + 9,  character->y + 4, 0b10111111);
-            for (uint8_t i = 10; i < 14; ++i)
-                page(character->x + i, character->y + 4, 0b10101010);
-            page(character->x + 14, character->y + 4, 0b10101000);
-            page(character->x + 15, character->y + 4, 0b10100000);
-            page(character->x + 16, character->y + 4, 0b10000000);
-            page(character->x + 17, character->y + 4, 0b10100000);
-            page(character->x + 18, character->y + 4, 0b00100000);
-            page(character->x + 19, character->y + 4, 0b10100000);
-            for (uint8_t i = 20; i < 23; ++i)
-                page(character->x + i, character->y + 4, 0);
-            page(character->x + 23, character->y + 4, 0b00000010);
-            page(character->x + 24, character->y + 4, 0b00000010);
-            page(character->x + 25, character->y + 4, 0b00001010);
-            page(character->x + 26, character->y + 4, 0b00001010);
-            page(character->x + 27, character->y + 4, 0b00101011);
-            page(character->x + 28, character->y + 4, 0b00101000);
-            page(character->x + 29, character->y + 4, 0);
-
-            page(character->x,      character->y + 5, 0b10100000);
-            page(character->x + 1,  character->y + 5, 0b10100000);
-            page(character->x + 2,  character->y + 5, 0b00100000);
-            for (uint8_t i = 3; i < 8; ++i)
-                page(character->x + i, character->y + 5, 0);
-            for (uint8_t i = 8; i < 14; ++i)
-                page(character->x + i, character->y + 5, 0b10101010);
-            page(character->x + 14, character->y + 5, 0);
-            page(character->x + 15, character->y + 5, 0);
-            page(character->x + 16, character->y + 5, 0b00000010);
-            page(character->x + 17, character->y + 5, 0b00001010);
-            page(character->x + 18, character->y + 5, 0b00001000);
-            for (uint8_t i = 19; i < 30; ++i)
-                page(character->x + i, character->y + 5, 0);
-
-            page(character->x,      character->y + 6, 0b00000010);
-            page(character->x + 1,  character->y + 6, 0);
-            page(character->x + 2,  character->y + 6, 0b00001010);
-            page(character->x + 3,  character->y + 6, 0b00101000);
-            page(character->x + 4,  character->y + 6, 0b00100000);
-            page(character->x + 5,  character->y + 6, 0b10100000);
-            page(character->x + 6,  character->y + 6, 0b10100000);
-            page(character->x + 7,  character->y + 6, 0b11111100);
-            page(character->x + 8,  character->y + 6, 0b11101010);
-            for (uint8_t i = 9; i < 14; ++i)
-                page(character->x + i, character->y + 6, 0b10101010);
-            page(character->x + 14, character->y + 6, 0b10101000);
-            page(character->x + 15, character->y + 6, 0b10100000);
-            for (uint8_t i = 16; i < 30; ++i)
-                page(character->x + i, character->y + 6, 0);
-
-            for (uint8_t i = 0; i < 8; ++i)
-                page(character->x + i, character->y + 7, 0);
-            page(character->x + 8,  character->y + 7, 0b00001111);
-            page(character->x + 9,  character->y + 7, 0b00111110);
-            page(character->x + 10, character->y + 7, 0b11111010);
-            page(character->x + 11, character->y + 7, 0b10111110);
-            page(character->x + 12, character->y + 7, 0b10101011);
-            page(character->x + 13, character->y + 7, 0b00101011);
-            page(character->x + 14, character->y + 7, 0b10101011);
-            page(character->x + 15, character->y + 7, 0b11101011);
-            page(character->x + 16, character->y + 7, 0b11111111);
-            page(character->x + 17, character->y + 7, 0b10000000);
-            for (uint8_t i = 18; i < 30; ++i)
-                page(character->x + i, character->y + 7, 0);
-
-            for (uint8_t i = 0; i < 7; ++i)
-                page(character->x + i, character->y + 8, 0);
-            page(character->x + 7,  character->y + 8, 0b10100000);
-            page(character->x + 8,  character->y + 8, 0b10101000);
-            page(character->x + 9,  character->y + 8, 0b10101010);
-            page(character->x + 10, character->y + 8, 0b00001010);
-            page(character->x + 11, character->y + 8, 0b00000010);
-            for (uint8_t i = 12; i < 16; ++i)
-                page(character->x + i, character->y + 8, 0);
-            page(character->x + 16, character->y + 8, 0b00000010);
-            page(character->x + 17, character->y + 8, 0b10101010);
-            page(character->x + 18, character->y + 8, 0b10101010);
-            page(character->x + 19, character->y + 8, 0b10101000);
-            for (uint8_t i = 20; i < 30; ++i)
-                page(character->x + i, character->y + 8, 0);
+            sprite = dragon;
             break;
+    }
+    
+    uint8_t i = 0;
+    for (uint8_t x = character->x; x < character->x + character->width; x++)
+    {
+        for (uint8_t y = character->y; y < character->y + character->height; y++)
+        {
+            page(x, y, sprite[i]);
+            i++;
+        }
     }
 }
 
