@@ -7,6 +7,7 @@
 #include "display.h"
 #include "character.h"
 #include "globals.h"
+#include "sprites.h"
 
 #define LEVEL_WIDTH 320 // 2*DISPLAY_WIDTH
 
@@ -78,24 +79,23 @@ void drawdoor_open(int x, int y)
 
 void drawfloor()
 {
-    for (int x = 0; x < DISPLAY_WIDTH; x+=16)
+    const uint8_t* sprite = NULL;
+    switch (random() % 3)
     {
-        page(x,      25, 0b01010110);
-        page(x + 1,  25, 0b10100110);
-        page(x + 2,  25, 0b01010110);
-        page(x + 3,  25, 0b10101010);
-        page(x + 4,  25, 0b10010101);
-        page(x + 5,  25, 0b10011010);
-        page(x + 6,  25, 0b10010101);
-        page(x + 7,  25, 0b10101010);
-        page(x + 8,  25, 0b01100110);
-        page(x + 9,  25, 0b01100110);
-        page(x + 10, 25, 0b01010110);
-        page(x + 11, 25, 0b10101010);
-        page(x + 12, 25, 0b10010101);
-        page(x + 13, 25, 0b10101001);
-        page(x + 14, 25, 0b10010101);
-        page(x + 15, 25, 0b10101010);
+        case 0:
+            sprite = floor1;
+            break;
+        case 1:
+            sprite = floor2;
+            break;
+        case 2:
+            sprite = floor3;
+            break;
+    }
+    
+    for (int x = 0; x < DISPLAY_WIDTH; x++)
+    {
+        page(x, 25, sprite[x % 16]);
     }
 }
 
@@ -141,9 +141,96 @@ void drawplatform()
     }
 }
 
+void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
+{
+    const uint8_t* sprite = NULL;
+    switch (digit)
+    {
+        case 0:
+            sprite = zero;
+            break;
+        case 1:
+            sprite = one;
+            break;
+        case 2:
+            sprite = two;
+            break;
+        case 3:
+            sprite = three;
+            break;
+        case 4: 
+            sprite = four;
+            break;
+        case 5: 
+            sprite = five;
+            break;
+        case 6:
+            sprite = six;
+            break;
+        case 7:
+            sprite = seven;
+            break;
+        case 8:
+            sprite = eight;
+            break;
+        case 9:
+            sprite = nine;
+            break;
+    }
+    uint8_t i = 0;
+    for (uint8_t y_ = y; y_ < y + 3; y_++)
+    {
+        for (uint8_t x_ = x; x_ < x + 3; x_++)
+        {
+            page(x, y, sprite[i]);
+            i++;
+        }
+    }
+}
+
+void drawnumber(uint8_t x, uint8_t y, uint8_t number)
+{
+    uint8_t leftdigit = number / 10;
+    uint8_t rightdigit = number % 10;
+    drawdigit(x, y, leftdigit);
+    drawdigit(x + 4, y, rightdigit);
+}
+
 void redraw()
 {
     clear();
+    
+    // print energy at the top
+    uint8_t i = 0;
+    for (uint8_t y = 0; y < 3; y++)
+    {
+        for (uint8_t x = 2; x < 25; x++)
+        {
+            page(x, y, labelenergy[i]);
+            i++;
+        }
+    }
+    
+    // print rocket label
+    for (uint8_t y = 0; y < 3; y++)
+    {
+        for (uint8_t x = 40; x < 55; x++)
+        {
+            page(x, y, labelrocket[i]);
+            i++;
+        }
+    }
+    
+    // print bomb label
+    for (uint8_t y = 0; y < 3; y++)
+    {
+        for (uint8_t x = 69; x < 83; x++)
+        {
+            page(x, y, labelbomb[i]);
+            i++;
+        }
+    }
+    
     drawfloor();
     drawplatform();
     
@@ -152,6 +239,7 @@ void redraw()
     monster->y = 25 - monster->height;
     draw(monster);
 }
+    
     
 int main(void)
 {

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "character.h"
 #include "globals.h"
 #include "display.h"
@@ -58,7 +59,7 @@ void initcharacter(struct Character* character)
 
 void draw(struct Character* character)
 {
-    uint8_t* sprite;
+    const uint8_t* sprite = NULL;
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
@@ -131,9 +132,9 @@ void draw(struct Character* character)
     }
     
     uint8_t i = 0;
-    for (uint8_t x = character->x; x < character->x + character->width; x++)
+    for (uint8_t y = character->y; y < character->y + character->height; y++)
     {
-        for (uint8_t y = character->y; y < character->y + character->height; y++)
+        for (uint8_t x = character->x; x < character->x + character->width; x++)
         {
             page(x, y, sprite[i]);
             i++;
