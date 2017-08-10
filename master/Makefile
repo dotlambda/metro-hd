@@ -3,10 +3,10 @@
 ###############################################################################
 # Source
 # Name your Project
-PROJECT = basis
+PROJECT = metroid
 
 # Sourcefiles
-SOURCE = main.c character.c globals.c
+SOURCE = main.c character.c globals.c sprites.c
 # Files from basis
 SOURCE += adc.c timer.c uart.c display.c
 # Libraries
@@ -98,6 +98,10 @@ LINKONLYOBJECTS =
 all: $(OBJDIR) $(TARGET).elf $(TARGET).hex $(TARGET).eep 
 #size
 
+## Generate sprites
+sprites.c sprites.h: generatesprites.py ../sprites/*.png ../sprites/*/*.png
+	./generatesprites.py
+
 ## Compile
 $(OBJDIR):
 	@mkdir $(OBJDIR)
@@ -130,7 +134,7 @@ size: $(TARGET).elf
 ## Clean target
 .PHONY: clean prog 
 clean:
-	rm -rf $(OBJECTS) dep/ obj/ $(TARGET).eep $(TARGET).hex $(TARGET).elf
+	rm -rf $(OBJECTS) dep/ obj/ $(TARGET).eep $(TARGET).hex $(TARGET).elf sprites.c sprites.h
 
 ## Other dependencies
 -include $(shell mkdir dep 2>/dev/null) $(wildcard dep/*)
