@@ -77,7 +77,11 @@ void drawdoor_open(int x, int y)
 
 }
 
+long level_seed = 3451627918l;
+long level_pos = 0;
+
 const uint8_t* floorsprite = NULL;
+const uint8_t* nofloorsprite = NULL;
 
 void selectfloor()
 {
@@ -94,22 +98,34 @@ void selectfloor()
             floorsprite = floor3;
             break;
     }
+    switch (random() % 2)
+    {
+        case 0:
+            nofloorsprite = water;
+            break;
+        case 1:
+            nofloorsprite = spikes;
+            break;
+    }
 }
 
 void drawfloor()
 {
-    for (int x = 0; x < DISPLAY_WIDTH; x++)
+    nofloor = random();
+    for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
     {
-        page(x, 25, floorsprite[x % 16]);
+        for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
+        {
+            if (!(nofloor & (7l << 3 * pos))) // there is a 1/8 chance of drawing water/spikes
+                page(x, 25, nofloorsprite[x % 16]);
+            else
+                page(x, 25, floorsprite[x % 16]);
+        }
     }
 }
 
-long level_seed = 3451627918l;
-long level_pos = 0;
-
 void drawplatform()
 {
-    srandom(level_seed + level_pos);
     platforms_20 = random();
     platforms_15 = random();
     platforms_24 = random();
@@ -227,6 +243,7 @@ void redraw()
         }
     }
     
+    srandom(level_seed + level_pos);
     drawfloor();
     drawplatform();
     
@@ -363,6 +380,12 @@ int main(void)
         {
             move(projectile);
             nextprojectilevent = getMsTimer() + 35;
+        }
+
+        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
+        {
+            clear();
+            // GAME OVER
         }
     }
 }

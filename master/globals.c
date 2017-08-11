@@ -3,7 +3,7 @@
 long obstacle(uint8_t x, uint8_t y)
 {
     if (y == 25)
-        return 1l;
+        return nofloor & (7l << x / 16 * 3);
     else if (y == 20)
         return !(platforms_20 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y == 15)
