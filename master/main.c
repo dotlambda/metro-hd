@@ -9,9 +9,14 @@
 #include "globals.h"
 #include "sprites.h"
 
-#define LEVEL_WIDTH 320 // 2*DISPLAY_WIDTH
+#define MAX_LEVEL_WIDTH 6 // max 6 displays for one level
+#define MIN_LEVEL_WIDTH 1 
 
 struct Character* monster;
+
+const uint8_t* floorsprite = NULL;
+const uint8_t* rotatedfloorsprite = NULL;
+const uint8_t* nofloorsprite = NULL;
 
 void init();
 
@@ -25,6 +30,15 @@ int collision(int x1, int y1, int x2, int y2)
 void drawdoorright_closed()
 {
     uint8_t i = 0;
+    for (uint8_t y = 6; y < 20; y++)
+    {
+        for (uint8_t x = 156; x < DISPLAY_WIDTH; x++)
+        {
+            page(x, y, rotatedfloorsprite[i]);
+        }
+    }
+    
+    i = 0;
     for (uint8_t y = 20; y < 25; y++)
     {
         for (uint8_t x = 154; x < DISPLAY_WIDTH; x++)
@@ -37,6 +51,15 @@ void drawdoorright_closed()
 void drawdoorleft_closed()
 {
     uint8_t i = 0;
+    for (uint8_t y = 6; y < 20; y++)
+    {
+        for (uint8_t x = 0; x < 4; x++)
+        {
+            page(x, y, rotatedfloorsprite[i]);
+        }
+    }
+    
+    i = 0;
     for (uint8_t y = 20; y < 25; y++)
     {
         for (uint8_t x = 0; x < 6; x++)
@@ -49,22 +72,21 @@ void drawdoorleft_closed()
 long level_seed = 3451627918l;
 long level_pos = 0;
 
-const uint8_t* floorsprite = NULL;
-const uint8_t* nofloorsprite = NULL;
-
 void selectfloor()
 {
-    srandom(level_seed);
     switch (random() % 3)
     {
         case 0:
             floorsprite = floor1;
+            rotatedfloorsprite = floor1_rotated;
             break;
         case 1:
             floorsprite = floor2;
+            rotatedfloorsprite = floor2_rotated;
             break;
         case 2:
             floorsprite = floor3;
+            rotatedfloorsprite = floor3_rotated;
             break;
     }
     switch (random() % 2)
@@ -192,6 +214,8 @@ void drawnumber(uint8_t x, uint8_t y, uint8_t number)
     drawdigit(x + 4, y, rightdigit);
 }
 
+enum {DOOR_LEFT, DOOR_RIGHT} exitposition = DOOR_RIGHT;
+
 void redraw()
 {
     clear();
@@ -237,16 +261,79 @@ void redraw()
     drawfloor();
     drawplatform();
     
+    doors = 0;
+    
+    // draw door to previous level
+    if (level_pos == 0)
+    {
+        if (exitposition == DOOR_RIGHT)
+        {
+            drawdoorleft_closed();
+            doors |= 0b00000010;
+        }
+        else
+        {
+            drawdoorright_closed();
+            doors |= 0b00000001;
+        }
+    }
+    
+    // draw exit door
+    if (level_pos == MAX_LEVEL_WIDTH - 1)
+    {
+        drawdoorright_closed();
+        doors |= 0b00000001;
+    }
+    else if (level_pos == -MAX_LEVEL_WIDTH + 1)
+    {
+        drawdoorleft_closed();
+        doors |= 0b00000010;
+    }
+    else if (random() % 5 == 0)
+    {
+        if (exitposition == DOOR_RIGHT)
+        {
+            drawdoorright_closed();
+            doors |= 0b00000001;
+        }
+        else
+        {
+            drawdoorleft_closed();
+            doors |= 0b00000010;
+        }
+    }
+    
     monster->look = random() % NUM_MONSTER_LOOKS;
     initcharacter(monster);
     monster->y = 25 - monster->height;
     draw(monster);
 }
 
-enum {DOOR_LEFT, DOOR_RIGHT} exitposition = DOOR_RIGHT;
-
 void newlevel()
 {
+    if ((exitposition == DOOR_LEFT && protagonist->x < DISPLAY_WIDTH / 2) 
+        || (exitposition == DOOR_RIGHT && protagonist->x >= DISPLAY_WIDTH / 2))
+    {
+        level_seed += 2 * MAX_LEVEL_WIDTH;
+    }
+    else // back to the previous level
+    {
+        level_seed -= 2 * MAX_LEVEL_WIDTH;
+    }
+    
+    if (exitposition == DOOR_LEFT)
+    {
+        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width;
+        protagonist->direction = DIRECTION_LEFT;
+    }
+    else
+    {
+        protagonist->x = 6;
+        protagonist->direction = DIRECTION_RIGHT;
+    }
+    
+    exitposition = 1 - exitposition; 
+    srandom(level_seed);
     selectfloor();
 }
     
