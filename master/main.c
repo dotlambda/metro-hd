@@ -77,37 +77,42 @@ void drawdoor_open(int x, int y)
 
 }
 
-void drawfloor()
+const uint8_t* floorsprite = NULL;
+
+void selectfloor()
 {
-    const uint8_t* sprite = NULL;
+    srandom(level_seed);
     switch (random() % 3)
     {
         case 0:
-            sprite = floor1;
+            floorsprite = floor1;
             break;
         case 1:
-            sprite = floor2;
+            floorsprite = floor2;
             break;
         case 2:
-            sprite = floor3;
+            floorsprite = floor3;
             break;
     }
-    
+}
+
+void drawfloor()
+{
     for (int x = 0; x < DISPLAY_WIDTH; x++)
     {
-        page(x, 25, sprite[x % 16]);
+        page(x, 25, floorsprite[x % 16]);
     }
 }
 
 long level_seed = 3451627918l;
 long level_pos = 0;
+
 void drawplatform()
 {
     srandom(level_seed + level_pos);
     platforms_20 = random();
     platforms_15 = random();
     platforms_24 = random();
-
     
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
@@ -115,28 +120,19 @@ void drawplatform()
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 20, 0xFF);
+                page(PLATFORM_WIDTH * pos + i, 20, floorsprite[i]);
             }
         }
         if (!(platforms_15 & (3l << 2 * pos)))
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 15, 0xFF);
+                page(PLATFORM_WIDTH * pos + i, 15, floorsprite[i]);
             }
         }
         if (!(platforms_24 & (3l << 2 * pos)))
-        {
-            page(PLATFORM_WIDTH * pos, 24, 0b01010110);
-            page(PLATFORM_WIDTH * pos+1, 24, 0b10100110);
-            page(PLATFORM_WIDTH * pos+2, 24, 0b01010110);
-            page(PLATFORM_WIDTH * pos+3, 24, 0b10101010);
-            page(PLATFORM_WIDTH * pos+4, 24, 0b10010101);
-            page(PLATFORM_WIDTH * pos+5, 24, 0b10011010);
-            page(PLATFORM_WIDTH * pos+6, 24, 0b10010101);
-            page(PLATFORM_WIDTH * pos+7, 24, 0b10101010);
-            page(PLATFORM_WIDTH * pos+8, 24, 0b01100110);
-            page(PLATFORM_WIDTH * pos+9, 24, 0b01100110);
+        {   
+            
         }
     }
 }
@@ -265,6 +261,7 @@ int main(void)
     initcharacter(projectile);
     projectile->movement = HIDDEN;
 
+    selectfloor();
     redraw();
     drawdoor_closed(0, 21);
     
