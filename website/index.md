@@ -11,7 +11,7 @@ title: Metroid
 
 
 # About Us
-![](../steckbrief/team.jpg){width=100%}
+![](images/wir.jpg){width=100%}
 
 * Daniela Kilian
     - BSc Applied Computer Science
