@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "display.h"
 
 long obstacle(uint8_t x, uint8_t y)
 {

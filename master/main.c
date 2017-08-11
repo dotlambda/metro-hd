@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <util/delay.h>
 
 #include "uart.h"
 #include "adc.h"
@@ -25,6 +26,41 @@ int collision(int x1, int y1, int x2, int y2)
 {
     return x1 < x2+6 && x1+6 > x2
            && y1 < y2+2 && y1+2 > y2;
+}
+
+void drawdoor(int x)
+{
+    uint8_t i = 0;
+    for (uint8_t y = 20; y < 25; y++)
+    {
+        for (int x_ = x; x_ < x + 33; x_++)
+        {
+            if (x_ < DISPLAY_WIDTH && x_ >= 0)
+            {
+                page(x_, y, door[i]);
+            }
+        }
+    }
+}
+
+void movedoorleft()
+{
+    for (int x = DISPLAY_WIDTH - 6; x <= -33 + 6; x--)
+    {
+        clear();
+        drawdoor(x);
+        _delay_ms(5);
+    }
+}
+
+void movedoorright()
+{
+    for (int x = -33 + 6; x <= DISPLAY_WIDTH - 6; x++)
+    {
+        clear();
+        drawdoor(x);
+        _delay_ms(5);
+    }
 }
 
 void drawdoorright_closed()
@@ -323,12 +359,12 @@ void newlevel()
     
     if (exitposition == DOOR_LEFT)
     {
-        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width;
+        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
         protagonist->direction = DIRECTION_LEFT;
     }
     else
     {
-        protagonist->x = 6;
+        protagonist->x = 6 + 1;
         protagonist->direction = DIRECTION_RIGHT;
     }
     
@@ -425,6 +461,20 @@ int main(void)
         else if (B_UP)
         {
             protagonist->jumpstate = 1;
+        }
+        
+        // change level when protagonist touches the door
+        if (doors & 0b00000001 
+            && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
+            && protagonist->y >= 20 - protagonist->height)
+        {
+            newlevel();
+        }
+        else if (doors & 0b00000010
+            && protagonist->x <= 6 
+            && protagonist->y >= 20 - protagonist->height)
+        {
+            newlevel();
         }
         
         //falls sich Monster und Character begegnen
