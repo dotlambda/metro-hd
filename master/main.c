@@ -22,59 +22,28 @@ int collision(int x1, int y1, int x2, int y2)
            && y1 < y2+2 && y1+2 > y2;
 }
 
-void drawdoor_closed(int x, int y)
+void drawdoorright_closed()
 {
-    page(x,     y, 0xFF);
-    page(x + 1, y, 0xFF);
-    page(x + 2, y, 0b10101011);
-    page(x + 3, y, 0b10101111);
-    page(x + 4, y, 0b10110000);
-    page(x + 5, y, 0b11000000);
-    
-    page(x,     y + 1, 0xFF);
-    page(x + 1, y + 1, 0xFF);
-    page(x + 2, y + 1, 0b11111110);
-    page(x + 3, y + 1, 0b10101010);
-    page(x + 4, y + 1, 0b01011010);
-    page(x + 5, y + 1, 0b01010110);
-    
-    page(x,     y + 2, 0xFF);
-    page(x + 1, y + 2, 0xFF);
-    page(x + 2, y + 2, 0b10111111);
-    page(x + 3, y + 2, 0b10101010);
-    page(x + 4, y + 2, 0b10100101);
-    page(x + 5, y + 2, 0b10010101);
-    
-    page(x,     y + 3, 0xFF);
-    page(x + 1, y + 3, 0xFF);
-    page(x + 2, y + 3, 0b11101010);
-    page(x + 3, y + 3, 0b11111010);
-    page(x + 4, y + 3, 0b00001110);
-    page(x + 5, y + 3, 0b00000011);
+    uint8_t i = 0;
+    for (uint8_t y = 20; y < 25; y++)
+    {
+        for (uint8_t x = 154; x < DISPLAY_WIDTH; x++)
+        {
+            page(x, y, doorright[i]);
+        }
+    }
 }
 
-void drawdoor_open(int x, int y)
+void drawdoorleft_closed()
 {
-    page(x,     y + 3, 0xFF);
-    page(x + 1, y + 3, 0xFF);
-    page(x + 2, y + 3, 0b11101010);
-    page(x + 3, y + 3, 0b11111000);
-
-    page(x,     y + 2, 0xFF);
-    page(x + 1, y + 2, 0xFF);
-    page(x + 2, y + 2, 0b10111111);
-    page(x + 3, y + 2, 0b00000000);
-
-    page(x,     y + 1, 0xFF);
-    page(x + 1, y + 1, 0xFF);
-    page(x + 2, y + 1, 0b11111110);
-    page(x + 3, y + 1, 0b00000000);
-
-    page(x,     y, 0xFF);
-    page(x + 1, y, 0xFF);
-    page(x + 2, y, 0b10101011);
-    page(x + 3, y, 0b00101111);
-
+    uint8_t i = 0;
+    for (uint8_t y = 20; y < 25; y++)
+    {
+        for (uint8_t x = 0; x < 6; x++)
+        {
+            page(x, y, doorleft[i]);
+        }
+    }
 }
 
 const uint8_t* floorsprite = NULL;
@@ -131,8 +100,23 @@ void drawplatform()
             }
         }
         if (!(platforms_24 & (3l << 2 * pos)))
-        {   
-            
+        {
+            page(16 * pos,    24, 0b11000000 & floorsprite[0]);
+            page(16 * pos+1,  24, 0b11110000 & floorsprite[1]);
+            page(16 * pos+2,  24, 0b11111100 & floorsprite[2]);
+            page(16 * pos+3,  24,              floorsprite[3]);
+            page(16 * pos+4,  24,              floorsprite[4]);
+            page(16 * pos+5,  24,              floorsprite[5]);
+            page(16 * pos+6,  24,              floorsprite[6]);
+            page(16 * pos+7,  24,              floorsprite[7]);
+            page(16 * pos+8,  24,              floorsprite[8]);
+            page(16 * pos+9,  24,              floorsprite[9]);
+            page(16 * pos+10, 24,              floorsprite[10]);
+            page(16 * pos+11, 24,              floorsprite[11]);
+            page(16 * pos+12, 24,              floorsprite[12]);
+            page(16 * pos+13, 24, 0b11111100 & floorsprite[13]);
+            page(16 * pos+14, 24, 0b11110000 & floorsprite[14]);
+            page(16 * pos+15, 24, 0b11000000 & floorsprote[15]);
         }
     }
 }
@@ -227,6 +211,12 @@ void redraw()
         }
     }
     
+    // print ceiling 
+    for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
+    {
+        page(x, 5, floorsprite[x % 16]);
+    }
+    
     drawfloor();
     drawplatform();
     
@@ -235,7 +225,13 @@ void redraw()
     monster->y = 25 - monster->height;
     draw(monster);
 }
-    
+
+enum {DOOR_LEFT, DOOR_RIGHT} exitposition = DOOR_RIGHT;
+
+void newlevel()
+{
+    selectfloor();
+}
     
 int main(void)
 {
@@ -260,10 +256,9 @@ int main(void)
     projectile->look = LOOK_ROCKET;
     initcharacter(projectile);
     projectile->movement = HIDDEN;
-
-    selectfloor();
+    
+    newlevel();
     redraw();
-    drawdoor_closed(0, 21);
     
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
