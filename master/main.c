@@ -39,6 +39,7 @@ void drawdoor(int x)
             {
                 page(x_, y, door[i]);
             }
+            i++;
         }
     }
 }
@@ -71,6 +72,7 @@ void drawdoorright_closed()
         for (uint8_t x = 156; x < DISPLAY_WIDTH; x++)
         {
             page(x, y, rotatedfloorsprite[i]);
+            i++;
         }
     }
     
@@ -80,6 +82,7 @@ void drawdoorright_closed()
         for (uint8_t x = 154; x < DISPLAY_WIDTH; x++)
         {
             page(x, y, doorright[i]);
+            i++;
         }
     }
 }
@@ -92,6 +95,7 @@ void drawdoorleft_closed()
         for (uint8_t x = 0; x < 4; x++)
         {
             page(x, y, rotatedfloorsprite[i]);
+            i++;
         }
     }
     
@@ -101,6 +105,7 @@ void drawdoorleft_closed()
         for (uint8_t x = 0; x < 6; x++)
         {
             page(x, y, doorleft[i]);
+            i++;
         }
     }
 }
