@@ -1,7 +1,8 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#define DISPLAY_WIDTH 160
+#define DISPLAY_WIDTH 160 // in pixels
+#define DISPLAY_HEIGHT 26 // in pages
 
 void displayInit(void);
 void clear(void);

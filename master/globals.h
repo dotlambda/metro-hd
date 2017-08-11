@@ -12,6 +12,7 @@ struct Character* protagonist;
 long platforms_20;
 long platforms_15;
 long platforms_24;
+long nofloor;
 long obstacle(uint8_t x, uint8_t y);
 
 #endif
