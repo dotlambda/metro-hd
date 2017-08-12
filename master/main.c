@@ -18,6 +18,8 @@ struct Character* monster;
 const uint8_t* floorsprite = NULL;
 const uint8_t* rotatedfloorsprite = NULL;
 const uint8_t* nofloorsprite = NULL;
+bool Title_ = true;
+bool Game_Over_ = false;
 
 void init();
 
@@ -377,7 +379,68 @@ void newlevel()
     srandom(level_seed);
     selectfloor();
 }
-    
+
+void takingdamage(struct Character* character, uint8_t damage)
+{
+    character->health = character->health - damage;
+    if(character->health > 0)
+    {
+        drawnumber(x, y, character->health);
+    }
+    else
+    {
+        drawnumber(x, y, 0);
+        Game_Over = true;
+        while(Game_Over);
+        {
+            game_over();
+        }
+    }
+}
+
+void Game_Over()//Brauch noch eventuell die richtigen Größen
+{
+    clear();
+    uint8_t i = 0;
+    for (uint8_t y = 5; y <= 16 ; y++)
+    {
+        for (uint8_t x = 40; x <= 117; x++)
+        {
+            page(x, y, Game_Over_[i]);
+            i++;
+        }
+    }
+    if(B_A)
+    {
+        Game_Over_ = false;
+    }
+    if(B_B)
+    {
+        Title_ = true;
+    }
+}
+
+void Title()
+{
+    clear();
+    uint8_t i = 0;
+    for (uint8_t y = 10; y <= 50; y++)//Brauch noch die richtigen Größen für das Bild
+    {
+        for (uint8_t x = 20; x <= 80; x++)
+        {
+            page(x, y, Title[i]);
+            i++;
+        }
+    }
+    if(B_A)
+    {
+        Title = false;
+    }
+  /*if(B_B)  Vielleicht hier noch so eine Option für eine Bestenliste hin?
+    {
+    }*/
+}
+
 int main(void)
 {
 	init();
@@ -411,6 +474,15 @@ int main(void)
     uint32_t nextmonsterevent = 0;
     while (1)
     {
+        while(Title_)
+        {
+            Title();
+        }
+
+        while(Game_Over_)
+        {
+            Game_Over();
+        }
         //monster in Bewegung
         if(nextmonsterevent < getMsTimer())
         {
@@ -521,8 +593,7 @@ int main(void)
 
         if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
         {
-            clear();
-            // GAME OVER
+            game_over();
         }
     }
 }

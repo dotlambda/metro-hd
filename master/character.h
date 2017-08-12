@@ -20,6 +20,8 @@ struct Character
     uint8_t height; // in pages
     uint8_t direction;
     uint8_t jumpstate;
+    uint8_t health;
+    uint8_t damage;
     enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN} movement;
 };
 

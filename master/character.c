@@ -11,46 +11,68 @@ void initcharacter(struct Character* character)
         case LOOK_PROTAGONIST:
             character->width = 8;
             character->height = 4;
+            character->health = 99;
+            character->damage = 15; // folgende damage und health Zahlen sind Platzhalter Zahlen
             break;
         case LOOK_MONSTER_LITTLE: 
             character->width = 8;
             character->height = 2;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_EYEMONSTER:
             character->width = 12;
-            character->height = 4; 
+            character->height = 4;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_MONSTER_ZOOMER:
             character->width = 15;
             character->height = 3;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_ROCKET:
             character->width = 13;
             character->height = 2;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_MONSTER_ZAZABI:
             character->width = 17;
             character->height = 8;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_MONSTER_METROID:
             character->width = 14;
             character->height = 3;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_MONSTER_HORNOAD:
             character->width = 14;
             character->height = 3;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
             character->height = 4;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
             character->height = 2;
+            character->health = 99;
+            character->damage = 15;
             break;
         case LOOK_BOSS_DRAGON:
             character->width = 30;
             character->height = 9;
+            character->health = 99;
+            character->damage = 15;
             break;
     }
     character->lookstate = 0;
