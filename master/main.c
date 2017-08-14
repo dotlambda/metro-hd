@@ -122,9 +122,9 @@ void selectfloor()
             rotatedfloorsprite = floor1_rotated;
             break;
         case 1:
-            floorsprite = floor2;
+            /*floorsprite = floor2;
             rotatedfloorsprite = floor2_rotated;
-            break;
+            break;*/
         case 2:
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
@@ -241,7 +241,7 @@ void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
     {
         for (uint8_t x_ = x; x_ < x + 3; x_++)
         {
-            page(x, y, sprite[i]);
+            page(x_, y_, sprite[i]);
             i++;
         }
     }
@@ -263,7 +263,7 @@ void redraw()
     
     // print energy at the top
     uint8_t i = 0;
-    for (uint8_t y = 0; y < 3; y++)
+    for (uint8_t y = 1; y < 4; y++)
     {
         for (uint8_t x = 2; x < 25; x++)
         {
@@ -273,7 +273,8 @@ void redraw()
     }
     
     // print rocket label
-    for (uint8_t y = 0; y < 3; y++)
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
     {
         for (uint8_t x = 40; x < 55; x++)
         {
@@ -283,7 +284,8 @@ void redraw()
     }
     
     // print bomb label
-    for (uint8_t y = 0; y < 3; y++)
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
     {
         for (uint8_t x = 69; x < 83; x++)
         {
@@ -291,6 +293,9 @@ void redraw()
             i++;
         }
     }
+    
+    // print number
+    drawnumber(57, 1, 13);
     
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
@@ -387,7 +392,7 @@ int main(void)
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
     protagonist->x = 10;
-    protagonist->y = 22;
+    protagonist->y = 25 - protagonist->height;
     protagonist->direction = DIRECTION_RIGHT;
     draw(protagonist);
     
