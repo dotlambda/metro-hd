@@ -9,6 +9,7 @@ with open('sprites.h', 'w') as hfile:
     with open('sprites.c', 'w') as cfile:
         hfile.write('#ifndef SPRITES_H\n#define SPRITES_H\n\n')
         hfile.write('#include <inttypes.h>\n\n')
+        hfile.write('#include <avr/pgmspace.h>')
         cfile.write('#include "sprites.h"\n\n')
 
         for dirname, _, filenames in os.walk('../sprites'):
@@ -16,14 +17,14 @@ with open('sprites.h', 'w') as hfile:
                 base, extension = os.path.splitext(filename)
                 if extension != '.png':
                     continue
-                
+
                 img = io.imread(dirname + '/' + filename, as_grey=True)
                 images = [img]
                 names = [base]
+                
                 if filename[:5] == 'floor':
                     images.append(transpose(img))
                     names.append(base + '_rotated')
-                
                 
                 for name, image in zip(names, images):
                     # colour values are floats between 0.0 and 1.0
@@ -33,8 +34,11 @@ with open('sprites.h', 'w') as hfile:
                     width = image.shape[1]
                     height = image.shape[0]
                     length = width * ceil(height / 4)
-                    
-                    carray = 'const uint8_t ' + name + '[' + str(length) + '] = {\n    '
+
+                    carray = 'const '
+                    if name == 'splash':
+                        carray += 'PROGMEM '
+                    carray += 'uint8_t ' + name + '[' + str(length) + '] = {\n    '
                     for y in range(0, height, 4):
                         for x in range(width):
                             carray += '0b'
@@ -53,7 +57,11 @@ with open('sprites.h', 'w') as hfile:
                             carray += ', '
                         carray += '\n    '
                     carray = carray[:-7] + '\n};\n\n'
-
-                    hfile.write('extern const uint8_t ' + name + '[' + str(length) + '];\n')
+                    
+                    hfile.write('// ' + str(image.shape[0]) + 'x' + str(image.shape[1]) + '\n')
+                    hfile.write('extern ')
+                    if name == 'splash':
+                        hfile.write('PROGMEM ')
+                    hfile.write('const uint8_t ' + name + '[' + str(length) + '];\n\n')
                     cfile.write(carray)
         hfile.write('\n#endif')
