@@ -86,7 +86,7 @@ void drawdoorright_closed()
         for (uint8_t x = 156; x < DISPLAY_WIDTH; x++)
         {
             page(x, y, rotatedfloorsprite[i]);
-            i++;
+            i = (i + 1) % 16;
         }
     }
     
@@ -109,7 +109,7 @@ void drawdoorleft_closed()
         for (uint8_t x = 0; x < 4; x++)
         {
             page(x, y, rotatedfloorsprite[i]);
-            i++;
+            i = (i + 1) % 16;
         }
     }
     
@@ -129,27 +129,29 @@ long level_pos = 0;
 
 void selectfloor()
 {
-    switch (random() % 3)
+    switch (random() % 2)
     {
-        case 0:
+        case 0l:
             floorsprite = floor1;
             rotatedfloorsprite = floor1_rotated;
             break;
-        case 1:
+        case 1l:
             /*floorsprite = floor2;
             rotatedfloorsprite = floor2_rotated;
             break;*/
-        case 2:
+        case 2l:
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
             break;
+        default:
+            floorsprite = 0;
     }
     switch (random() % 2)
     {
-        case 0:
+        case 0l:
             nofloorsprite = water;
             break;
-        case 1:
+        case 1l:
             nofloorsprite = spikes;
             break;
     }
