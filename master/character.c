@@ -131,7 +131,7 @@ void draw(struct Character* character)
             break;
     }
     
-    uint8_t i = 0;
+    uint16_t i = 0;
     for (uint8_t y = character->y; y < character->y + character->height; y++)
     {
         for (uint8_t x = character->x; x < character->x + character->width; x++)
