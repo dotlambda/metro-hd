@@ -86,7 +86,9 @@ void drawdoorright_closed()
         for (uint8_t x = 156; x < DISPLAY_WIDTH; x++)
         {
             page(x, y, rotatedfloorsprite[i]);
-            i = (i + 1) % 16;
+            i++;
+            if (i == 16)
+                i = 0;
         }
     }
     
@@ -109,7 +111,9 @@ void drawdoorleft_closed()
         for (uint8_t x = 0; x < 4; x++)
         {
             page(x, y, rotatedfloorsprite[i]);
-            i = (i + 1) % 16;
+            i++;
+            if (i == 16)
+                i = 0;
         }
     }
     
