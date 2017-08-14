@@ -46,21 +46,35 @@ void drawdoor(int x)
 
 void movedoorleft()
 {
-    for (int x = DISPLAY_WIDTH - 6; x <= -33 + 6; x--)
+    clear();
+    for (int x = DISPLAY_WIDTH - 6; x >= -33 + 6; x--)
     {
-        clear();
         drawdoor(x);
-        _delay_ms(5);
+        if (x + 1 < DISPLAY_WIDTH)
+        {
+            page(x + 33, 20, 0);
+            page(x + 33, 21, 0);
+            page(x + 33, 22, 0);
+            page(x + 33, 23, 0);
+            page(x + 33, 24, 0);
+        }
     }
 }
 
 void movedoorright()
 {
+    clear();
     for (int x = -33 + 6; x <= DISPLAY_WIDTH - 6; x++)
     {
-        clear();
         drawdoor(x);
-        _delay_ms(5);
+        if (x > 0)
+        {
+            page(x - 1, 20, 0);
+            page(x - 1, 21, 0);
+            page(x - 1, 22, 0);
+            page(x - 1, 23, 0);
+            page(x - 1, 24, 0);
+        }
     }
 }
 
@@ -144,6 +158,7 @@ void selectfloor()
 void drawfloor()
 {
     nofloor = random();
+    nofloor = INT32_MAX; // turn off water
     for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
     {
         for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
@@ -161,6 +176,7 @@ void drawplatform()
     platforms_20 = random();
     platforms_15 = random();
     platforms_24 = random();
+    platforms_24 = INT32_MAX; // turn off
     
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
@@ -353,12 +369,14 @@ void redraw()
     initcharacter(monster);
     monster->y = 25 - monster->height;
     draw(monster);
+
+    draw(protagonist);
 }
 
 void newlevel()
 {
-    if ((exitposition == DOOR_LEFT && protagonist->x < DISPLAY_WIDTH / 2) 
-        || (exitposition == DOOR_RIGHT && protagonist->x >= DISPLAY_WIDTH / 2))
+    if ((exitposition == DOOR_LEFT && protagonist->x <= DISPLAY_WIDTH / 2) 
+        || (exitposition == DOOR_RIGHT && protagonist->x > DISPLAY_WIDTH / 2))
     {
         level_seed += 2 * MAX_LEVEL_WIDTH;
     }
@@ -367,22 +385,34 @@ void newlevel()
         level_seed -= 2 * MAX_LEVEL_WIDTH;
     }
     
-    if (exitposition == DOOR_LEFT)
+    if (protagonist->x > DISPLAY_WIDTH / 2)
     {
-        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
-        protagonist->direction = DIRECTION_LEFT;
+        exitposition = DOOR_RIGHT;
+        movedoorleft();
     }
     else
+    {
+        exitposition = DOOR_LEFT;
+        movedoorright();
+    }
+    
+    if (protagonist->x > DISPLAY_WIDTH / 2)
     {
         protagonist->x = 6 + 1;
         protagonist->direction = DIRECTION_RIGHT;
     }
+    else
+    {
+        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
+        protagonist->direction = DIRECTION_LEFT;
+    }
+    protagonist->y = 25 - protagonist->height;
     
-    exitposition = 1 - exitposition; 
+    level_pos = 0;
     srandom(level_seed);
     selectfloor();
 }
-    
+
 int main(void)
 {
 	init();
@@ -391,8 +421,7 @@ int main(void)
     protagonist = &protagonist_;
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
-    protagonist->x = 10;
-    protagonist->y = 25 - protagonist->height;
+    protagonist->x = DISPLAY_WIDTH;
     protagonist->direction = DIRECTION_RIGHT;
     draw(protagonist);
     
@@ -432,10 +461,8 @@ int main(void)
                 if (protagonist->x + protagonist->width == DISPLAY_WIDTH)
                 {
                     ++level_pos;
-                    redraw();
                     protagonist->x = 0;
-                    //y = 22;
-                    draw(protagonist);
+                    redraw();
                 }
                 else
                 {
@@ -448,10 +475,8 @@ int main(void)
                 if (protagonist->x == 0)
                 {
                     --level_pos;
-                    redraw();
                     protagonist->x = DISPLAY_WIDTH - protagonist->width;
-                    //y = 22;
-                    draw(protagonist);
+                    redraw();
                 }
                 else
                 {
@@ -474,17 +499,19 @@ int main(void)
         }
         
         // change level when protagonist touches the door
-        if (doors & 0b00000001 
+        if (doors & 0b00000001
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
             && protagonist->y >= 20 - protagonist->height)
         {
             newlevel();
+            redraw();
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
             && protagonist->y >= 20 - protagonist->height)
         {
             newlevel();
+            redraw();
         }
         
         //falls sich Monster und Character begegnen
