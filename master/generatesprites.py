@@ -6,7 +6,7 @@ from numpy import transpose
 from math import ceil
 
 DIR_USE_PROGMEM = ['monsters', 'bosses', 'protagonist']
-NAME_USE_PROGMEM = ['splash']
+NAME_USE_PROGMEM = ['splash', 'rocket']
 
 with open('sprites.h', 'w') as hfile:
     with open('sprites.c', 'w') as cfile:
