@@ -8,7 +8,19 @@ title: Metroid
 # The Task
 
 # Hardware
+The console features two microcontrollers:
 
+* [Atmega328](https://en.wikipedia.org/wiki/ATmega328) with
+    - 32 kB flash
+    - 2 kB SRAM
+    - 1 kB EEPROM
+* Atmega168 with
+    - 16 kB flash
+    - 1 kB SRAM
+    - 512 B EEPROM
+
+where the former is responsible for the game logic and controlling the display
+and the latter is used solely as a sound controller.
 
 # About Us
 ![](images/wir.jpg){width=100%}
