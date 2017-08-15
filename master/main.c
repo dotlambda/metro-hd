@@ -23,13 +23,6 @@ bool Game_Over_ = false;
 
 void init();
 
-// x1,y1 - x1+6,y1+2
-int collision(int x1, int y1, int x2, int y2)
-{
-    return x1 < x2+6 && x1+6 > x2
-           && y1 < y2+2 && y1+2 > y2;
-}
-
 void drawdoor(int x)
 {
     uint8_t i = 0;
@@ -420,6 +413,37 @@ void newlevel()
     srandom(level_seed);
     selectfloor();
 }
+
+void collision(struct Character* protagonist_, struct Character* monster_)
+{
+    for(uint8_t y = protagonist_->y; y < protagonist_->y + protagonist_->height; ++y)
+    {
+        for(uint8_t k = monster_->y; y < monster_->y + monster_->height; ++y)
+        {
+            if(monster_->y == y && monster_->x == protagonist_->x-1)
+            {
+                takingdamage(protagonist_, monster_->damage);
+
+                for(int i = 0; i < 4; ++i)
+                {
+                    moveright(protagonist_);
+                    _delay_ms(50);
+                }
+            }
+            if(monster_->y == y && monster_->x == protagonist_->x + 1 + protagonist_->width)
+            {
+                takingdamage(protagonist_, monster_->damage);
+
+                for(int i = 0; i < 4; ++i)
+                {
+                    moveleft(protagonist_);
+                    _delay_ms(50);
+                }
+            }
+        }
+    }
+}
+
 
 void takingdamage(struct Character* character, uint8_t damage)
 {
