@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <avr/pgmspace.h>
 #include "character.h"
 #include "globals.h"
 #include "display.h"
@@ -136,7 +137,7 @@ void draw(struct Character* character)
     {
         for (uint8_t x = character->x; x < character->x + character->width; x++)
         {
-            page(x, y, sprite[i]);
+            page(x, y, pgm_read_byte_near(sprite + i));
             i++;
         }
     }

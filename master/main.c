@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <util/delay.h>
 #include <avr/pgmspace.h>
 
 #include "uart.h"
@@ -428,7 +427,7 @@ int main(void)
     {
         for (uint8_t x = 22; x < 22 + 115; x++)
         {
-            page(x, y, pgm_read_word_near(splash + i));
+            page(x, y, pgm_read_byte_near(splash + i));
             i++;
         }
     }

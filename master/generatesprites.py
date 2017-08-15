@@ -5,6 +5,9 @@ from skimage import io
 from numpy import transpose
 from math import ceil
 
+DIR_USE_PROGMEM = ['monsters', 'bosses']
+NAME_USE_PROGMEM = ['splash', 'protagonistleft', 'protagonistright']
+
 with open('sprites.h', 'w') as hfile:
     with open('sprites.c', 'w') as cfile:
         hfile.write('#ifndef SPRITES_H\n#define SPRITES_H\n\n')
@@ -35,9 +38,14 @@ with open('sprites.h', 'w') as hfile:
                     height = image.shape[0]
                     length = width * ceil(height / 4)
 
+                    useprogmem = False
+                    if os.path.basename(dirname) in DIR_USE_PROGMEM or name in NAME_USE_PROGMEM:
+                        useprogmem = True
+
                     carray = 'const '
-                    if name == 'splash':
+                    if useprogmem:
                         carray += 'PROGMEM '
+
                     carray += 'uint8_t ' + name + '[' + str(length) + '] = {\n    '
                     for y in range(0, height, 4):
                         for x in range(width):
@@ -60,7 +68,7 @@ with open('sprites.h', 'w') as hfile:
                     
                     hfile.write('// ' + str(image.shape[0]) + 'x' + str(image.shape[1]) + '\n')
                     hfile.write('extern ')
-                    if name == 'splash':
+                    if useprogmem:
                         hfile.write('PROGMEM ')
                     hfile.write('const uint8_t ' + name + '[' + str(length) + '];\n\n')
                     cfile.write(carray)
