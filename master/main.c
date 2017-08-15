@@ -346,12 +346,12 @@ void redraw()
     }
     
     // draw exit door
-    if (level_pos == MAX_LEVEL_WIDTH - 1)
+    if (level_pos == MAX_LEVEL_WIDTH - 1 && exitposition == DOOR_RIGHT)
     {
         drawdoorright_closed();
         doors |= 0b00000001;
     }
-    else if (level_pos == -MAX_LEVEL_WIDTH + 1)
+    else if (level_pos == -MAX_LEVEL_WIDTH + 1 && exitposition == DOOR_LEFT)
     {
         drawdoorleft_closed();
         doors |= 0b00000010;
