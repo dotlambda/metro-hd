@@ -143,7 +143,7 @@ void selectfloor()
         case 2l:
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
-            break;
+            break;                           
         default:
             floorsprite = 0;
     }
@@ -176,25 +176,25 @@ void drawfloor()
 
 void drawplatform()
 {
-    platforms_20 = random();
-    platforms_15 = random();
+    platforms_19 = random();
+    platforms_13 = random();
     platforms_24 = random();
-    platforms_24 = INT32_MAX; // turn off
+   // platforms_24 = INT32_MAX; // turn off
     
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
-        if (!(platforms_20 & (3l << 2 * pos)))
+        if (!(platforms_19 & (3l << 2 * pos)))
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 20, floorsprite[i]);
+                page(PLATFORM_WIDTH * pos + i, 19, floorsprite[i]);
             }
         }
-        if (!(platforms_15 & (3l << 2 * pos)))
+        if (!(platforms_13 & (3l << 2 * pos)))
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 15, floorsprite[i]);
+                page(PLATFORM_WIDTH * pos + i, 13, floorsprite[i]);
             }
         }
         if (!(platforms_24 & (3l << 2 * pos)))
