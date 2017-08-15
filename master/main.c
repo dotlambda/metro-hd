@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <avr/pgmspace.h>
-
+#include <stdbool.h>
+#include <util/delay.h>
 #include "uart.h"
 #include "adc.h"
 #include "timer.h"
@@ -414,74 +415,6 @@ void newlevel()
     selectfloor();
 }
 
-void collision(struct Character* protagonist, struct Character* monster)
-{
-    if (protagonist->x < monster->x + monster->width - 1 && protagonist->x + protagonist->width - 1 > monster->x &&
-        protagonist->y < monster->y + monster->height - 1 && protagonist->y + protagonist->height - 1 > monster->y)
-    {
-        if(monster->y == protagonist->y && monster->x == protagonist->x - 1)
-        {
-            takingdamage(protagonist, monster->damage);
-
-            for(int i = 0; i < 4; ++i)
-            {
-                moveright(protagonist);
-            }
-            break;
-        }
-        else if(monster->y == protagonist->y && monster->x == protagonist->x + protagonist->width)
-        {
-            takingdamage(protagonist, monster->damage);
-
-            for(int i = 0; i < 4; ++i)
-            {
-                moveleft(protagonist);
-            }
-        }
-        else if(protagonist->y + protagonist->height == monster->y && protagonist->x <= monster->x + monster->width && protagonist->x => monster->x)
-        {
-            takingdamage(protagonist, monster->damage);
-            while(monster->x + monster->width/2 >= character->x + character->width && moveleft(protagonist))
-            {
-                moveleft(protagonist);
-            }
-            while(monster->x + monster->width/2 <= character->x + character->width && moveright(protagonist))
-            {
-                moveright(protagonist);
-            }
-        }
-    }
-}
-
-
-void takingdamage(struct Character* character, uint8_t damage)
-{
-    uint32_t blinking_time = 0;
-
-    character->health = character->health - damage;
-    if(character->health > 0)
-    {
-        drawnumber(57, 1, character->health);
-    }
-    else
-    {
-        drawnumber(57, 1, 0);
-        Game_Over_ = true;
-        while(Game_Over_);
-        {
-            Game_Over();
-        }
-    }
-    blinking_time = getMsTimer();
-    while(blinking_time + 650 >= getMsTimer())
-    {
-        hide(character);
-        _delay_ms(50);
-        draw(character);
-        _delay_ms(100);
-    }
-}
-
 void Game_Over()//Brauch noch eventuell die richtigen Größen
 {
     clear();
@@ -501,6 +434,62 @@ void Game_Over()//Brauch noch eventuell die richtigen Größen
     if(B_B)
     {
         Title_ = true;
+    }
+}
+
+void takingdamage(struct Character* character, uint8_t damage)
+{
+    uint32_t blinking_time = 0;
+
+    character->health = character->health - damage;
+    if(character->health > 0)
+    {
+        drawnumber(57, 1, character->health);
+    }
+    else
+    {
+        drawnumber(57, 1, 0);
+        Game_Over_ = true;
+        while(Game_Over_)
+        {
+            Game_Over();
+        }
+    }
+    blinking_time = getMsTimer();
+    while(blinking_time + 650 >= getMsTimer())
+    {
+        hide(character);
+        _delay_ms(50);
+        draw(character);
+        _delay_ms(100);
+    }
+}
+
+void collision(struct Character* protagonist, struct Character* monster)
+{
+    if (protagonist->x < monster->x + monster->width && protagonist->x + protagonist->width > monster->x &&
+        protagonist->y < monster->y + monster->height && protagonist->y + protagonist->height > monster->y)
+    {
+
+            takingdamage(protagonist, monster->damage);
+            
+            // if the monster is right of the protagonist
+            if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
+            {
+                while (protagonist->x + protagonist->width + 7 > monster->x)
+                {
+                    if (!moveleft(protagonist))
+                        break;
+                }
+            }
+            else
+            {
+                while (monster->x + monster->width + 7 > protagonist->x)
+                {
+                    if (!moveright(protagonist))
+                        break;
+                }
+            }
     }
 }
 
@@ -548,11 +537,6 @@ int main(void)
     uint32_t nextmonsterevent = 0;
     while (1)
     {
-        while(Title_)
-        {
-            Title();
-        }
-
         while(Game_Over_)
         {
             Game_Over();
@@ -667,6 +651,7 @@ int main(void)
         {
             Game_Over();
         }
+        
         collision(protagonist, monster);
     }
 }

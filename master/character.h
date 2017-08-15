@@ -28,6 +28,7 @@ struct Character
 void initcharacter(struct Character* character);
 
 void draw(struct Character* character);
+void hide(struct Character* character);
 
 uint8_t moveleft(struct Character* character);
 uint8_t moveright(struct Character* character);
