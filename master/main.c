@@ -416,40 +416,38 @@ void newlevel()
 
 void collision(struct Character* protagonist, struct Character* monster)
 {
-    for(uint8_t py = protagonist->y; py < protagonist->y + protagonist->height; ++py)
+    if (protagonist->x < monster->x + monster->width - 1 && protagonist->x + protagonist->width - 1 > monster->x &&
+        protagonist->y < monster->y + monster->height - 1 && protagonist->y + protagonist->height - 1 > monster->y)
     {
-        for(uint8_t my = monster->y; my < monster->y + monster->height; ++my)
+        if(monster->y == protagonist->y && monster->x == protagonist->x - 1)
         {
-            if(monster->y == py && monster->x == protagonist->x - 1)
-            {
-                takingdamage(protagonist, monster->damage);
+            takingdamage(protagonist, monster->damage);
 
-                for(int i = 0; i < 4; ++i)
-                {
-                    moveright(protagonist);
-                }
+            for(int i = 0; i < 4; ++i)
+            {
+                moveright(protagonist);
             }
-            else if(monster->y == py && monster->x == protagonist->x + protagonist->width)
-            {
-                takingdamage(protagonist, monster->damage);
+            break;
+        }
+        else if(monster->y == protagonist->y && monster->x == protagonist->x + protagonist->width)
+        {
+            takingdamage(protagonist, monster->damage);
 
-                for(int i = 0; i < 4; ++i)
-                {
-                    moveleft(protagonist);
-                }
+            for(int i = 0; i < 4; ++i)
+            {
+                moveleft(protagonist);
             }
-            else if(protagonist->y + protagonist->height == monster->y && protagonist->x <= monster->x + monster->width && protagonist->x => monster->x)
+        }
+        else if(protagonist->y + protagonist->height == monster->y && protagonist->x <= monster->x + monster->width && protagonist->x => monster->x)
+        {
+            takingdamage(protagonist, monster->damage);
+            while(monster->x + monster->width/2 >= character->x + character->width && moveleft(protagonist))
             {
-                takingdamage(protagonist, monster->damage);
-                while(monster->x + monster->width/2 >= character->x + character->width && moveleft(protagonist))
-                {
-                    moveleft(protagonist);
-                }
-                while(monster->x + monster->width/2 <= character->x + character->width && moveright(protagonist))
-                {
-                    moveright(protagonist);
-                }
-
+                moveleft(protagonist);
+            }
+            while(monster->x + monster->width/2 <= character->x + character->width && moveright(protagonist))
+            {
+                moveright(protagonist);
             }
         }
     }
