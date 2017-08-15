@@ -455,10 +455,10 @@ void takingdamage(struct Character* character, uint8_t damage)
     else
     {
         drawnumber(x, y, 0);
-        Game_Over = true;
-        while(Game_Over);
+        Game_Over_ = true;
+        while(Game_Over_);
         {
-            game_over();
+            Game_Over();
         }
     }
 }
@@ -471,7 +471,7 @@ void Game_Over()//Brauch noch eventuell die richtigen Größen
     {
         for (uint8_t x = 40; x <= 117; x++)
         {
-            page(x, y, Game_Over_[i]);
+            page(x, y, game_over[i]);
             i++;
         }
     }
@@ -646,7 +646,7 @@ int main(void)
 
         if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
         {
-            game_over();
+            Game_Over();
         }
         collision(protagonist, monster);
     }
