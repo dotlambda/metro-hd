@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <util/delay.h>
@@ -24,6 +25,100 @@ bool Game_Over_ = false;
 
 void init();
 
+void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
+{
+    const uint8_t* sprite = NULL;
+    switch (digit)
+    {
+        case 0:
+            sprite = zero;
+            break;
+        case 1:
+            sprite = one;
+            break;
+        case 2:
+            sprite = two;
+            break;
+        case 3:
+            sprite = three;
+            break;
+        case 4: 
+            sprite = four;
+            break;
+        case 5: 
+            sprite = five;
+            break;
+        case 6:
+            sprite = six;
+            break;
+        case 7:
+            sprite = seven;
+            break;
+        case 8:
+            sprite = eight;
+            break;
+        case 9:
+            sprite = nine;
+            break;
+    }
+    uint8_t i = 0;
+    for (uint8_t y_ = y; y_ < y + 3; y_++)
+    {
+        for (uint8_t x_ = x; x_ < x + 3; x_++)
+        {
+            page(x_, y_, sprite[i]);
+            i++;
+        }
+    }
+}
+
+void drawnumber(uint8_t x, uint8_t y, uint8_t number)
+{
+    uint8_t leftdigit = number / 10;
+    uint8_t rightdigit = number % 10;
+    drawdigit(x, y, leftdigit);
+    drawdigit(x + 4, y, rightdigit);
+}
+
+void drawlabels()
+{
+    // print energy at the top
+    uint8_t i = 0;
+    for (uint8_t y = 1; y < 4; y++)
+    {
+        for (uint8_t x = 2; x < 25; x++)
+        {
+            page(x, y, labelenergy[i]);
+            i++;
+        }
+    }
+    
+    // print rocket label
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
+    {
+        for (uint8_t x = 40; x < 55; x++)
+        {
+            page(x, y, labelrocket[i]);
+            i++;
+        }
+    }
+    
+    // print bomb label
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
+    {
+        for (uint8_t x = 69; x < 83; x++)
+        {
+            page(x, y, labelbomb[i]);
+            i++;
+        }
+    }
+    
+    // print number
+    drawnumber(57, 1, 13);
+}
+
 void drawdoor(int x)
 {
     uint8_t i = 0;
@@ -33,43 +128,63 @@ void drawdoor(int x)
         {
             if (x_ < DISPLAY_WIDTH && x_ >= 0)
             {
-                page(x_, y, door[i]);
+                page(x_, y, doorinverted[i]);
             }
             i++;
         }
     }
 }
 
+void black()
+{
+    sendbyte(0, 0);
+    sendbyte(16, 0);
+    sendbyte(96, 0);
+    for (uint16_t i = 0; i < 5 * DISPLAY_WIDTH; i++)
+    {
+        sendbyte(0, 1);
+    }
+    for (uint16_t i = 5 * DISPLAY_WIDTH; i < DISPLAY_WIDTH * DISPLAY_HEIGHT; i++)
+    {
+        sendbyte(0xFF, 1);
+    }
+    sendbyte(0, 0);
+    sendbyte(16, 0);
+    sendbyte(96, 0);
+}
+
 void movedoorleft()
 {
-    clear();
+    black();
+    drawlabels();
     for (int x = DISPLAY_WIDTH - 6; x >= -33 + 6; x--)
     {
         drawdoor(x);
         if (x + 1 < DISPLAY_WIDTH)
         {
-            page(x + 33, 20, 0);
-            page(x + 33, 21, 0);
-            page(x + 33, 22, 0);
-            page(x + 33, 23, 0);
-            page(x + 33, 24, 0);
+            page(x + 33, 20, 0xFF);
+            page(x + 33, 21, 0xFF);
+            page(x + 33, 22, 0xFF);
+            page(x + 33, 23, 0xFF);
+            page(x + 33, 24, 0xFF);
         }
     }
 }
 
 void movedoorright()
 {
-    clear();
+    black();
+    drawlabels();
     for (int x = -33 + 6; x <= DISPLAY_WIDTH - 6; x++)
     {
         drawdoor(x);
         if (x > 0)
         {
-            page(x - 1, 20, 0);
-            page(x - 1, 21, 0);
-            page(x - 1, 22, 0);
-            page(x - 1, 23, 0);
-            page(x - 1, 24, 0);
+            page(x - 1, 20, 0xFF);
+            page(x - 1, 21, 0xFF);
+            page(x - 1, 22, 0xFF);
+            page(x - 1, 23, 0xFF);
+            page(x - 1, 24, 0xFF);
         }
     }
 }
@@ -211,102 +326,13 @@ void drawplatform()
     }
 }
 
-void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
-{
-    const uint8_t* sprite = NULL;
-    switch (digit)
-    {
-        case 0:
-            sprite = zero;
-            break;
-        case 1:
-            sprite = one;
-            break;
-        case 2:
-            sprite = two;
-            break;
-        case 3:
-            sprite = three;
-            break;
-        case 4: 
-            sprite = four;
-            break;
-        case 5: 
-            sprite = five;
-            break;
-        case 6:
-            sprite = six;
-            break;
-        case 7:
-            sprite = seven;
-            break;
-        case 8:
-            sprite = eight;
-            break;
-        case 9:
-            sprite = nine;
-            break;
-    }
-    uint8_t i = 0;
-    for (uint8_t y_ = y; y_ < y + 3; y_++)
-    {
-        for (uint8_t x_ = x; x_ < x + 3; x_++)
-        {
-            page(x_, y_, sprite[i]);
-            i++;
-        }
-    }
-}
-
-void drawnumber(uint8_t x, uint8_t y, uint8_t number)
-{
-    uint8_t leftdigit = number / 10;
-    uint8_t rightdigit = number % 10;
-    drawdigit(x, y, leftdigit);
-    drawdigit(x + 4, y, rightdigit);
-}
-
 enum {DOOR_LEFT, DOOR_RIGHT} exitposition = DOOR_RIGHT;
 
 void redraw()
 {
     clear();
     
-    // print energy at the top
-    uint8_t i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 2; x < 25; x++)
-        {
-            page(x, y, labelenergy[i]);
-            i++;
-        }
-    }
-    
-    // print rocket label
-    i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 40; x < 55; x++)
-        {
-            page(x, y, labelrocket[i]);
-            i++;
-        }
-    }
-    
-    // print bomb label
-    i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 69; x < 83; x++)
-        {
-            page(x, y, labelbomb[i]);
-            i++;
-        }
-    }
-    
-    // print number
-    drawnumber(57, 1, 13);
+    drawlabels();
     
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
