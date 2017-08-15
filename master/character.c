@@ -28,7 +28,7 @@ void initcharacter(struct Character* character)
             character->width = 13;
             character->height = 2;
             break;
-        case LOOK_MONSTER_ZAZABI:
+        case LOOK_BOSS_ZAZABI:
             character->width = 17;
             character->height = 8;
             break;
@@ -42,7 +42,7 @@ void initcharacter(struct Character* character)
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
-            character->height = 4;
+            character->height = 3;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
@@ -78,9 +78,16 @@ void draw(struct Character* character)
             break;
             
         case LOOK_EYEMONSTER:
-            sprite = eyemonster;
+            if(character->direction == DIRECTION_LEFT)
+            {
+                sprite = eyemonster_left;
+            }
+            else
+            {
+                sprite = eyemonster_right;
+            }
             break;
-            
+        
         case LOOK_MONSTER_ZOOMER:
             sprite = zoomer;
             break;
@@ -89,7 +96,7 @@ void draw(struct Character* character)
             sprite = rocket;
             break;
             
-        case LOOK_MONSTER_ZAZABI:
+        case LOOK_BOSS_ZAZABI:
             sprite = zazabi;
             break;
 
@@ -105,7 +112,7 @@ void draw(struct Character* character)
             }
             else
             {
-                sprite = hornoadleft;
+                sprite = hornoadright;
             }
             break;
 
@@ -127,7 +134,14 @@ void draw(struct Character* character)
             break;
 
         case LOOK_BOSS_DRAGON:
-            sprite = dragon;
+            if (character->direction == DIRECTION_LEFT)
+            {
+                sprite = dragon_left;
+            }
+            else
+            {
+                sprite = dragon_right;
+            }
             break;
     }
     
