@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <util/delay.h>
+#include <avr/pgmspace.h>
 
 #include "uart.h"
 #include "adc.h"
@@ -422,6 +423,18 @@ void newlevel()
 int main(void)
 {
 	init();
+    uint16_t i = 0;
+    for (uint8_t y = 3; y < 3 + 20; y++)
+    {
+        for (uint8_t x = 22; x < 22 + 115; x++)
+        {
+            page(x, y, pgm_read_word_near(splash + i));
+            i++;
+        }
+    }
+    while (!B_A);
+    
+    // show splash screen until button A is pressed
     
     struct Character protagonist_;
     protagonist = &protagonist_;
