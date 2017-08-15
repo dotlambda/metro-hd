@@ -374,7 +374,17 @@ void redraw()
     
     monster->look = random() % NUM_MONSTER_LOOKS;
     initcharacter(monster);
+    monster->x = (DISPLAY_WIDTH - monster->width) / 2;
     monster->y = 25 - monster->height;
+    // draw monster higher if it's on a hill
+    for (uint8_t x = monster->x; x < monster->x + monster->width; x++)
+    {
+        if (obstacle_hill(x))
+        {
+            monster->y--;
+            break;
+        }
+    }
     draw(monster);
 
     draw(protagonist);
