@@ -322,6 +322,8 @@ void redraw()
     platforms_19 = random();
     platforms_13 = random();
     platforms_24 = random();
+    platforms_24 |= 3l << 0; // no hill at the display boundary
+    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
     nofloor = random();
     nofloor = INT32_MAX; // turn off water
     

@@ -33,6 +33,8 @@ long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
     long platforms_19 = random();
     long platforms_13 = random();
     long platforms_24 = random();
+    platforms_24 |= 3l << 0; // no hill at the display boundary
+    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
     long nofloor = random();
     nofloor = INT32_MAX; // turn off water
     
