@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <avr/pgmspace.h>
+#include "timer.h"
 #include "character.h"
 #include "globals.h"
 #include "display.h"
@@ -55,6 +56,7 @@ void initcharacter(struct Character* character)
             break;
     }
     character->lookstate = 0;
+    character->lastlookstatechg = getMsTimer();
     character->jumpstate = ON_THE_GROUND;
 }
 
@@ -64,13 +66,32 @@ void draw(struct Character* character)
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
+            if (character->lastlookstatechg + 300 < getMsTimer())
+            {
+                character->lookstate = 1 - character->lookstate;
+                character->lastlookstatechg = getMsTimer();
+            }
             if (character->direction == DIRECTION_LEFT)
             {
-                sprite = protagonistleft;
+                if (character->lookstate)
+                {
+                    sprite = protagonistleft;
+                }
+                else 
+                {
+                    sprite = protagleftwalk;
+                }
             }
             else
             {
-                sprite = protagonistright;
+                if (character->lookstate)
+                {
+                    sprite = protagonistright;
+                }   
+                else 
+                {
+                    sprite = protagrightwalk;
+                }
             }
             break;
 
