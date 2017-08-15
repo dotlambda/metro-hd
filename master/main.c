@@ -426,19 +426,30 @@ void collision(struct Character* protagonist, struct Character* monster)
 
                 for(int i = 0; i < 4; ++i)
                 {
-                    moveright(protagonist_);
-                    _delay_ms(50);
+                    moveright(protagonist);
                 }
             }
-            if(monster->y == py && monster->x == protagonist->x + 1 + protagonist->width)
+            else if(monster->y == py && monster->x == protagonist->x + protagonist->width)
             {
                 takingdamage(protagonist, monster->damage);
 
                 for(int i = 0; i < 4; ++i)
                 {
                     moveleft(protagonist);
-                    _delay_ms(50);
                 }
+            }
+            else if(protagonist->y + protagonist->height == monster->y && protagonist->x <= monster->x + monster->width && protagonist->x => monster->x)
+            {
+                takingdamage(protagonist, monster->damage);
+                while(monster->x + monster->width/2 >= character->x + character->width && moveleft(protagonist))
+                {
+                    moveleft(protagonist);
+                }
+                while(monster->x + monster->width/2 <= character->x + character->width && moveright(protagonist))
+                {
+                    moveright(protagonist);
+                }
+
             }
         }
     }
@@ -460,6 +471,13 @@ void takingdamage(struct Character* character, uint8_t damage)
         {
             Game_Over();
         }
+    }
+    blinking_time = getMsTimer();
+    while(blinking_time >= getMsTimer() + 500)
+    {
+        hide(character);
+        _delay_ms(100);
+        initcharacter(character);
     }
 }
 
