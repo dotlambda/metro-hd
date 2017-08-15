@@ -174,7 +174,7 @@ void drawfloor()
 
 void drawplatform()
 {
-    for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
+    for (uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
         if (!(platforms_19 & (3l << 2 * pos)))
         {
@@ -190,24 +190,27 @@ void drawplatform()
                 page(PLATFORM_WIDTH * pos + i, 13, floorsprite[i]);
             }
         }
+    }
+    for (uint8_t pos = 0; pos < DISPLAY_WIDTH/16; ++pos)
+    {
         if (!(platforms_24 & (3l << 2 * pos)))
         {
-            page(16 * pos,    24, 0b11000000 & floorsprite[0]);
-            page(16 * pos+1,  24, 0b11110000 & floorsprite[1]);
-            page(16 * pos+2,  24, 0b11111100 & floorsprite[2]);
-            page(16 * pos+3,  24,              floorsprite[3]);
-            page(16 * pos+4,  24,              floorsprite[4]);
-            page(16 * pos+5,  24,              floorsprite[5]);
-            page(16 * pos+6,  24,              floorsprite[6]);
-            page(16 * pos+7,  24,              floorsprite[7]);
-            page(16 * pos+8,  24,              floorsprite[8]);
-            page(16 * pos+9,  24,              floorsprite[9]);
-            page(16 * pos+10, 24,              floorsprite[10]);
-            page(16 * pos+11, 24,              floorsprite[11]);
-            page(16 * pos+12, 24,              floorsprite[12]);
-            page(16 * pos+13, 24, 0b11111100 & floorsprite[13]);
-            page(16 * pos+14, 24, 0b11110000 & floorsprite[14]);
-            page(16 * pos+15, 24, 0b11000000 & floorsprite[15]);
+            page(16 * pos,      24, 0b11000000 & floorsprite[0]);
+            page(16 * pos + 1,  24, 0b11110000 & floorsprite[1]);
+            page(16 * pos + 2,  24, 0b11111100 & floorsprite[2]);
+            page(16 * pos + 3,  24,              floorsprite[3]);
+            page(16 * pos + 4,  24,              floorsprite[4]);
+            page(16 * pos + 5,  24,              floorsprite[5]);
+            page(16 * pos + 6,  24,              floorsprite[6]);
+            page(16 * pos + 7,  24,              floorsprite[7]);
+            page(16 * pos + 8,  24,              floorsprite[8]);
+            page(16 * pos + 9,  24,              floorsprite[9]);
+            page(16 * pos + 10, 24,              floorsprite[10]);
+            page(16 * pos + 11, 24,              floorsprite[11]);
+            page(16 * pos + 12, 24,              floorsprite[12]);
+            page(16 * pos + 13, 24, 0b11111100 & floorsprite[13]);
+            page(16 * pos + 14, 24, 0b11110000 & floorsprite[14]);
+            page(16 * pos + 15, 24, 0b11000000 & floorsprite[15]);
         }
     }
 }
