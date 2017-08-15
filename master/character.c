@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <avr/pgmspace.h>
 #include "character.h"
 #include "globals.h"
 #include "display.h"
@@ -150,7 +151,7 @@ void draw(struct Character* character)
     {
         for (uint8_t x = character->x; x < character->x + character->width; x++)
         {
-            page(x, y, sprite[i]);
+            page(x, y, pgm_read_byte_near(sprite + i));
             i++;
         }
     }
@@ -175,7 +176,10 @@ uint8_t moveleft(struct Character* character)
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
     {
         if (obstacle(character->x - 1, y))
+        {
+            draw(character);
             return 0;
+        }
     }
 
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
@@ -202,7 +206,10 @@ uint8_t moveright(struct Character* character)
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
     {
         if (obstacle(character->x + character->width, y))
+        {
+            draw(character);
             return 0;
+        }
     }
 
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
