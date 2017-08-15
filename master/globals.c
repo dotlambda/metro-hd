@@ -22,6 +22,11 @@ long obstacle(uint8_t x, uint8_t y)
         return 0l;
 }
 
+long obstacle_hill(uint8_t x)
+{
+    return !(platforms_24 & (3l << (x / 16 * 2)));
+}    
+
 long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
 {
     srandom(level_seed + level_pos);

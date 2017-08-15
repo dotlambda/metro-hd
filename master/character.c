@@ -177,8 +177,15 @@ uint8_t moveleft(struct Character* character)
     {
         if (obstacle(character->x - 1, y))
         {
-            draw(character);
-            return 0;
+            if (character->y + character->height == 25 && obstacle_hill(character->x - 1))
+            {
+                moveup(character);
+            }
+            else
+            {
+                draw(character);
+                return 0;
+            }
         }
     }
 
@@ -199,8 +206,15 @@ uint8_t moveright(struct Character* character)
     {
         if (obstacle(character->x + character->width, y))
         {
-            draw(character);
-            return 0;
+            if (character->y + character->height == 25 && obstacle_hill(character->x + character->width))
+            {
+                moveup(character);
+            }
+            else
+            {
+                draw(character);
+                return 0;
+            }
         }
     }
 

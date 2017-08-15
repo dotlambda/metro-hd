@@ -460,14 +460,20 @@ int main(void)
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
     uint32_t nextprojectilevent = 0;
-    uint32_t nextmonsterevent = 0;
+    uint32_t nextmonstermoveevent = 0;
+    uint32_t nextmonsterjumpevent = 0;
     while (1)
     {
         //monster in Bewegung
-        if(nextmonsterevent < getMsTimer())
+        if(nextmonstermoveevent < getMsTimer())
         {
             move(monster);
-            nextmonsterevent = getMsTimer() + 100;
+            nextmonstermoveevent = getMsTimer() + 100;
+        }
+        if(nextmonsterjumpevent < getMsTimer())
+        {
+            jump(monster);
+            nextmonsterjumpevent = getMsTimer() + 150;
         }
         
         //Protagonist kann sich bewegen
