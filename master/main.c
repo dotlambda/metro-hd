@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <util/delay.h>
+#include <avr/pgmspace.h>
 
 #include "uart.h"
 #include "adc.h"
@@ -48,21 +48,35 @@ void drawdoor(int x)
 
 void movedoorleft()
 {
-    for (int x = DISPLAY_WIDTH - 6; x <= -33 + 6; x--)
+    clear();
+    for (int x = DISPLAY_WIDTH - 6; x >= -33 + 6; x--)
     {
-        clear();
         drawdoor(x);
-        _delay_ms(5);
+        if (x + 1 < DISPLAY_WIDTH)
+        {
+            page(x + 33, 20, 0);
+            page(x + 33, 21, 0);
+            page(x + 33, 22, 0);
+            page(x + 33, 23, 0);
+            page(x + 33, 24, 0);
+        }
     }
 }
 
 void movedoorright()
 {
+    clear();
     for (int x = -33 + 6; x <= DISPLAY_WIDTH - 6; x++)
     {
-        clear();
         drawdoor(x);
-        _delay_ms(5);
+        if (x > 0)
+        {
+            page(x - 1, 20, 0);
+            page(x - 1, 21, 0);
+            page(x - 1, 22, 0);
+            page(x - 1, 23, 0);
+            page(x - 1, 24, 0);
+        }
     }
 }
 
@@ -75,6 +89,8 @@ void drawdoorright_closed()
         {
             page(x, y, rotatedfloorsprite[i]);
             i++;
+            if (i == 16)
+                i = 0;
         }
     }
     
@@ -98,6 +114,8 @@ void drawdoorleft_closed()
         {
             page(x, y, rotatedfloorsprite[i]);
             i++;
+            if (i == 16)
+                i = 0;
         }
     }
     
@@ -117,27 +135,29 @@ long level_pos = 0;
 
 void selectfloor()
 {
-    switch (random() % 3)
+    switch (random() % 2)
     {
-        case 0:
+        case 0l:
             floorsprite = floor1;
             rotatedfloorsprite = floor1_rotated;
             break;
-        case 1:
-            floorsprite = floor2;
+        case 1l:
+            /*floorsprite = floor2;
             rotatedfloorsprite = floor2_rotated;
-            break;
-        case 2:
+            break;*/
+        case 2l:
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
             break;
+        default:
+            floorsprite = 0;
     }
     switch (random() % 2)
     {
-        case 0:
+        case 0l:
             nofloorsprite = water;
             break;
-        case 1:
+        case 1l:
             nofloorsprite = spikes;
             break;
     }
@@ -146,6 +166,7 @@ void selectfloor()
 void drawfloor()
 {
     nofloor = random();
+    nofloor = INT32_MAX; // turn off water
     for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
     {
         for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
@@ -163,6 +184,7 @@ void drawplatform()
     platforms_20 = random();
     platforms_15 = random();
     platforms_24 = random();
+    platforms_24 = INT32_MAX; // turn off
     
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
@@ -243,7 +265,7 @@ void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
     {
         for (uint8_t x_ = x; x_ < x + 3; x_++)
         {
-            page(x, y, sprite[i]);
+            page(x_, y_, sprite[i]);
             i++;
         }
     }
@@ -265,7 +287,7 @@ void redraw()
     
     // print energy at the top
     uint8_t i = 0;
-    for (uint8_t y = 0; y < 3; y++)
+    for (uint8_t y = 1; y < 4; y++)
     {
         for (uint8_t x = 2; x < 25; x++)
         {
@@ -275,7 +297,8 @@ void redraw()
     }
     
     // print rocket label
-    for (uint8_t y = 0; y < 3; y++)
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
     {
         for (uint8_t x = 40; x < 55; x++)
         {
@@ -285,7 +308,8 @@ void redraw()
     }
     
     // print bomb label
-    for (uint8_t y = 0; y < 3; y++)
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
     {
         for (uint8_t x = 69; x < 83; x++)
         {
@@ -293,6 +317,9 @@ void redraw()
             i++;
         }
     }
+    
+    // print number
+    drawnumber(57, 1, 13);
     
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
@@ -350,12 +377,14 @@ void redraw()
     initcharacter(monster);
     monster->y = 25 - monster->height;
     draw(monster);
+
+    draw(protagonist);
 }
 
 void newlevel()
 {
-    if ((exitposition == DOOR_LEFT && protagonist->x < DISPLAY_WIDTH / 2) 
-        || (exitposition == DOOR_RIGHT && protagonist->x >= DISPLAY_WIDTH / 2))
+    if ((exitposition == DOOR_LEFT && protagonist->x <= DISPLAY_WIDTH / 2) 
+        || (exitposition == DOOR_RIGHT && protagonist->x > DISPLAY_WIDTH / 2))
     {
         level_seed += 2 * MAX_LEVEL_WIDTH;
     }
@@ -364,18 +393,30 @@ void newlevel()
         level_seed -= 2 * MAX_LEVEL_WIDTH;
     }
     
-    if (exitposition == DOOR_LEFT)
+    if (protagonist->x > DISPLAY_WIDTH / 2)
     {
-        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
-        protagonist->direction = DIRECTION_LEFT;
+        exitposition = DOOR_RIGHT;
+        movedoorleft();
     }
     else
+    {
+        exitposition = DOOR_LEFT;
+        movedoorright();
+    }
+    
+    if (protagonist->x > DISPLAY_WIDTH / 2)
     {
         protagonist->x = 6 + 1;
         protagonist->direction = DIRECTION_RIGHT;
     }
+    else
+    {
+        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
+        protagonist->direction = DIRECTION_LEFT;
+    }
+    protagonist->y = 25 - protagonist->height;
     
-    exitposition = 1 - exitposition; 
+    level_pos = 0;
     srandom(level_seed);
     selectfloor();
 }
@@ -420,37 +461,27 @@ void Game_Over()//Brauch noch eventuell die richtigen Größen
     }
 }
 
-void Title()
-{
-    clear();
-    uint8_t i = 0;
-    for (uint8_t y = 10; y <= 50; y++)//Brauch noch die richtigen Größen für das Bild
-    {
-        for (uint8_t x = 20; x <= 80; x++)
-        {
-            page(x, y, Title[i]);
-            i++;
-        }
-    }
-    if(B_A)
-    {
-        Title = false;
-    }
-  /*if(B_B)  Vielleicht hier noch so eine Option für eine Bestenliste hin?
-    {
-    }*/
-}
-
 int main(void)
 {
 	init();
+    uint16_t i = 0;
+    for (uint8_t y = 3; y < 3 + 20; y++)
+    {
+        for (uint8_t x = 22; x < 22 + 115; x++)
+        {
+            page(x, y, pgm_read_byte_near(splash + i));
+            i++;
+        }
+    }
+    while (!B_A);
+    
+    // show splash screen until button A is pressed
     
     struct Character protagonist_;
     protagonist = &protagonist_;
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
-    protagonist->x = 10;
-    protagonist->y = 22;
+    protagonist->x = DISPLAY_WIDTH;
     protagonist->direction = DIRECTION_RIGHT;
     draw(protagonist);
     
@@ -499,10 +530,8 @@ int main(void)
                 if (protagonist->x + protagonist->width == DISPLAY_WIDTH)
                 {
                     ++level_pos;
-                    redraw();
                     protagonist->x = 0;
-                    //y = 22;
-                    draw(protagonist);
+                    redraw();
                 }
                 else
                 {
@@ -515,10 +544,8 @@ int main(void)
                 if (protagonist->x == 0)
                 {
                     --level_pos;
-                    redraw();
                     protagonist->x = DISPLAY_WIDTH - protagonist->width;
-                    //y = 22;
-                    draw(protagonist);
+                    redraw();
                 }
                 else
                 {
@@ -541,17 +568,19 @@ int main(void)
         }
         
         // change level when protagonist touches the door
-        if (doors & 0b00000001 
+        if (doors & 0b00000001
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
             && protagonist->y >= 20 - protagonist->height)
         {
             newlevel();
+            redraw();
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
             && protagonist->y >= 20 - protagonist->height)
         {
             newlevel();
+            redraw();
         }
         
         //falls sich Monster und Character begegnen

@@ -6,7 +6,7 @@
 #define ON_THE_GROUND 0
 #define FALLING_DOWN 7
 
-#define NUM_MONSTER_LOOKS 3
+#define NUM_MONSTER_LOOKS 7
 
 #include <inttypes.h>
 
