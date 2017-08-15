@@ -186,15 +186,7 @@ uint8_t moveleft(struct Character* character)
         page(character->x + character->width - 1, y, 0x00);
     character->x--;
     draw(character);
-
-    if (character->jumpstate == ON_THE_GROUND)
-    {
-        long feet_on_ground = 0l;
-        for (uint8_t x = character->x; x < character->x + character->width; ++x)
-            feet_on_ground |= obstacle(x, character->y + character->height);
-        if (!feet_on_ground)
-            character->jumpstate = FALLING_DOWN;
-    }
+    checkfalling(character);
     character->direction = DIRECTION_LEFT;
 
     return 1;
@@ -216,15 +208,7 @@ uint8_t moveright(struct Character* character)
         page(character->x, y, 0x00);
     character->x++;
     draw(character);
-
-    if (character->jumpstate == ON_THE_GROUND)
-    {
-        long feet_on_ground = 0l;
-        for (uint8_t x = character->x; x < character->x + character->width; ++x)
-            feet_on_ground |= obstacle(x, character->y + character->height);
-        if (!feet_on_ground)
-            character->jumpstate = FALLING_DOWN;
-    }
+    checkfalling(character);
     character->direction = DIRECTION_RIGHT;
     
     return 1;
@@ -262,6 +246,18 @@ uint8_t movedown(struct Character* character)
     draw(character);
 
     return 1;
+}
+
+void checkfalling(struct Character* character)
+{
+    if (character->jumpstate == ON_THE_GROUND)
+    {
+        long feet_on_ground = 0l;
+        for (uint8_t x = character->x; x < character->x + character->width; ++x)
+            feet_on_ground |= obstacle(x, character->y + character->height);
+        if (!feet_on_ground)
+            character->jumpstate = FALLING_DOWN;
+    }
 }
 
 void jump(struct Character* character)

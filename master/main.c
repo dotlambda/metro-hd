@@ -128,9 +128,6 @@ void drawdoorleft_closed()
     }
 }
 
-long level_seed = 3451627918l;
-long level_pos = 0;
-
 void selectfloor()
 {
     switch (random() % 2)
@@ -163,8 +160,6 @@ void selectfloor()
 
 void drawfloor()
 {
-    nofloor = random();
-    nofloor = INT32_MAX; // turn off water
     for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
     {
         for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
@@ -179,11 +174,6 @@ void drawfloor()
 
 void drawplatform()
 {
-    platforms_19 = random();
-    platforms_13 = random();
-    platforms_24 = random();
-   // platforms_24 = INT32_MAX; // turn off
-    
     for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
         if (!(platforms_19 & (3l << 2 * pos)))
@@ -326,8 +316,14 @@ void redraw()
     }
     
     srandom(level_seed + level_pos);
-    drawfloor();
+    platforms_19 = random();
+    platforms_13 = random();
+    platforms_24 = random();
+    nofloor = random();
+    nofloor = INT32_MAX; // turn off water
+    
     drawplatform();
+    drawfloor();
     
     doors = 0;
     
@@ -454,6 +450,7 @@ int main(void)
     initcharacter(projectile);
     projectile->movement = HIDDEN;
     
+    level_seed = 3451627918l;
     newlevel();
     redraw();
     
@@ -473,14 +470,25 @@ int main(void)
         //Protagonist kann sich bewegen
         if (nextmoveevent < getMsTimer())
         {
-            // wenn er nicht rechts gegen eine Plattform stoeßt
             if (B_RIGHT)
             {
                 if (protagonist->x + protagonist->width == DISPLAY_WIDTH)
                 {
-                    ++level_pos;
-                    protagonist->x = 0;
-                    redraw();
+                    long obstacle = 0l;
+                    for (uint8_t x = 0; x < protagonist->width; ++x)
+                    {
+                        for (uint8_t y = protagonist->y; y < protagonist->y + protagonist->height; ++y)
+                        {
+                            obstacle |= obstacle_levelpos(x, y, level_pos + 1);
+                        }
+                    }
+                    if (!obstacle)
+                    {
+                        ++level_pos;
+                        protagonist->x = 0;
+                        redraw();
+                        checkfalling(protagonist);
+                    }
                 }
                 else
                 {
@@ -492,9 +500,21 @@ int main(void)
             {
                 if (protagonist->x == 0)
                 {
-                    --level_pos;
-                    protagonist->x = DISPLAY_WIDTH - protagonist->width;
-                    redraw();
+                    long obstacle = 0l;
+                    for (uint8_t x = DISPLAY_WIDTH - protagonist->width; x < DISPLAY_WIDTH; ++x)
+                    {
+                        for (uint8_t y = protagonist->y; y < protagonist->y + protagonist->height; ++y)
+                        {
+                            obstacle |= obstacle_levelpos(x, y, level_pos - 1);
+                        }
+                    }
+                    if (!obstacle)
+                    {
+                        --level_pos;
+                        protagonist->x = DISPLAY_WIDTH - protagonist->width;
+                        redraw();
+                        checkfalling(protagonist);
+                    }
                 }
                 else
                 {

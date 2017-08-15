@@ -32,6 +32,7 @@ uint8_t moveright(struct Character* character);
 uint8_t moveup(struct Character* character);
 uint8_t movedown(struct Character* character);
 
+void checkfalling(struct Character* character);
 void jump(struct Character* character);
 void move(struct Character* monster);
 
