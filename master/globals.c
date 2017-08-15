@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "globals.h"
 #include "display.h"
 
@@ -11,10 +12,40 @@ long obstacle(uint8_t x, uint8_t y)
         return 1l;
     else if (y == 25)
         return nofloor & (7l << x / 16 * 3);
-    else if (y == 20)
-        return !(platforms_20 & (3l << (x / PLATFORM_WIDTH * 2)));
-    else if (y == 15)
-        return !(platforms_15 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 19)
+        return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 13)
+        return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 24)
+         return !(platforms_24 & (3l << (x / 16 * 2)));
+    else
+        return 0l;
+}
+
+long obstacle_hill(uint8_t x)
+{
+    return !(platforms_24 & (3l << (x / 16 * 2)));
+}    
+
+long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
+{
+    srandom(level_seed + level_pos);
+    long platforms_19 = random();
+    long platforms_13 = random();
+    long platforms_24 = random();
+    platforms_24 |= 3l << 0; // no hill at the display boundary
+    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
+    long nofloor = random();
+    nofloor = INT32_MAX; // turn off water
+    
+    if (y == 5) // ceiling
+        return 1l;
+    else if (y == 25)
+        return nofloor & (7l << x / 16 * 3);
+    else if (y == 19)
+        return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 13)
+        return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y == 24)
          return !(platforms_24 & (3l << (x / 16 * 2)));
     else

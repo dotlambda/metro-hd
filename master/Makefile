@@ -99,7 +99,7 @@ all: $(OBJDIR) $(TARGET).elf $(TARGET).hex $(TARGET).eep
 #size
 
 ## Generate sprites
-sprites.c sprites.h: generatesprites.py ../sprites/*.png ../sprites/*/*.png
+sprites.c sprites.h: generatesprites.py ../sprites/*/*.png
 	./generatesprites.py
 
 ## Compile

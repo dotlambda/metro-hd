@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <avr/pgmspace.h>
+#include "timer.h"
 #include "character.h"
 #include "globals.h"
 #include "display.h"
@@ -39,7 +40,7 @@ void initcharacter(struct Character* character)
             character->health = 99;
             character->damage = 15;
             break;
-        case LOOK_MONSTER_ZAZABI:
+        case LOOK_BOSS_ZAZABI:
             character->width = 17;
             character->height = 8;
             character->health = 99;
@@ -59,7 +60,7 @@ void initcharacter(struct Character* character)
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
-            character->height = 4;
+            character->height = 3;
             character->health = 99;
             character->damage = 15;
             break;
@@ -77,6 +78,7 @@ void initcharacter(struct Character* character)
             break;
     }
     character->lookstate = 0;
+    character->lastlookstatechg = getMsTimer();
     character->jumpstate = ON_THE_GROUND;
 }
 
@@ -86,13 +88,32 @@ void draw(struct Character* character)
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
+            if (character->lastlookstatechg + 300 < getMsTimer())
+            {
+                character->lookstate = 1 - character->lookstate;
+                character->lastlookstatechg = getMsTimer();
+            }
             if (character->direction == DIRECTION_LEFT)
             {
-                sprite = protagonistleft;
+                if (character->lookstate)
+                {
+                    sprite = protagonistleft;
+                }
+                else 
+                {
+                    sprite = protagleftwalk;
+                }
             }
             else
             {
-                sprite = protagonistright;
+                if (character->lookstate)
+                {
+                    sprite = protagonistright;
+                }   
+                else 
+                {
+                    sprite = protagrightwalk;
+                }
             }
             break;
 
@@ -101,9 +122,16 @@ void draw(struct Character* character)
             break;
             
         case LOOK_EYEMONSTER:
-            sprite = eyemonster;
+            if(character->direction == DIRECTION_LEFT)
+            {
+                sprite = eyemonster_left;
+            }
+            else
+            {
+                sprite = eyemonster_right;
+            }
             break;
-            
+        
         case LOOK_MONSTER_ZOOMER:
             sprite = zoomer;
             break;
@@ -112,7 +140,7 @@ void draw(struct Character* character)
             sprite = rocket;
             break;
             
-        case LOOK_MONSTER_ZAZABI:
+        case LOOK_BOSS_ZAZABI:
             sprite = zazabi;
             break;
 
@@ -128,7 +156,7 @@ void draw(struct Character* character)
             }
             else
             {
-                sprite = hornoadleft;
+                sprite = hornoadright;
             }
             break;
 
@@ -150,7 +178,14 @@ void draw(struct Character* character)
             break;
 
         case LOOK_BOSS_DRAGON:
-            sprite = dragon;
+            if (character->direction == DIRECTION_LEFT)
+            {
+                sprite = dragon_left;
+            }
+            else
+            {
+                sprite = dragon_right;
+            }
             break;
     }
     
@@ -185,8 +220,15 @@ uint8_t moveleft(struct Character* character)
     {
         if (obstacle(character->x - 1, y))
         {
-            draw(character);
-            return 0;
+            if (character->y + character->height == 25 && obstacle_hill(character->x - 1))
+            {
+                moveup(character);
+            }
+            else
+            {
+                draw(character);
+                return 0;
+            }
         }
     }
 
@@ -194,15 +236,7 @@ uint8_t moveleft(struct Character* character)
         page(character->x + character->width - 1, y, 0x00);
     character->x--;
     draw(character);
-
-    if (character->jumpstate == ON_THE_GROUND)
-    {
-        long feet_on_ground = 0l;
-        for (uint8_t x = character->x; x < character->x + character->width; ++x)
-            feet_on_ground |= obstacle(x, character->y + character->height);
-        if (!feet_on_ground)
-            character->jumpstate = FALLING_DOWN;
-    }
+    checkfalling(character);
     character->direction = DIRECTION_LEFT;
 
     return 1;
@@ -215,8 +249,15 @@ uint8_t moveright(struct Character* character)
     {
         if (obstacle(character->x + character->width, y))
         {
-            draw(character);
-            return 0;
+            if (character->y + character->height == 25 && obstacle_hill(character->x + character->width))
+            {
+                moveup(character);
+            }
+            else
+            {
+                draw(character);
+                return 0;
+            }
         }
     }
 
@@ -224,15 +265,7 @@ uint8_t moveright(struct Character* character)
         page(character->x, y, 0x00);
     character->x++;
     draw(character);
-
-    if (character->jumpstate == ON_THE_GROUND)
-    {
-        long feet_on_ground = 0l;
-        for (uint8_t x = character->x; x < character->x + character->width; ++x)
-            feet_on_ground |= obstacle(x, character->y + character->height);
-        if (!feet_on_ground)
-            character->jumpstate = FALLING_DOWN;
-    }
+    checkfalling(character);
     character->direction = DIRECTION_RIGHT;
     
     return 1;
@@ -270,6 +303,18 @@ uint8_t movedown(struct Character* character)
     draw(character);
 
     return 1;
+}
+
+void checkfalling(struct Character* character)
+{
+    if (character->jumpstate == ON_THE_GROUND)
+    {
+        long feet_on_ground = 0l;
+        for (uint8_t x = character->x; x < character->x + character->width; ++x)
+            feet_on_ground |= obstacle(x, character->y + character->height);
+        if (!feet_on_ground)
+            character->jumpstate = FALLING_DOWN;
+    }
 }
 
 void jump(struct Character* character)

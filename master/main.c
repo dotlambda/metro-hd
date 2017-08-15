@@ -124,9 +124,6 @@ void drawdoorleft_closed()
     }
 }
 
-long level_seed = 3451627918l;
-long level_pos = 0;
-
 void selectfloor()
 {
     switch (random() % 2)
@@ -142,7 +139,7 @@ void selectfloor()
         case 2l:
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
-            break;
+            break;                           
         default:
             floorsprite = 0;
     }
@@ -159,8 +156,6 @@ void selectfloor()
 
 void drawfloor()
 {
-    nofloor = random();
-    nofloor = INT32_MAX; // turn off water
     for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
     {
         for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
@@ -175,45 +170,43 @@ void drawfloor()
 
 void drawplatform()
 {
-    platforms_20 = random();
-    platforms_15 = random();
-    platforms_24 = random();
-    platforms_24 = INT32_MAX; // turn off
-    
-    for(uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
+    for (uint8_t pos = 0; pos < DISPLAY_WIDTH/PLATFORM_WIDTH; ++pos) // draw random platforms at 20 possible positions
     {
-        if (!(platforms_20 & (3l << 2 * pos)))
+        if (!(platforms_19 & (3l << 2 * pos)))
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 20, floorsprite[i]);
+                page(PLATFORM_WIDTH * pos + i, 19, floorsprite[i]);
             }
         }
-        if (!(platforms_15 & (3l << 2 * pos)))
+        if (!(platforms_13 & (3l << 2 * pos)))
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 15, floorsprite[i]);
+                page(PLATFORM_WIDTH * pos + i, 13, floorsprite[i]);
             }
         }
+    }
+    for (uint8_t pos = 0; pos < DISPLAY_WIDTH/16; ++pos)
+    {
         if (!(platforms_24 & (3l << 2 * pos)))
         {
-            page(16 * pos,    24, 0b11000000 & floorsprite[0]);
-            page(16 * pos+1,  24, 0b11110000 & floorsprite[1]);
-            page(16 * pos+2,  24, 0b11111100 & floorsprite[2]);
-            page(16 * pos+3,  24,              floorsprite[3]);
-            page(16 * pos+4,  24,              floorsprite[4]);
-            page(16 * pos+5,  24,              floorsprite[5]);
-            page(16 * pos+6,  24,              floorsprite[6]);
-            page(16 * pos+7,  24,              floorsprite[7]);
-            page(16 * pos+8,  24,              floorsprite[8]);
-            page(16 * pos+9,  24,              floorsprite[9]);
-            page(16 * pos+10, 24,              floorsprite[10]);
-            page(16 * pos+11, 24,              floorsprite[11]);
-            page(16 * pos+12, 24,              floorsprite[12]);
-            page(16 * pos+13, 24, 0b11111100 & floorsprite[13]);
-            page(16 * pos+14, 24, 0b11110000 & floorsprite[14]);
-            page(16 * pos+15, 24, 0b11000000 & floorsprite[15]);
+            page(16 * pos,      24, 0b11000000 & floorsprite[0]);
+            page(16 * pos + 1,  24, 0b11110000 & floorsprite[1]);
+            page(16 * pos + 2,  24, 0b11111100 & floorsprite[2]);
+            page(16 * pos + 3,  24,              floorsprite[3]);
+            page(16 * pos + 4,  24,              floorsprite[4]);
+            page(16 * pos + 5,  24,              floorsprite[5]);
+            page(16 * pos + 6,  24,              floorsprite[6]);
+            page(16 * pos + 7,  24,              floorsprite[7]);
+            page(16 * pos + 8,  24,              floorsprite[8]);
+            page(16 * pos + 9,  24,              floorsprite[9]);
+            page(16 * pos + 10, 24,              floorsprite[10]);
+            page(16 * pos + 11, 24,              floorsprite[11]);
+            page(16 * pos + 12, 24,              floorsprite[12]);
+            page(16 * pos + 13, 24, 0b11111100 & floorsprite[13]);
+            page(16 * pos + 14, 24, 0b11110000 & floorsprite[14]);
+            page(16 * pos + 15, 24, 0b11000000 & floorsprite[15]);
         }
     }
 }
@@ -322,8 +315,16 @@ void redraw()
     }
     
     srandom(level_seed + level_pos);
-    drawfloor();
+    platforms_19 = random();
+    platforms_13 = random();
+    platforms_24 = random();
+    platforms_24 |= 3l << 0; // no hill at the display boundary
+    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
+    nofloor = random();
+    nofloor = INT32_MAX; // turn off water
+    
     drawplatform();
+    drawfloor();
     
     doors = 0;
     
@@ -343,12 +344,12 @@ void redraw()
     }
     
     // draw exit door
-    if (level_pos == MAX_LEVEL_WIDTH - 1)
+    if (level_pos == MAX_LEVEL_WIDTH - 1 && exitposition == DOOR_RIGHT)
     {
         drawdoorright_closed();
         doors |= 0b00000001;
     }
-    else if (level_pos == -MAX_LEVEL_WIDTH + 1)
+    else if (level_pos == -MAX_LEVEL_WIDTH + 1 && exitposition == DOOR_LEFT)
     {
         drawdoorleft_closed();
         doors |= 0b00000010;
@@ -369,7 +370,17 @@ void redraw()
     
     monster->look = random() % NUM_MONSTER_LOOKS;
     initcharacter(monster);
+    monster->x = (DISPLAY_WIDTH - monster->width) / 2;
     monster->y = 25 - monster->height;
+    // draw monster higher if it's on a hill
+    for (uint8_t x = monster->x; x < monster->x + monster->width; x++)
+    {
+        if (obstacle_hill(x))
+        {
+            monster->y--;
+            break;
+        }
+    }
     draw(monster);
 
     draw(protagonist);
@@ -528,13 +539,15 @@ int main(void)
     initcharacter(projectile);
     projectile->movement = HIDDEN;
     
+    level_seed = 3451627918l;
     newlevel();
     redraw();
     
     uint32_t nextmoveevent = 0;
     uint32_t nextjumpevent = 0;
     uint32_t nextprojectilevent = 0;
-    uint32_t nextmonsterevent = 0;
+    uint32_t nextmonstermoveevent = 0;
+    uint32_t nextmonsterjumpevent = 0;
     while (1)
     {
         while(Game_Over_)
@@ -542,23 +555,39 @@ int main(void)
             Game_Over();
         }
         //monster in Bewegung
-        if(nextmonsterevent < getMsTimer())
+        if(nextmonstermoveevent < getMsTimer())
         {
             move(monster);
-            nextmonsterevent = getMsTimer() + 100;
+            nextmonstermoveevent = getMsTimer() + 100;
+        }
+        if(nextmonsterjumpevent < getMsTimer())
+        {
+            jump(monster);
+            nextmonsterjumpevent = getMsTimer() + 150;
         }
         
         //Protagonist kann sich bewegen
         if (nextmoveevent < getMsTimer())
         {
-            // wenn er nicht rechts gegen eine Plattform stoeßt
             if (B_RIGHT)
             {
                 if (protagonist->x + protagonist->width == DISPLAY_WIDTH)
                 {
-                    ++level_pos;
-                    protagonist->x = 0;
-                    redraw();
+                    long obstacle = 0l;
+                    for (uint8_t x = 0; x < protagonist->width; ++x)
+                    {
+                        for (uint8_t y = protagonist->y; y < protagonist->y + protagonist->height; ++y)
+                        {
+                            obstacle |= obstacle_levelpos(x, y, level_pos + 1);
+                        }
+                    }
+                    if (!obstacle)
+                    {
+                        ++level_pos;
+                        protagonist->x = 0;
+                        redraw();
+                        checkfalling(protagonist);
+                    }
                 }
                 else
                 {
@@ -570,9 +599,21 @@ int main(void)
             {
                 if (protagonist->x == 0)
                 {
-                    --level_pos;
-                    protagonist->x = DISPLAY_WIDTH - protagonist->width;
-                    redraw();
+                    long obstacle = 0l;
+                    for (uint8_t x = DISPLAY_WIDTH - protagonist->width; x < DISPLAY_WIDTH; ++x)
+                    {
+                        for (uint8_t y = protagonist->y; y < protagonist->y + protagonist->height; ++y)
+                        {
+                            obstacle |= obstacle_levelpos(x, y, level_pos - 1);
+                        }
+                    }
+                    if (!obstacle)
+                    {
+                        --level_pos;
+                        protagonist->x = DISPLAY_WIDTH - protagonist->width;
+                        redraw();
+                        checkfalling(protagonist);
+                    }
                 }
                 else
                 {
