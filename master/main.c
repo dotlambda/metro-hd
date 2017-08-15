@@ -420,7 +420,7 @@ void collision(struct Character* protagonist, struct Character* monster)
     {
         for(uint8_t my = monster->y; my < monster->y + monster->height; ++my)
         {
-            if(monster->y == py && monster->x == protagonist->x-1)
+            if(monster->y == py && monster->x == protagonist->x - 1)
             {
                 takingdamage(protagonist, monster->damage);
 
@@ -458,14 +458,16 @@ void collision(struct Character* protagonist, struct Character* monster)
 
 void takingdamage(struct Character* character, uint8_t damage)
 {
+    uint32_t blinking_time = 0;
+
     character->health = character->health - damage;
     if(character->health > 0)
     {
-        drawnumber(x, y, character->health);
+        drawnumber(57, 1, character->health);
     }
     else
     {
-        drawnumber(x, y, 0);
+        drawnumber(57, 1, 0);
         Game_Over_ = true;
         while(Game_Over_);
         {
@@ -473,11 +475,12 @@ void takingdamage(struct Character* character, uint8_t damage)
         }
     }
     blinking_time = getMsTimer();
-    while(blinking_time >= getMsTimer() + 500)
+    while(blinking_time + 650 >= getMsTimer())
     {
         hide(character);
+        _delay_ms(50);
+        draw(character);
         _delay_ms(100);
-        initcharacter(character);
     }
 }
 
