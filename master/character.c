@@ -161,7 +161,10 @@ uint8_t moveleft(struct Character* character)
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
     {
         if (obstacle(character->x - 1, y))
+        {
+            draw(character);
             return 0;
+        }
     }
 
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
@@ -188,7 +191,10 @@ uint8_t moveright(struct Character* character)
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
     {
         if (obstacle(character->x + character->width, y))
+        {
+            draw(character);
             return 0;
+        }
     }
 
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
