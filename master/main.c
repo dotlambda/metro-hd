@@ -414,15 +414,15 @@ void newlevel()
     selectfloor();
 }
 
-void collision(struct Character* protagonist_, struct Character* monster_)
+void collision(struct Character* protagonist, struct Character* monster)
 {
-    for(uint8_t y = protagonist_->y; y < protagonist_->y + protagonist_->height; ++y)
+    for(uint8_t py = protagonist->y; py < protagonist->y + protagonist->height; ++py)
     {
-        for(uint8_t k = monster_->y; y < monster_->y + monster_->height; ++y)
+        for(uint8_t my = monster->y; my < monster->y + monster->height; ++my)
         {
-            if(monster_->y == y && monster_->x == protagonist_->x-1)
+            if(monster->y == py && monster->x == protagonist->x-1)
             {
-                takingdamage(protagonist_, monster_->damage);
+                takingdamage(protagonist, monster->damage);
 
                 for(int i = 0; i < 4; ++i)
                 {
@@ -430,13 +430,13 @@ void collision(struct Character* protagonist_, struct Character* monster_)
                     _delay_ms(50);
                 }
             }
-            if(monster_->y == y && monster_->x == protagonist_->x + 1 + protagonist_->width)
+            if(monster->y == py && monster->x == protagonist->x + 1 + protagonist->width)
             {
-                takingdamage(protagonist_, monster_->damage);
+                takingdamage(protagonist, monster->damage);
 
                 for(int i = 0; i < 4; ++i)
                 {
-                    moveleft(protagonist_);
+                    moveleft(protagonist);
                     _delay_ms(50);
                 }
             }
@@ -648,6 +648,7 @@ int main(void)
         {
             game_over();
         }
+        collision(protagonist, monster);
     }
 }
 
