@@ -676,7 +676,10 @@ int main(void)
             clear();
         }*/
         
-        if (projectile->movement == HIDDEN && num_rockets > 0 && B_A)
+        if (projectile->movement == HIDDEN
+            && num_rockets > 0
+            && nextprojectilevent < getMsTimer()
+            && B_A)
         {
             uint8_t enough_space = 1;
             projectile->direction = protagonist->direction;
@@ -703,10 +706,14 @@ int main(void)
                 nextprojectilevent = getMsTimer() + 35;
             }
         }
-        else if (projectile->movement != HIDDEN && nextprojectilevent < getMsTimer())
+        else if (projectile->movement != HIDDEN
+            && nextprojectilevent < getMsTimer())
         {
             move(projectile);
-            nextprojectilevent = getMsTimer() + 35;
+            if (projectile->movement == HIDDEN)
+                nextprojectilevent = getMsTimer() + 500;
+            else
+                nextprojectilevent = getMsTimer() + 35;
         }
 
         /*if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
@@ -770,6 +777,7 @@ int main(void)
                 hide(monster);
             else
                 draw(monster);
+            nextprojectilevent = getMsTimer() + 500;
         }
 
         if(B_PAUSE)
