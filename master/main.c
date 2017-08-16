@@ -16,11 +16,12 @@
 #define MIN_LEVEL_WIDTH 1
 
 #define INITIAL_LEVEL 3451627918l
+#define INITIAL_NUM_ROCKETS 20
 
 #define DIST_AFTER_DAMAGE 10
 
 struct Character* monster;
-uint8_t num_rockets = 20;
+uint8_t num_rockets = INITIAL_NUM_ROCKETS;
 
 const uint8_t* floorsprite = NULL;
 const uint8_t* rotatedfloorsprite = NULL;
@@ -516,6 +517,7 @@ void takingdamage(uint8_t damage)
         }
         while (!B_A);
         level_seed = INITIAL_LEVEL;
+        num_rockets = INITIAL_NUM_ROCKETS;
         protagonist->health = 99;
         newlevel();
         redraw();
