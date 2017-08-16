@@ -476,6 +476,15 @@ void takingdamage(uint8_t damage)
                 i++;
             }
         }
+        i = 0;
+        for (uint8_t y = 20; y < 23; y++)
+        {
+            for (uint8_t x = 32; x < 128; x++)
+            {
+                page(x, y, pgm_read_byte_near(restart + i));
+                i++;
+            }
+        }
         while (!B_A);
         level_seed = INITIAL_LEVEL;
         protagonist->health = 99;
@@ -492,32 +501,10 @@ void takingdamage(uint8_t damage)
     }
 }
 
-void collision(struct Character* protagonist, struct Character* monster)
+bool collision(struct Character* protagonist, struct Character* monster)
 {
-    if (protagonist->x < monster->x + monster->width && protagonist->x + protagonist->width > monster->x &&
-        protagonist->y < monster->y + monster->height && protagonist->y + protagonist->height > monster->y)
-    {
-
-            takingdamage(monster->damage);
-            
-            // if the monster is right of the protagonist
-            if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
-            {
-                while (protagonist->x + protagonist->width + 7 > monster->x)
-                {
-                    if (!moveleft(protagonist))
-                        break;
-                }
-            }
-            else
-            {
-                while (monster->x + monster->width + 7 > protagonist->x)
-                {
-                    if (!moveright(protagonist))
-                        break;
-                }
-            }
-    }
+    return (protagonist->x < monster->x + monster->width && protagonist->x + protagonist->width > monster->x &&
+        protagonist->y < monster->y + monster->height && protagonist->y + protagonist->height > monster->y);
 }
 
 int main(void)
@@ -564,6 +551,7 @@ int main(void)
     uint32_t nextprojectilevent = 0;
     uint32_t nextmonstermoveevent = 0;
     uint32_t nextmonsterjumpevent = 0;
+    uint32_t nextdamageevent = 0;
     while (1)
     {
         //monster in Bewegung
@@ -705,7 +693,35 @@ int main(void)
             Game_Over();
         }*/
         
-        collision(protagonist, monster);
+        if (nextdamageevent < getMsTimer())
+        {
+            if(collision(protagonist, monster))
+            {
+                takingdamage(monster->damage);
+                // if the monster is right of the protagonist
+                if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
+                {
+                    while (protagonist->x + protagonist->width + 7 > monster->x)
+                    {
+                        if (!moveleft(protagonist))
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    while (monster->x + monster->width + 7 > protagonist->x)
+                    {
+                        if (!moveright(protagonist))
+                        {
+                            break;
+                        }
+                    }
+                }
+                nextdamageevent = getMsTimer() + 1500;
+            }
+        }
     }
 }
 
