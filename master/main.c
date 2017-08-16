@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <avr/io.h>
 #include <avr/pgmspace.h>
-
+#include <stdbool.h>
+#include <util/delay.h>
 #include "uart.h"
 #include "adc.h"
 #include "timer.h"
@@ -11,7 +13,9 @@
 #include "sprites.h"
 
 #define MAX_LEVEL_WIDTH 6 // max 6 displays for one level
-#define MIN_LEVEL_WIDTH 1 
+#define MIN_LEVEL_WIDTH 1
+
+#define INITIAL_LEVEL 3451627918l
 
 struct Character* monster;
 
@@ -23,11 +27,99 @@ bool Game_Over_ = false;
 
 void init();
 
-// x1,y1 - x1+6,y1+2
-int collision(int x1, int y1, int x2, int y2)
+void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
 {
-    return x1 < x2+6 && x1+6 > x2
-           && y1 < y2+2 && y1+2 > y2;
+    const uint8_t* sprite = NULL;
+    switch (digit)
+    {
+        case 0:
+            sprite = zero;
+            break;
+        case 1:
+            sprite = one;
+            break;
+        case 2:
+            sprite = two;
+            break;
+        case 3:
+            sprite = three;
+            break;
+        case 4: 
+            sprite = four;
+            break;
+        case 5: 
+            sprite = five;
+            break;
+        case 6:
+            sprite = six;
+            break;
+        case 7:
+            sprite = seven;
+            break;
+        case 8:
+            sprite = eight;
+            break;
+        case 9:
+            sprite = nine;
+            break;
+    }
+    uint8_t i = 0;
+    for (uint8_t y_ = y; y_ < y + 3; y_++)
+    {
+        for (uint8_t x_ = x; x_ < x + 3; x_++)
+        {
+            page(x_, y_, pgm_read_byte_near(sprite + i));
+            i++;
+        }
+    }
+}
+
+void drawnumber(uint8_t x, uint8_t y, uint8_t number)
+{
+    uint8_t leftdigit = number / 10;
+    uint8_t rightdigit = number % 10;
+    drawdigit(x, y, leftdigit);
+    drawdigit(x + 4, y, rightdigit);
+}
+
+void drawlabels()
+{
+    // print energy at the top
+    uint8_t i = 0;
+    for (uint8_t y = 1; y < 4; y++)
+    {
+        for (uint8_t x = 2; x < 25; x++)
+        {
+            page(x, y, labelenergy[i]);
+            i++;
+        }
+    }
+    
+    // print rocket label
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
+    {
+        for (uint8_t x = 40; x < 55; x++)
+        {
+            page(x, y, labelrocket[i]);
+            i++;
+        }
+    }
+    
+    // print bomb label
+    i = 0;
+    for (uint8_t y = 1; y < 4; y++)
+    {
+        for (uint8_t x = 69; x < 83; x++)
+        {
+            page(x, y, labelbomb[i]);
+            i++;
+        }
+    }
+    
+    // print number
+    drawnumber(57, 1, 13);
+    drawnumber(27, 1, protagonist->health);
 }
 
 void drawdoor(int x)
@@ -39,43 +131,63 @@ void drawdoor(int x)
         {
             if (x_ < DISPLAY_WIDTH && x_ >= 0)
             {
-                page(x_, y, door[i]);
+                page(x_, y, doorinverted[i]);
             }
             i++;
         }
     }
 }
 
+void black()
+{
+    sendbyte(0, 0);
+    sendbyte(16, 0);
+    sendbyte(96, 0);
+    for (uint16_t i = 0; i < 5 * DISPLAY_WIDTH; i++)
+    {
+        sendbyte(0, 1);
+    }
+    for (uint16_t i = 5 * DISPLAY_WIDTH; i < DISPLAY_WIDTH * DISPLAY_HEIGHT; i++)
+    {
+        sendbyte(0xFF, 1);
+    }
+    sendbyte(0, 0);
+    sendbyte(16, 0);
+    sendbyte(96, 0);
+}
+
 void movedoorleft()
 {
-    clear();
+    black();
+    drawlabels();
     for (int x = DISPLAY_WIDTH - 6; x >= -33 + 6; x--)
     {
         drawdoor(x);
         if (x + 1 < DISPLAY_WIDTH)
         {
-            page(x + 33, 20, 0);
-            page(x + 33, 21, 0);
-            page(x + 33, 22, 0);
-            page(x + 33, 23, 0);
-            page(x + 33, 24, 0);
+            page(x + 33, 20, 0xFF);
+            page(x + 33, 21, 0xFF);
+            page(x + 33, 22, 0xFF);
+            page(x + 33, 23, 0xFF);
+            page(x + 33, 24, 0xFF);
         }
     }
 }
 
 void movedoorright()
 {
-    clear();
+    black();
+    drawlabels();
     for (int x = -33 + 6; x <= DISPLAY_WIDTH - 6; x++)
     {
         drawdoor(x);
         if (x > 0)
         {
-            page(x - 1, 20, 0);
-            page(x - 1, 21, 0);
-            page(x - 1, 22, 0);
-            page(x - 1, 23, 0);
-            page(x - 1, 24, 0);
+            page(x - 1, 20, 0xFF);
+            page(x - 1, 21, 0xFF);
+            page(x - 1, 22, 0xFF);
+            page(x - 1, 23, 0xFF);
+            page(x - 1, 24, 0xFF);
         }
     }
 }
@@ -217,102 +329,13 @@ void drawplatform()
     }
 }
 
-void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
-{
-    const uint8_t* sprite = NULL;
-    switch (digit)
-    {
-        case 0:
-            sprite = zero;
-            break;
-        case 1:
-            sprite = one;
-            break;
-        case 2:
-            sprite = two;
-            break;
-        case 3:
-            sprite = three;
-            break;
-        case 4: 
-            sprite = four;
-            break;
-        case 5: 
-            sprite = five;
-            break;
-        case 6:
-            sprite = six;
-            break;
-        case 7:
-            sprite = seven;
-            break;
-        case 8:
-            sprite = eight;
-            break;
-        case 9:
-            sprite = nine;
-            break;
-    }
-    uint8_t i = 0;
-    for (uint8_t y_ = y; y_ < y + 3; y_++)
-    {
-        for (uint8_t x_ = x; x_ < x + 3; x_++)
-        {
-            page(x_, y_, pgm_read_byte_near(sprite + i));
-            i++;
-        }
-    }
-}
-
-void drawnumber(uint8_t x, uint8_t y, uint8_t number)
-{
-    uint8_t leftdigit = number / 10;
-    uint8_t rightdigit = number % 10;
-    drawdigit(x, y, leftdigit);
-    drawdigit(x + 4, y, rightdigit);
-}
-
 enum {DOOR_LEFT, DOOR_RIGHT} exitposition = DOOR_RIGHT;
 
 void redraw()
 {
     clear();
     
-    // print energy at the top
-    uint8_t i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 2; x < 25; x++)
-        {
-            page(x, y, labelenergy[i]);
-            i++;
-        }
-    }
-    
-    // print rocket label
-    i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 40; x < 55; x++)
-        {
-            page(x, y, labelrocket[i]);
-            i++;
-        }
-    }
-    
-    // print bomb label
-    i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 69; x < 83; x++)
-        {
-            page(x, y, labelbomb[i]);
-            i++;
-        }
-    }
-    
-    // print number
-    drawnumber(57, 1, 13);
+    drawlabels();
     
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
@@ -432,43 +455,67 @@ void newlevel()
     selectfloor();
 }
 
-void takingdamage(struct Character* character, uint8_t damage)
+void takingdamage(uint8_t damage)
 {
-    character->health = character->health - damage;
-    if(character->health > 0)
+    uint32_t blinking_time = 0;
+
+    protagonist->health = protagonist->health - damage;
+    if(protagonist->health > 0)
     {
-        drawnumber(x, y, character->health);
+        drawnumber(27, 1, protagonist->health);
     }
     else
     {
-        drawnumber(x, y, 0);
-        Game_Over = true;
-        while(Game_Over);
+        clear();
+        uint8_t i = 0;
+        for (uint8_t y = 5; y < 13 ; y++)
         {
-            game_over();
+            for (uint8_t x = 51; x < 108; x++)
+            {
+                page(x, y, game_over[i]);
+                i++;
+            }
         }
+        while (!B_A);
+        level_seed = INITIAL_LEVEL;
+        newlevel();
+        redraw();
+    }
+    blinking_time = getMsTimer();
+    while(blinking_time + 650 >= getMsTimer())
+    {
+        hide(protagonist);
+        _delay_ms(50);
+        draw(protagonist);
+        _delay_ms(100);
     }
 }
 
-void Game_Over()//Brauch noch eventuell die richtigen Größen
+void collision(struct Character* protagonist, struct Character* monster)
 {
-    clear();
-    uint8_t i = 0;
-    for (uint8_t y = 5; y <= 16 ; y++)
+    if (protagonist->x < monster->x + monster->width && protagonist->x + protagonist->width > monster->x &&
+        protagonist->y < monster->y + monster->height && protagonist->y + protagonist->height > monster->y)
     {
-        for (uint8_t x = 40; x <= 117; x++)
-        {
-            page(x, y, Game_Over_[i]);
-            i++;
-        }
-    }
-    if(B_A)
-    {
-        Game_Over_ = false;
-    }
-    if(B_B)
-    {
-        Title_ = true;
+
+            takingdamage(monster->damage);
+            
+            // if the monster is right of the protagonist
+            if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
+            {
+                while (protagonist->x + protagonist->width + 7 > monster->x)
+                {
+                    if (!moveleft(protagonist))
+                        break;
+                }
+            }
+            else
+            {
+                while (monster->x + monster->width + 7 > protagonist->x)
+                {
+                    if (!moveright(protagonist))
+                        break;
+                }
+            }
     }
 }
 
@@ -507,7 +554,7 @@ int main(void)
     initcharacter(projectile);
     projectile->movement = HIDDEN;
     
-    level_seed = 3451627918l;
+    level_seed = INITIAL_LEVEL;
     newlevel();
     redraw();
     
@@ -518,15 +565,6 @@ int main(void)
     uint32_t nextmonsterjumpevent = 0;
     while (1)
     {
-        while(Title_)
-        {
-            Title();
-        }
-
-        while(Game_Over_)
-        {
-            Game_Over();
-        }
         //monster in Bewegung
         if(nextmonstermoveevent < getMsTimer())
         {
@@ -661,10 +699,12 @@ int main(void)
             nextprojectilevent = getMsTimer() + 35;
         }
 
-        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
+        /*if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
         {
-            game_over();
-        }
+            Game_Over();
+        }*/
+        
+        collision(protagonist, monster);
     }
 }
 

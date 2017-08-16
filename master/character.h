@@ -21,7 +21,7 @@ struct Character
     uint8_t height; // in pages
     uint8_t direction;
     uint8_t jumpstate;
-    uint8_t health;
+    int8_t health;
     uint8_t damage;
     enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN} movement;
 };
@@ -29,6 +29,7 @@ struct Character
 void initcharacter(struct Character* character);
 
 void draw(struct Character* character);
+void hide(struct Character* character);
 
 uint8_t moveleft(struct Character* character);
 uint8_t moveright(struct Character* character);
