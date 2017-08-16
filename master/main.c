@@ -127,8 +127,8 @@ void drawlabels()
     }
     
     // print number
-    drawnumber(57, 1, 13);
-    drawnumber(27, 1, protagonist->health);
+    drawnumber(58, 1, 13);
+    drawnumber(29, 1, protagonist->health);
 }
 
 void drawdoor(int x)
@@ -470,11 +470,11 @@ void takingdamage(uint8_t damage)
     protagonist->health = protagonist->health - damage;
     if(protagonist->health > 0)
     {
-        drawnumber(27, 1, protagonist->health);
+        drawnumber(29, 1, protagonist->health);
     }
     else
     {
-        drawnumber(27, 1, 0);
+        drawnumber(29, 1, 0);
         uint16_t i = 0;
         for (uint8_t y = 2; y < 9; y++)
         {
