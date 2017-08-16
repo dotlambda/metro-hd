@@ -215,6 +215,9 @@ void hide(struct Character* character)
 
 uint8_t moveleft(struct Character* character)
 {
+    if (character->x == 0)
+        return 0;
+
     // don't move if there is an obstacle to the left
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
     {
@@ -244,6 +247,9 @@ uint8_t moveleft(struct Character* character)
 
 uint8_t moveright(struct Character* character)
 {
+    if (character->x + 1 == DISPLAY_WIDTH)
+        return 0;
+
     // don't move if there is an obstacle to the right
     for (uint8_t y = character->y; y < character->y + character->height; ++y)
     {

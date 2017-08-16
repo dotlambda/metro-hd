@@ -17,6 +17,8 @@
 
 #define INITIAL_LEVEL 3451627918l
 
+#define DIST_AFTER_DAMAGE 10
+
 struct Character* monster;
 
 const uint8_t* floorsprite = NULL;
@@ -553,7 +555,6 @@ int main(void)
     uint32_t nextprojectilevent = 0;
     uint32_t nextmonstermoveevent = 0;
     uint32_t nextmonsterjumpevent = 0;
-    uint32_t nextdamageevent = 0;
     while (1)
     {
         //monster in Bewegung
@@ -695,34 +696,52 @@ int main(void)
             Game_Over();
         }*/
         
-        if (nextdamageevent < getMsTimer())
+        if (collision(protagonist, monster))
         {
-            if(collision(protagonist, monster))
+            // if the monster is right of the protagonist
+            if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
             {
-                takingdamage(monster->damage);
-                // if the monster is right of the protagonist
-                if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
+                uint8_t i = 0;
+                while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monster->x)
                 {
-                    while (protagonist->x + protagonist->width + 7 > monster->x)
-                    {
-                        if (!moveleft(protagonist))
-                        {
-                            break;
-                        }
-                    }
+                    if (!moveleft(protagonist))
+                        break;
+                    if (i == 0 || i == 2)
+                        moveup(protagonist);
+                    if (i > 3 && i % 2 == 0)
+                        movedown(protagonist);
+                    i++;
+                    draw(monster);
+                    _delay_ms(50);
                 }
-                else
+                while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monster->x)
                 {
-                    while (monster->x + monster->width + 7 > protagonist->x)
-                    {
-                        if (!moveright(protagonist))
-                        {
-                            break;
-                        }
-                    }
+                    if (!moveright(monster))
+                        break;
                 }
-                nextdamageevent = getMsTimer() + 1500;
             }
+            else
+            {
+                uint8_t i = 0;
+                while (monster->x + monster->width + DIST_AFTER_DAMAGE > protagonist->x)
+                {
+                    if (!moveright(protagonist))
+                        break;
+                    if (i == 0 || i == 2)
+                        moveup(protagonist);
+                    if (i > 3 && i % 2 == 0)
+                        movedown(protagonist);
+                    i++;
+                    draw(monster);
+                    _delay_ms(50);
+                }
+                while (monster->x + monster->width + DIST_AFTER_DAMAGE > protagonist->x)
+                {
+                    if (!moveleft(monster))
+                        break;
+                }
+            }
+            takingdamage(monster->damage);
         }
     }
 }
