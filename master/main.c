@@ -29,6 +29,13 @@ bool Game_Over_ = false;
 
 void init();
 
+// delay without interrupts
+void delay(uint32_t ms)
+{
+    uint32_t time = getMsTimer();
+    while (getMsTimer() < time + ms);
+}
+
 void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
 {
     const uint8_t* sprite = NULL;
@@ -469,7 +476,7 @@ void takingdamage(uint8_t damage)
     else
     {
         drawnumber(27, 1, 0);
-        _delay_ms(2000);
+        delay(2000);
         clear();
         uint16_t i = 0;
         for (uint8_t y = 5; y < 13 ; y++)
@@ -499,9 +506,9 @@ void takingdamage(uint8_t damage)
     while(blinking_time + 650 >= getMsTimer())
     {
         hide(protagonist);
-        _delay_ms(50);
+        delay(50);
         draw(protagonist);
-        _delay_ms(100);
+        delay(100);
     }
 }
 
@@ -712,7 +719,7 @@ int main(void)
                         movedown(protagonist);
                     i++;
                     draw(monster);
-                    _delay_ms(50);
+                    delay(50);
                 }
                 while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monster->x)
                 {
@@ -733,7 +740,7 @@ int main(void)
                         movedown(protagonist);
                     i++;
                     draw(monster);
-                    _delay_ms(50);
+                    delay(50);
                 }
                 while (monster->x + monster->width + DIST_AFTER_DAMAGE > protagonist->x)
                 {
