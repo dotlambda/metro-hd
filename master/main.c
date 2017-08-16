@@ -762,6 +762,24 @@ int main(void)
             }
             takingdamage(monster->damage);
         }
+        if(B_PAUSE)
+        {
+            clear();
+            uint16_t i = 0;
+            for (uint8_t y = 12; y < 16 ; y++)
+            {
+                for (uint8_t x = 60; x < 96; x++)
+                {
+                    page(x, y, pgm_read_byte_near(pause + i));
+                    i++;
+                }
+            }
+            while(B_PAUSE);
+            if(B_PAUSE)
+            {
+                redraw();
+            }
+        }
     }
 }
 
