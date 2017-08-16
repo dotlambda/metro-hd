@@ -13,14 +13,14 @@ void initcharacter(struct Character* character)
         case LOOK_PROTAGONIST:
             character->width = 8;
             character->height = 4;
-            character->health = 99;
+            character->health = 20;
             character->damage = 15; // folgende damage und health Zahlen sind Platzhalter Zahlen
             break;
         case LOOK_MONSTER_LITTLE: 
             character->width = 8;
             character->height = 2;
             character->health = 99;
-            character->damage = 15;
+            character->damage = 10;
             break;
         case LOOK_EYEMONSTER:
             character->width = 12;
@@ -32,7 +32,7 @@ void initcharacter(struct Character* character)
             character->width = 15;
             character->height = 3;
             character->health = 99;
-            character->damage = 15;
+            character->damage = 20;
             break;
         case LOOK_ROCKET:
             character->width = 13;
@@ -44,7 +44,7 @@ void initcharacter(struct Character* character)
             character->width = 17;
             character->height = 8;
             character->health = 99;
-            character->damage = 15;
+            character->damage = 30;
             break;
         case LOOK_MONSTER_METROID:
             character->width = 14;
@@ -62,16 +62,16 @@ void initcharacter(struct Character* character)
             character->width = 16;
             character->height = 3;
             character->health = 99;
-            character->damage = 15;
+            character->damage = 20;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
             character->height = 2;
             character->health = 99;
-            character->damage = 15;
+            character->damage = 10;
             break;
         case LOOK_BOSS_DRAGON:
-            character->width = 30;
+            character->width = 40;
             character->height = 9;
             character->health = 99;
             character->damage = 15;

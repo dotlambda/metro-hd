@@ -466,6 +466,8 @@ void takingdamage(uint8_t damage)
     }
     else
     {
+        drawnumber(27, 1, 0);
+        _delay_ms(2000);
         clear();
         uint16_t i = 0;
         for (uint8_t y = 5; y < 13 ; y++)
