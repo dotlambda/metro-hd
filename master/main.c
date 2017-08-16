@@ -125,7 +125,7 @@ void drawlabels()
         }
     }
     
-    drawnumber(27, 1, protagonist->health);
+    drawnumber(29, 1, protagonist->health);
     drawnumber(57, 1, num_rockets);
 }
 
@@ -469,11 +469,11 @@ void takingdamage(uint8_t damage)
     protagonist->health = protagonist->health - damage;
     if(protagonist->health > 0)
     {
-        drawnumber(27, 1, protagonist->health);
+        drawnumber(29, 1, protagonist->health);
     }
     else
     {
-        drawnumber(27, 1, 0);
+        drawnumber(29, 1, 0);
         uint16_t i = 0;
         for (uint8_t y = 2; y < 9; y++)
         {
@@ -770,6 +770,25 @@ int main(void)
                 hide(monster);
             else
                 draw(monster);
+        }
+
+        if(B_PAUSE)
+        {
+            clear();
+            uint16_t i = 0;
+            for (uint8_t y = 12; y < 16 ; y++)
+            {
+                for (uint8_t x = 60; x < 96; x++)
+                {
+                    page(x, y, pgm_read_byte_near(pause + i));
+                    i++;
+                }
+            }
+            while(B_PAUSE);
+            if(B_PAUSE)
+            {
+                redraw();
+            }
         }
     }
 }
