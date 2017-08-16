@@ -466,8 +466,7 @@ void newlevel()
 
 void takingdamage(uint8_t damage)
 {
-    uint32_t blinking_time = 0;
-
+    uint32_t blink_for = 650;
     protagonist->health = protagonist->health - damage;
     if(protagonist->health > 0)
     {
@@ -476,7 +475,18 @@ void takingdamage(uint8_t damage)
     else
     {
         drawnumber(27, 1, 0);
-        delay(2000);
+        blink_for = 2000;
+    }
+    uint32_t blinking_time = getMsTimer();
+    while(blinking_time + blink_for >= getMsTimer())
+    {
+        hide(protagonist);
+        delay(50);
+        draw(protagonist);
+        delay(100);
+    }
+    if (protagonist->health <= 0)
+    {
         clear();
         uint16_t i = 0;
         for (uint8_t y = 5; y < 13 ; y++)
@@ -502,14 +512,7 @@ void takingdamage(uint8_t damage)
         newlevel();
         redraw();
     }
-    blinking_time = getMsTimer();
-    while(blinking_time + 650 >= getMsTimer())
-    {
-        hide(protagonist);
-        delay(50);
-        draw(protagonist);
-        delay(100);
-    }
+
 }
 
 bool collision(struct Character* protagonist, struct Character* monster)
