@@ -13,7 +13,7 @@ void initcharacter(struct Character* character)
         case LOOK_PROTAGONIST:
             character->width = 8;
             character->height = 4;
-            character->health = 20;
+            character->health = 99;
             character->damage = 15; // folgende damage und health Zahlen sind Platzhalter Zahlen
             break;
         case LOOK_MONSTER_LITTLE: 

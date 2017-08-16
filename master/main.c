@@ -469,7 +469,17 @@ void takingdamage(uint8_t damage)
     else
     {
         drawnumber(27, 1, 0);
-        _delay_ms(2000);
+        
+        uint16_t b = 0;
+        for (uint8_t y = 2; y < 9; y++)
+        {
+            for (uint8_t x = 20; x < 140; x++)
+            {
+                page(x, y, pgm_read_byte_near(energy0 + b));
+                b++;
+            }
+        }
+         _delay_ms(2000);
         clear();
         uint16_t i = 0;
         for (uint8_t y = 5; y < 13 ; y++)
