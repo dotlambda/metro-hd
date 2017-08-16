@@ -90,7 +90,7 @@ void drawlabels()
     {
         for (uint8_t x = 2; x < 25; x++)
         {
-            page(x, y, labelenergy[i]);
+            page(x, y, pgm_read_byte_near(labelenergy + i));
             i++;
         }
     }
@@ -101,7 +101,7 @@ void drawlabels()
     {
         for (uint8_t x = 40; x < 55; x++)
         {
-            page(x, y, labelrocket[i]);
+            page(x, y, pgm_read_byte_near(labelrocket + i));
             i++;
         }
     }
@@ -112,7 +112,7 @@ void drawlabels()
     {
         for (uint8_t x = 69; x < 83; x++)
         {
-            page(x, y, labelbomb[i]);
+            page(x, y, pgm_read_byte_near(labelbomb + i));
             i++;
         }
     }
@@ -131,7 +131,7 @@ void drawdoor(int x)
         {
             if (x_ < DISPLAY_WIDTH && x_ >= 0)
             {
-                page(x_, y, doorinverted[i]);
+                page(x_, y, pgm_read_byte_near(doorinverted + i));
             }
             i++;
         }
@@ -279,9 +279,9 @@ void drawfloor()
         for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
         {
             if (!(nofloor & (7l << 3 * pos))) // there is a 1/8 chance of drawing water/spikes
-                page(x, 25, pgm_read_byte_near(nofloorsprite + x % 16);
+                page(x, 25, pgm_read_byte_near(nofloorsprite + x % 16));
             else
-                page(x, 25, pgm_read_byte_near(floorsprite + x % 16);
+                page(x, 25, pgm_read_byte_near(floorsprite + x % 16));
         }
     }
 }
@@ -340,7 +340,7 @@ void redraw()
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
     {
-        page(x, 5, floorsprite[x % 16]);
+        page(x, 5, pgm_read_byte_near(floorsprite + x % 16));
     }
     
     srandom(level_seed + level_pos);
@@ -467,12 +467,12 @@ void takingdamage(uint8_t damage)
     else
     {
         clear();
-        uint8_t i = 0;
+        uint16_t i = 0;
         for (uint8_t y = 5; y < 13 ; y++)
         {
             for (uint8_t x = 51; x < 108; x++)
             {
-                page(x, y, game_over[i]);
+                page(x, y, pgm_read_byte_near(game_over + i));
                 i++;
             }
         }
