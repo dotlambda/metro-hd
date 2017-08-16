@@ -478,6 +478,7 @@ void takingdamage(uint8_t damage)
         }
         while (!B_A);
         level_seed = INITIAL_LEVEL;
+        protagonist->health = 99;
         newlevel();
         redraw();
     }
