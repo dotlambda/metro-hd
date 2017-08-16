@@ -15,13 +15,18 @@
 #define MAX_LEVEL_WIDTH 6 // max 6 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
-#define INITIAL_LEVEL 3451627918l
-#define INITIAL_NUM_ROCKETS 20
-
 #define DIST_AFTER_DAMAGE 10
 
 struct Character* monster;
-uint8_t num_rockets = INITIAL_NUM_ROCKETS;
+struct Character* projectile;
+uint8_t num_rockets;
+enum {DOOR_LEFT, DOOR_RIGHT} exitposition;
+
+uint32_t nextmoveevent;
+uint32_t nextjumpevent;
+uint32_t nextprojectilevent;
+uint32_t nextmonstermoveevent;
+uint32_t nextmonsterjumpevent;
 
 const uint8_t* floorsprite = NULL;
 const uint8_t* rotatedfloorsprite = NULL;
@@ -337,8 +342,6 @@ void drawplatform()
     }
 }
 
-enum {DOOR_LEFT, DOOR_RIGHT} exitposition = DOOR_RIGHT;
-
 void redraw()
 {
     clear();
@@ -462,6 +465,31 @@ void newlevel()
     level_pos = 0;
     srandom(level_seed);
     selectfloor();
+
+    redraw();
+}
+
+void newgame()
+{
+    level_seed = 3451627918l;
+    num_rockets = 20;
+    exitposition = DOOR_RIGHT;
+
+    protagonist->look = LOOK_PROTAGONIST;
+    initcharacter(protagonist);
+    protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
+
+    projectile->movement = HIDDEN;
+    projectile->look = LOOK_ROCKET;
+    initcharacter(projectile);
+
+    nextmoveevent = 0;
+    nextjumpevent = 0;
+    nextprojectilevent = 0;
+    nextmonstermoveevent = 0;
+    nextmonsterjumpevent = 0;
+
+    newlevel();
 }
 
 void takingdamage(uint8_t damage)
@@ -516,11 +544,7 @@ void takingdamage(uint8_t damage)
             }
         }
         while (!B_A);
-        level_seed = INITIAL_LEVEL;
-        num_rockets = INITIAL_NUM_ROCKETS;
-        protagonist->health = 99;
-        newlevel();
-        redraw();
+        newgame();
     }
 
 }
@@ -534,6 +558,8 @@ bool collision(struct Character* protagonist, struct Character* monster)
 int main(void)
 {
 	init();
+
+    // show splash screen until button A is pressed
     uint16_t i = 0;
     for (uint8_t y = 3; y < 3 + 20; y++)
     {
@@ -545,34 +571,17 @@ int main(void)
     }
     while (!B_A);
     
-    // show splash screen until button A is pressed
-    
     struct Character protagonist_;
     protagonist = &protagonist_;
-    protagonist->look = LOOK_PROTAGONIST;
-    initcharacter(protagonist);
-    protagonist->x = DISPLAY_WIDTH;
-    protagonist->direction = DIRECTION_RIGHT;
-    draw(protagonist);
-    
+        
     struct Character monster_;
     monster = &monster_;
  
     struct Character projectile_;
-    struct Character* projectile = &projectile_;
-    projectile->look = LOOK_ROCKET;
-    initcharacter(projectile);
-    projectile->movement = HIDDEN;
+    projectile = &projectile_;
+        
+    newgame();
     
-    level_seed = INITIAL_LEVEL;
-    newlevel();
-    redraw();
-    
-    uint32_t nextmoveevent = 0;
-    uint32_t nextjumpevent = 0;
-    uint32_t nextprojectilevent = 0;
-    uint32_t nextmonstermoveevent = 0;
-    uint32_t nextmonsterjumpevent = 0;
     while (1)
     {
         //monster in Bewegung
