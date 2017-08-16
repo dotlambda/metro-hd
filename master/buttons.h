@@ -12,8 +12,8 @@ void buttonsInit() {
 #define B_DOWN (!(PIND & (1<<3)))
 #define B_LEFT (!(PIND & (1<<4)))
 #define B_RIGHT (!(PIND & (1<<5)))
-#define B_A (!(PIND & (1<<6)))
-#define B_B (!(PIND & (1<<7)))
+#define B_B (!(PIND & (1<<6)))
+#define B_A (!(PIND & (1<<7)))
 
 #define B_PAUSE (!(PINC & (1<<4)))
 #define B_SELECT (!(PINC & (1<<5)))
