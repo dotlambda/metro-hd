@@ -68,7 +68,7 @@ void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
     {
         for (uint8_t x_ = x; x_ < x + 3; x_++)
         {
-            page(x_, y_, sprite[i]);
+            page(x_, y_, pgm_read_byte_near(sprite + i));
             i++;
         }
     }
@@ -90,7 +90,7 @@ void drawlabels()
     {
         for (uint8_t x = 2; x < 25; x++)
         {
-            page(x, y, labelenergy[i]);
+            page(x, y, pgm_read_byte_near(labelenergy + i));
             i++;
         }
     }
@@ -101,7 +101,7 @@ void drawlabels()
     {
         for (uint8_t x = 40; x < 55; x++)
         {
-            page(x, y, labelrocket[i]);
+            page(x, y, pgm_read_byte_near(labelrocket + i));
             i++;
         }
     }
@@ -112,7 +112,7 @@ void drawlabels()
     {
         for (uint8_t x = 69; x < 83; x++)
         {
-            page(x, y, labelbomb[i]);
+            page(x, y, pgm_read_byte_near(labelbomb + i));
             i++;
         }
     }
@@ -131,7 +131,7 @@ void drawdoor(int x)
         {
             if (x_ < DISPLAY_WIDTH && x_ >= 0)
             {
-                page(x_, y, doorinverted[i]);
+                page(x_, y, pgm_read_byte_near(doorinverted + i));
             }
             i++;
         }
@@ -199,7 +199,7 @@ void drawdoorright_closed()
     {
         for (uint8_t x = 156; x < DISPLAY_WIDTH; x++)
         {
-            page(x, y, rotatedfloorsprite[i]);
+            page(x, y, pgm_read_byte_near(rotatedfloorsprite + i));
             i++;
             if (i == 16)
                 i = 0;
@@ -211,7 +211,7 @@ void drawdoorright_closed()
     {
         for (uint8_t x = 154; x < DISPLAY_WIDTH; x++)
         {
-            page(x, y, doorright[i]);
+            page(x, y, pgm_read_byte_near(doorright + i));
             i++;
         }
     }
@@ -224,7 +224,7 @@ void drawdoorleft_closed()
     {
         for (uint8_t x = 0; x < 4; x++)
         {
-            page(x, y, rotatedfloorsprite[i]);
+            page(x, y, pgm_read_byte_near(rotatedfloorsprite + i));
             i++;
             if (i == 16)
                 i = 0;
@@ -236,7 +236,7 @@ void drawdoorleft_closed()
     {
         for (uint8_t x = 0; x < 6; x++)
         {
-            page(x, y, doorleft[i]);
+            page(x, y, pgm_read_byte_near(doorleft + i));
             i++;
         }
     }
@@ -279,9 +279,9 @@ void drawfloor()
         for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
         {
             if (!(nofloor & (7l << 3 * pos))) // there is a 1/8 chance of drawing water/spikes
-                page(x, 25, nofloorsprite[x % 16]);
+                page(x, 25, pgm_read_byte_near(nofloorsprite + x % 16));
             else
-                page(x, 25, floorsprite[x % 16]);
+                page(x, 25, pgm_read_byte_near(floorsprite + x % 16));
         }
     }
 }
@@ -294,14 +294,14 @@ void drawplatform()
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 19, floorsprite[i]);
+                page(PLATFORM_WIDTH * pos + i, 19, pgm_read_byte_near(floorsprite + i));
             }
         }
         if (!(platforms_13 & (3l << 2 * pos)))
         {
             for (short i = 0; i < PLATFORM_WIDTH; ++i)
             {
-                page(PLATFORM_WIDTH * pos + i, 13, floorsprite[i]);
+                page(PLATFORM_WIDTH * pos + i, 13, pgm_read_byte_near(floorsprite + i));
             }
         }
     }
@@ -309,22 +309,22 @@ void drawplatform()
     {
         if (!(platforms_24 & (3l << 2 * pos)))
         {
-            page(16 * pos,      24, 0b11000000 & floorsprite[0]);
-            page(16 * pos + 1,  24, 0b11110000 & floorsprite[1]);
-            page(16 * pos + 2,  24, 0b11111100 & floorsprite[2]);
-            page(16 * pos + 3,  24,              floorsprite[3]);
-            page(16 * pos + 4,  24,              floorsprite[4]);
-            page(16 * pos + 5,  24,              floorsprite[5]);
-            page(16 * pos + 6,  24,              floorsprite[6]);
-            page(16 * pos + 7,  24,              floorsprite[7]);
-            page(16 * pos + 8,  24,              floorsprite[8]);
-            page(16 * pos + 9,  24,              floorsprite[9]);
-            page(16 * pos + 10, 24,              floorsprite[10]);
-            page(16 * pos + 11, 24,              floorsprite[11]);
-            page(16 * pos + 12, 24,              floorsprite[12]);
-            page(16 * pos + 13, 24, 0b11111100 & floorsprite[13]);
-            page(16 * pos + 14, 24, 0b11110000 & floorsprite[14]);
-            page(16 * pos + 15, 24, 0b11000000 & floorsprite[15]);
+            page(16 * pos,      24, 0b11000000 & pgm_read_byte_near(floorsprite + 0));
+            page(16 * pos + 1,  24, 0b11110000 & pgm_read_byte_near(floorsprite + 1));
+            page(16 * pos + 2,  24, 0b11111100 & pgm_read_byte_near(floorsprite + 2));
+            page(16 * pos + 3,  24,              pgm_read_byte_near(floorsprite + 3));
+            page(16 * pos + 4,  24,              pgm_read_byte_near(floorsprite + 4));
+            page(16 * pos + 5,  24,              pgm_read_byte_near(floorsprite + 5));
+            page(16 * pos + 6,  24,              pgm_read_byte_near(floorsprite + 6));
+            page(16 * pos + 7,  24,              pgm_read_byte_near(floorsprite + 7));
+            page(16 * pos + 8,  24,              pgm_read_byte_near(floorsprite + 8));
+            page(16 * pos + 9,  24,              pgm_read_byte_near(floorsprite + 9));
+            page(16 * pos + 10, 24,              pgm_read_byte_near(floorsprite + 10));
+            page(16 * pos + 11, 24,              pgm_read_byte_near(floorsprite + 11));
+            page(16 * pos + 12, 24,              pgm_read_byte_near(floorsprite + 12));
+            page(16 * pos + 13, 24, 0b11111100 & pgm_read_byte_near(floorsprite + 13));
+            page(16 * pos + 14, 24, 0b11110000 & pgm_read_byte_near(floorsprite + 14));
+            page(16 * pos + 15, 24, 0b11000000 & pgm_read_byte_near(floorsprite + 15));
         }
     }
 }
@@ -340,7 +340,7 @@ void redraw()
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
     {
-        page(x, 5, floorsprite[x % 16]);
+        page(x, 5, pgm_read_byte_near(floorsprite + x % 16));
     }
     
     srandom(level_seed + level_pos);
@@ -467,12 +467,12 @@ void takingdamage(uint8_t damage)
     else
     {
         clear();
-        uint8_t i = 0;
+        uint16_t i = 0;
         for (uint8_t y = 5; y < 13 ; y++)
         {
             for (uint8_t x = 51; x < 108; x++)
             {
-                page(x, y, game_over[i]);
+                page(x, y, pgm_read_byte_near(game_over + i));
                 i++;
             }
         }
