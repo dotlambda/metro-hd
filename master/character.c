@@ -37,8 +37,7 @@ void initcharacter(struct Character* character)
         case LOOK_ROCKET:
             character->width = 13;
             character->height = 2;
-            character->health = 99;
-            character->damage = 15;
+            character->damage = 2;
             break;
         case LOOK_BOSS_ZAZABI:
             character->width = 17;
@@ -363,12 +362,16 @@ void move(struct Character* character)
                 moveright(character);
             break;
         case PROJECTILE:
-            if (character->x <= 0 || character->x + character->width == DISPLAY_WIDTH)
-                hide(character);
-            else if (character->direction == DIRECTION_LEFT)
-                moveleft(character);
+            if (character->direction == DIRECTION_LEFT)
+            {
+                if (!moveleft(character))
+                    hide(character);
+            }
             else
-                moveright(character);
+            {
+                if (!moveright(character))
+                    hide(character);
+            }
             break;
         case HIDDEN:
             break;

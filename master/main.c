@@ -20,12 +20,11 @@
 #define DIST_AFTER_DAMAGE 10
 
 struct Character* monster;
+uint8_t num_rockets = 20;
 
 const uint8_t* floorsprite = NULL;
 const uint8_t* rotatedfloorsprite = NULL;
 const uint8_t* nofloorsprite = NULL;
-bool Title_ = true;
-bool Game_Over_ = false;
 
 void init();
 
@@ -126,9 +125,8 @@ void drawlabels()
         }
     }
     
-    // print number
-    drawnumber(57, 1, 13);
     drawnumber(27, 1, protagonist->health);
+    drawnumber(57, 1, num_rockets);
 }
 
 void drawdoor(int x)
@@ -408,6 +406,7 @@ void redraw()
     
     monster->look = random() % NUM_MONSTER_LOOKS;
     initcharacter(monster);
+    monster->movement = FOLLOW_PROTAGONIST;
     monster->x = (DISPLAY_WIDTH - monster->width) / 2;
     monster->y = 25 - monster->height;
     // draw monster higher if it's on a hill
@@ -556,8 +555,6 @@ int main(void)
     
     struct Character monster_;
     monster = &monster_;
-    monster->movement = FOLLOW_PROTAGONIST;
-    monster->x = 50;
  
     struct Character projectile_;
     struct Character* projectile = &projectile_;
@@ -679,7 +676,7 @@ int main(void)
             clear();
         }*/
         
-        if (projectile->movement == HIDDEN && B_A)
+        if (projectile->movement == HIDDEN && num_rockets > 0 && B_A)
         {
             uint8_t enough_space = 1;
             projectile->direction = protagonist->direction;
@@ -701,6 +698,8 @@ int main(void)
             {
                 projectile->movement = PROJECTILE;
                 draw(projectile);
+                num_rockets--;
+                drawnumber(57, 1, num_rockets);
                 nextprojectilevent = getMsTimer() + 35;
             }
         }
@@ -715,7 +714,7 @@ int main(void)
             Game_Over();
         }*/
         
-        if (collision(protagonist, monster))
+        if (monster->movement != HIDDEN && collision(protagonist, monster))
         {
             // if the monster is right of the protagonist
             if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
@@ -761,6 +760,16 @@ int main(void)
                 }
             }
             takingdamage(monster->damage);
+        }
+
+        if (projectile->movement != HIDDEN && collision(projectile, monster))
+        {
+            hide(projectile);
+            monster->health -= projectile->damage;
+            if (monster->health <= 0)
+                hide(monster);
+            else
+                draw(monster);
         }
     }
 }
