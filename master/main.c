@@ -13,7 +13,9 @@
 #include "sprites.h"
 
 #define MAX_LEVEL_WIDTH 6 // max 6 displays for one level
-#define MIN_LEVEL_WIDTH 1 
+#define MIN_LEVEL_WIDTH 1
+
+#define INITIAL_LEVEL 3451627918l
 
 struct Character* monster;
 
@@ -117,6 +119,7 @@ void drawlabels()
     
     // print number
     drawnumber(57, 1, 13);
+    drawnumber(27, 1, protagonist->health);
 }
 
 void drawdoor(int x)
@@ -452,52 +455,38 @@ void newlevel()
     selectfloor();
 }
 
-void Game_Over()//Brauch noch eventuell die richtigen Größen
-{
-    clear();
-    uint8_t i = 0;
-    for (uint8_t y = 5; y <= 16 ; y++)
-    {
-        for (uint8_t x = 40; x <= 117; x++)
-        {
-            page(x, y, game_over[i]);
-            i++;
-        }
-    }
-    if(B_A)
-    {
-        Game_Over_ = false;
-    }
-    if(B_B)
-    {
-        Title_ = true;
-    }
-}
-
-void takingdamage(struct Character* character, uint8_t damage)
+void takingdamage(uint8_t damage)
 {
     uint32_t blinking_time = 0;
 
-    character->health = character->health - damage;
-    if(character->health > 0)
+    protagonist->health = protagonist->health - damage;
+    if(protagonist->health > 0)
     {
-        drawnumber(57, 1, character->health);
+        drawnumber(27, 1, protagonist->health);
     }
     else
     {
-        drawnumber(57, 1, 0);
-        Game_Over_ = true;
-        while(Game_Over_)
+        clear();
+        uint8_t i = 0;
+        for (uint8_t y = 5; y < 13 ; y++)
         {
-            Game_Over();
+            for (uint8_t x = 51; x < 108; x++)
+            {
+                page(x, y, game_over[i]);
+                i++;
+            }
         }
+        while (!B_A);
+        level_seed = INITIAL_LEVEL;
+        newlevel();
+        redraw();
     }
     blinking_time = getMsTimer();
     while(blinking_time + 650 >= getMsTimer())
     {
-        hide(character);
+        hide(protagonist);
         _delay_ms(50);
-        draw(character);
+        draw(protagonist);
         _delay_ms(100);
     }
 }
@@ -508,7 +497,7 @@ void collision(struct Character* protagonist, struct Character* monster)
         protagonist->y < monster->y + monster->height && protagonist->y + protagonist->height > monster->y)
     {
 
-            takingdamage(protagonist, monster->damage);
+            takingdamage(monster->damage);
             
             // if the monster is right of the protagonist
             if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
@@ -565,7 +554,7 @@ int main(void)
     initcharacter(projectile);
     projectile->movement = HIDDEN;
     
-    level_seed = 3451627918l;
+    level_seed = INITIAL_LEVEL;
     newlevel();
     redraw();
     
@@ -576,10 +565,6 @@ int main(void)
     uint32_t nextmonsterjumpevent = 0;
     while (1)
     {
-        while(Game_Over_)
-        {
-            Game_Over();
-        }
         //monster in Bewegung
         if(nextmonstermoveevent < getMsTimer())
         {
@@ -714,10 +699,10 @@ int main(void)
             nextprojectilevent = getMsTimer() + 35;
         }
 
-        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
+        /*if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
         {
             Game_Over();
-        }
+        }*/
         
         collision(protagonist, monster);
     }
