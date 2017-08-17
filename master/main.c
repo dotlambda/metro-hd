@@ -353,7 +353,22 @@ void redraw()
     {
         page(x, 5, pgm_read_byte_near(floorsprite + x % 16));
     }
-    
+
+    drawplatform();
+    drawfloor();
+
+    if (doors & 0b00000010)
+        drawdoorleft_closed();
+    else if (doors & 0b00000001)
+        drawdoorright_closed();
+
+    draw(monster);
+
+    draw(protagonist);
+}
+
+void newlevelpos()
+{
     srandom(level_seed + level_pos);
     platforms_19 = random();
     platforms_13 = random();
@@ -372,38 +387,28 @@ void redraw()
     if (level_pos == 0)
     {
         if (door_back == DOOR_LEFT)
-        {
-            drawdoorleft_closed();
             doors |= 0b00000010;
-        }
         else
-        {
-            drawdoorright_closed();
             doors |= 0b00000001;
-        }
     }
     
     // draw exit door
     if (level_pos == MAX_LEVEL_WIDTH - 1 && door_back == DOOR_LEFT)
     {
-        drawdoorright_closed();
         doors |= 0b00000001;
     }
     else if (level_pos == -MAX_LEVEL_WIDTH + 1 && door_back == DOOR_RIGHT)
     {
-        drawdoorleft_closed();
         doors |= 0b00000010;
     }
     else if (random() % 5 == 0)
     {
         if (door_back == DOOR_LEFT)
         {
-            drawdoorright_closed();
             doors |= 0b00000001;
         }
         else
         {
-            drawdoorleft_closed();
             doors |= 0b00000010;
         }
     }
@@ -421,11 +426,10 @@ void redraw()
             break;
         }
     }
-    draw(monster);
-
-    draw(protagonist);
-    
+        
     projectile->movement = HIDDEN;
+
+    redraw();
 }
 
 void newlevel()
@@ -466,7 +470,7 @@ void newlevel()
     srandom(level_seed);
     selectfloor();
 
-    redraw();
+    newlevelpos();
 }
 
 void newgame()
@@ -615,7 +619,7 @@ int main(void)
                     {
                         ++level_pos;
                         protagonist->x = 0;
-                        redraw();
+                        newlevelpos();
                         checkfalling(protagonist);
                     }
                 }
@@ -641,7 +645,7 @@ int main(void)
                     {
                         --level_pos;
                         protagonist->x = DISPLAY_WIDTH - protagonist->width;
-                        redraw();
+                        newlevelpos();
                         checkfalling(protagonist);
                     }
                 }
