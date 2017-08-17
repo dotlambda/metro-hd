@@ -502,50 +502,52 @@ void takingdamage(uint8_t damage)
     else
     {
         drawnumber(29, 1, 0);
-        uint16_t i = 0;
-        for (uint8_t y = 2; y < 9; y++)
-        {
-            for (uint8_t x = 20; x < 140; x++)
-            {
-                page(x, y, pgm_read_byte_near(energy0 + i));
-                i++;
-            }
-        }
         blink_for = 2000;
     }
     uint32_t blinking_time = getMsTimer();
     while(blinking_time + blink_for >= getMsTimer())
     {
         hide(protagonist);
+        if (protagonist->health <= 0)
+        {
+            for (uint8_t y = 1; y < 4; y++)
+            {
+                for (uint8_t x = 29; x < 36; x++)
+                {
+                    page(x, y, 0);
+                }
+            }
+        }
         delay(50);
         draw(protagonist);
+        if (protagonist->health <= 0)
+        {    
+            drawnumber(29, 1, 0);
+        }
         delay(100);
     }
     if (protagonist->health <= 0)
     {
-        clear();
         uint16_t i = 0;
-        for (uint8_t y = 5; y < 13 ; y++)
+        for (uint8_t y = 0; y < DISPLAY_HEIGHT; y++)
         {
-            for (uint8_t x = 51; x < 108; x++)
+            for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
             {
-                page(x, y, pgm_read_byte_near(game_over + i));
-                i++;
+                if (y > 7 && y < 21 && x > 17 && x < 141)
+                {
+                    page(x, y, pgm_read_byte_near(gameover + i));
+                    i++;
+                }
+                else
+                {
+                    page(x, y, 0);
+                }
             }
-        }
-        i = 0;
-        for (uint8_t y = 20; y < 23; y++)
-        {
-            for (uint8_t x = 32; x < 128; x++)
-            {
-                page(x, y, pgm_read_byte_near(restart + i));
-                i++;
-            }
+            delay(30);
         }
         while (!B_A);
         newgame();
     }
-
 }
 
 bool collision(struct Character* protagonist, struct Character* monster)
