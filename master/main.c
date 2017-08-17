@@ -478,7 +478,6 @@ void newgame()
     initcharacter(protagonist);
     protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
 
-    projectile->movement = HIDDEN;
     projectile->look = LOOK_ROCKET;
     initcharacter(projectile);
 

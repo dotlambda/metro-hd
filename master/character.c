@@ -39,6 +39,7 @@ void initcharacter(struct Character* character)
             character->width = 13;
             character->height = 2;
             character->damage = 2;
+            character->movement = HIDDEN;
             break;
         case LOOK_BOSS_ZAZABI:
             character->width = 17;
