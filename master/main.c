@@ -20,7 +20,7 @@
 struct Character* monster;
 struct Character* projectile;
 uint8_t num_rockets;
-enum {DOOR_LEFT, DOOR_RIGHT} exitposition;
+enum {DOOR_LEFT, DOOR_RIGHT} door_back;
 
 uint32_t nextmoveevent;
 uint32_t nextjumpevent;
@@ -371,7 +371,7 @@ void redraw()
     // draw door to previous level
     if (level_pos == 0)
     {
-        if (exitposition == DOOR_RIGHT)
+        if (door_back == DOOR_LEFT)
         {
             drawdoorleft_closed();
             doors |= 0b00000010;
@@ -384,19 +384,19 @@ void redraw()
     }
     
     // draw exit door
-    if (level_pos == MAX_LEVEL_WIDTH - 1 && exitposition == DOOR_RIGHT)
+    if (level_pos == MAX_LEVEL_WIDTH - 1 && door_back == DOOR_LEFT)
     {
         drawdoorright_closed();
         doors |= 0b00000001;
     }
-    else if (level_pos == -MAX_LEVEL_WIDTH + 1 && exitposition == DOOR_LEFT)
+    else if (level_pos == -MAX_LEVEL_WIDTH + 1 && door_back == DOOR_RIGHT)
     {
         drawdoorleft_closed();
         doors |= 0b00000010;
     }
     else if (random() % 5 == 0)
     {
-        if (exitposition == DOOR_RIGHT)
+        if (door_back == DOOR_LEFT)
         {
             drawdoorright_closed();
             doors |= 0b00000001;
@@ -428,24 +428,23 @@ void redraw()
 
 void newlevel()
 {
-    if ((exitposition == DOOR_LEFT && protagonist->x <= DISPLAY_WIDTH / 2) 
-        || (exitposition == DOOR_RIGHT && protagonist->x > DISPLAY_WIDTH / 2))
+    if (protagonist->x > DISPLAY_WIDTH / 2)
     {
         level_seed += 2 * MAX_LEVEL_WIDTH;
+        door_back = DOOR_LEFT;
     }
     else // back to the previous level
     {
         level_seed -= 2 * MAX_LEVEL_WIDTH;
+        door_back = DOOR_RIGHT;
     }
-    
+
     if (protagonist->x > DISPLAY_WIDTH / 2)
     {
-        exitposition = DOOR_RIGHT;
         movedoorleft();
     }
     else
     {
-        exitposition = DOOR_LEFT;
         movedoorright();
     }
     
@@ -472,7 +471,6 @@ void newgame()
 {
     level_seed = 3451627918l;
     num_rockets = 20;
-    exitposition = DOOR_RIGHT;
 
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
@@ -585,12 +583,12 @@ int main(void)
     while (1)
     {
         //monster in Bewegung
-        if(nextmonstermoveevent < getMsTimer())
+        if(monster->movement != HIDDEN && nextmonstermoveevent < getMsTimer())
         {
             move(monster);
             nextmonstermoveevent = getMsTimer() + 100;
         }
-        if(nextmonsterjumpevent < getMsTimer())
+        if(monster->movement != HIDDEN && nextmonsterjumpevent < getMsTimer())
         {
             jump(monster);
             nextmonsterjumpevent = getMsTimer() + 150;
@@ -671,14 +669,12 @@ int main(void)
             && protagonist->y >= 20 - protagonist->height)
         {
             newlevel();
-            redraw();
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
             && protagonist->y >= 20 - protagonist->height)
         {
             newlevel();
-            redraw();
         }
         
         //falls sich Monster und Character begegnen
