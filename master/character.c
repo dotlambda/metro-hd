@@ -73,6 +73,12 @@ void initcharacter(struct Character* character)
             character->height = 9;
             character->damage = 15;
             break;
+        case LOOK_BOMB:
+            character->width = 4;
+            character->height = 1;
+            character->damage = 5;
+            character->movement = HIDDEN;
+            break;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -183,6 +189,9 @@ void draw(struct Character* character)
             {
                 sprite = dragon_right;
             }
+            break;
+        case LOOK_BOMB:
+            sprite = bomb;
             break;
     }
     
@@ -391,5 +400,7 @@ void move(struct Character* character)
                 else
                     draw(character);
             break;
+       case BOMB:
+           break;
     }
 }

@@ -12,6 +12,9 @@
 #include "globals.h"
 #include "sprites.h"
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+
 #define MAX_LEVEL_WIDTH 6 // max 6 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
@@ -19,12 +22,16 @@
 
 struct Character* monster;
 struct Character* projectile;
+struct Character* bombstruct;
 uint8_t num_rockets;
+uint8_t num_bombs;
 enum {DOOR_LEFT, DOOR_RIGHT} door_back;
 
 uint32_t nextmoveevent;
 uint32_t nextjumpevent;
 uint32_t nextprojectilevent;
+uint32_t nextbombevent;
+uint32_t explode;
 uint32_t nextmonstermoveevent;
 uint32_t nextmonsterjumpevent;
 
@@ -133,6 +140,7 @@ void drawlabels()
     
     drawnumber(29, 1, protagonist->health);
     drawnumber(57, 1, num_rockets);
+    drawnumber(86, 1, num_bombs);
 }
 
 void drawdoor(int x)
@@ -433,6 +441,7 @@ void newlevelpos()
     }
         
     projectile->movement = HIDDEN;
+    bombstruct->movement = HIDDEN;
 
     redraw();
 }
@@ -482,6 +491,7 @@ void newgame()
 {
     level_seed = 3451627918l;
     num_rockets = 20;
+    num_bombs = 20;
 
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
@@ -489,10 +499,14 @@ void newgame()
 
     projectile->look = LOOK_ROCKET;
     initcharacter(projectile);
+    
+    bombstruct->look = LOOK_BOMB;
+    initcharacter(bombstruct);
 
     nextmoveevent = 0;
     nextjumpevent = 0;
     nextprojectilevent = 0;
+    nextbombevent = 0;
     nextmonstermoveevent = 0;
     nextmonsterjumpevent = 0;
 
@@ -588,6 +602,9 @@ int main(void)
  
     struct Character projectile_;
     projectile = &projectile_;
+    
+    struct Character bomb_;
+    bombstruct = &bomb_;
         
     newgame();
     
@@ -743,6 +760,65 @@ int main(void)
             else
                 nextprojectilevent = getMsTimer() + 35;
         }
+        
+        if (nextbombevent < getMsTimer())
+        {
+            if (bombstruct->movement != HIDDEN)
+            {
+                jump(bombstruct);
+                nextbombevent = getMsTimer() + 100;
+            }
+            else if (B_DOWN && num_bombs > 0)
+            {
+                bombstruct->x = protagonist->x;
+                bombstruct->y = protagonist->y + protagonist->height - bombstruct->height;
+                bombstruct->movement = BOMB;
+                num_bombs--;
+                drawnumber(86, 1, num_bombs);
+                checkfalling(bombstruct);
+                explode = getMsTimer() + 2000;
+                nextbombevent = getMsTimer() + 100;
+            }
+        }
+        if (bombstruct->movement != HIDDEN)
+        {
+            if (explode < getMsTimer())
+            {
+                hide(bombstruct);
+                uint8_t blast_x1 = MAX(0, bombstruct->x - 6);
+                uint8_t blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
+                uint8_t blast_y1 = MAX(6, bombstruct->y - 6);
+                uint8_t blast_y2 = MIN(bombstruct->y + bombstruct->height + 6, 25);
+                for (uint8_t x = blast_x1; x < blast_x2; x++)
+                {
+                    for (uint8_t y = blast_y1; y < blast_y2; y++)
+                    {
+                        if (!obstacle(x, y))
+                            page(x, y, 0);
+                    }
+                }
+                if (monster->movement != HIDDEN &&
+                    blast_x1 < monster->x + monster->width && blast_x2 > monster->x &&
+                    blast_y1 < monster->y + monster->height && blast_y2 > monster->y)
+                {
+                    monster->health -= bombstruct->damage;
+                    if (monster->health <= 0)
+                        hide(monster);
+                    else
+                        draw(monster);
+                }
+                if (blast_x1 < protagonist->x + protagonist->width && blast_x2 > protagonist->x &&
+                    blast_y1 < protagonist->y + protagonist->height && blast_y2 > protagonist->y)
+                {
+                    takingdamage(bombstruct->damage);
+                }
+            }
+            else
+            {
+                draw(bombstruct);
+            }
+        }
+            
 
         /*if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
         {

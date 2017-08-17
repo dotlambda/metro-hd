@@ -13,7 +13,7 @@ struct Character
 {
     uint8_t x;
     uint8_t y;
-    enum {LOOK_MONSTER_MEMU, LOOK_MONSTER_METROID, LOOK_MONSTER_LITTLE, LOOK_EYEMONSTER, LOOK_MONSTER_ZOOMER, LOOK_MONSTER_HORNOAD, LOOK_MONSTER_SIDEHOPPER, LOOK_BOSS_ZAZABI, LOOK_BOSS_DRAGON, LOOK_PROTAGONIST, LOOK_ROCKET} look;
+    enum {LOOK_MONSTER_MEMU, LOOK_MONSTER_METROID, LOOK_MONSTER_LITTLE, LOOK_EYEMONSTER, LOOK_MONSTER_ZOOMER, LOOK_MONSTER_HORNOAD, LOOK_MONSTER_SIDEHOPPER, LOOK_BOSS_ZAZABI, LOOK_BOSS_DRAGON, LOOK_PROTAGONIST, LOOK_ROCKET, LOOK_BOMB} look;
     uint8_t lookstate; // to e.g. store whether the wings are turned upwards or downwards
     uint32_t lastlookstatechg;
     uint8_t width;  // in pixels
@@ -23,7 +23,7 @@ struct Character
     int8_t health;
     uint8_t damage;
     uint8_t jumpheight;
-    enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN, JUMP, JUMPMOVE} movement;
+    enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN, JUMP, JUMPMOVE, BOMB} movement;
 };
 
 void initcharacter(struct Character* character);
