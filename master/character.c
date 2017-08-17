@@ -8,6 +8,7 @@
 
 void initcharacter(struct Character* character)
 {
+    character->health = 4;
     character->movement = FOLLOW_PROTAGONIST;
     switch (character->look)
     {
@@ -15,24 +16,20 @@ void initcharacter(struct Character* character)
             character->width = 8;
             character->height = 4;
             character->health = 99;
-            character->damage = 15; // folgende damage und health Zahlen sind Platzhalter Zahlen
             break;
         case LOOK_MONSTER_LITTLE: 
             character->width = 8;
             character->height = 2;
-            character->health = 99;
             character->damage = 10;
             break;
         case LOOK_EYEMONSTER:
             character->width = 12;
             character->height = 4;
-            character->health = 99;
             character->damage = 15;
             break;
         case LOOK_MONSTER_ZOOMER:
             character->width = 15;
             character->height = 3;
-            character->health = 99;
             character->damage = 20;
             break;
         case LOOK_ROCKET:
@@ -44,39 +41,33 @@ void initcharacter(struct Character* character)
         case LOOK_BOSS_ZAZABI:
             character->width = 17;
             character->height = 8;
-            character->health = 99;
             character->damage = 30;
             break;
         case LOOK_MONSTER_METROID:
             character->width = 14;
             character->height = 3;
-            character->health = 99;
             character->damage = 15;
             break;
         case LOOK_MONSTER_HORNOAD:
             character->width = 14;
             character->height = 3;
-            character->health = 99;
             character->damage = 15;
             character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
             character->height = 3;
-            character->health = 99;
             character->damage = 20;
             character->movement = JUMP;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
             character->height = 2;
-            character->health = 99;
             character->damage = 10;
             break;
         case LOOK_BOSS_DRAGON:
             character->width = 40;
             character->height = 9;
-            character->health = 99;
             character->damage = 15;
             break;
     }
@@ -250,7 +241,7 @@ uint8_t moveleft(struct Character* character)
 
 uint8_t moveright(struct Character* character)
 {
-    if (character->x + 1 == DISPLAY_WIDTH)
+    if (character->x + character->width == DISPLAY_WIDTH)
         return 0;
 
     // don't move if there is an obstacle to the right

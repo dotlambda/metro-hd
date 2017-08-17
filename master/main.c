@@ -424,6 +424,8 @@ void redraw()
     draw(monster);
 
     draw(protagonist);
+    
+    projectile->movement = HIDDEN;
 }
 
 void newlevel()
@@ -690,19 +692,29 @@ int main(void)
         {
             uint8_t enough_space = 1;
             projectile->direction = protagonist->direction;
+            projectile->y = protagonist->y + 1;
             if (protagonist->direction == DIRECTION_LEFT)
             {
                 if (protagonist->x < projectile->width)
                     enough_space = 0;
                 projectile->x = protagonist->x - projectile->width;
-                projectile->y = protagonist->y + 1;
             }
             else
             {
                 if (protagonist->x + protagonist->width + projectile->width >= DISPLAY_WIDTH)
                     enough_space = 0;
                 projectile->x = protagonist->x + protagonist->width;
-                projectile->y = protagonist->y + 1;
+            }
+            if (enough_space)
+            {
+                for (uint8_t x = projectile->x; x < projectile->x + projectile->width; ++x)
+                {
+                    for (uint8_t y = projectile->y; y < projectile->y + projectile->height; ++y)
+                    {
+                        if (obstacle(x, y))
+                            enough_space = 0;
+                    }
+                }
             }
             if (enough_space)
             {
@@ -776,7 +788,7 @@ int main(void)
             takingdamage(monster->damage);
         }
 
-        if (projectile->movement != HIDDEN && collision(projectile, monster))
+        if (projectile->movement != HIDDEN && monster->movement != HIDDEN && collision(projectile, monster))
         {
             hide(projectile);
             monster->health -= projectile->damage;
