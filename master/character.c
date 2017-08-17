@@ -10,6 +10,7 @@ void initcharacter(struct Character* character)
 {
     character->health = 4;
     character->movement = FOLLOW_PROTAGONIST;
+    character->jumpheight = 7;
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
@@ -52,12 +53,14 @@ void initcharacter(struct Character* character)
             character->width = 14;
             character->height = 3;
             character->damage = 15;
+            character->jumpheight = 5;
             character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
             character->height = 3;
             character->damage = 20;
+            character->jumpheight = 10;
             character->movement = JUMP;
             break;
         case LOOK_MONSTER_MEMU:
@@ -313,13 +316,13 @@ void checkfalling(struct Character* character)
         for (uint8_t x = character->x; x < character->x + character->width; ++x)
             feet_on_ground |= obstacle(x, character->y + character->height);
         if (!feet_on_ground)
-            character->jumpstate = FALLING_DOWN;
+            character->jumpstate = character->jumpheight;
     }
 }
 
 void jump(struct Character* character)
 {
-    if (character->jumpstate == FALLING_DOWN)
+    if (character->jumpstate == character->jumpheight)
     {
         if (!movedown(character))
             character->jumpstate = ON_THE_GROUND;
@@ -327,7 +330,7 @@ void jump(struct Character* character)
     else if (character->jumpstate != ON_THE_GROUND)
     {
         if (!moveup(character))
-            character->jumpstate = FALLING_DOWN;
+            character->jumpstate = character->jumpheight;
         else
             character->jumpstate++;
     }

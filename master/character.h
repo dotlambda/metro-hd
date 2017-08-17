@@ -4,7 +4,6 @@
 #define DIRECTION_LEFT 0
 #define DIRECTION_RIGHT 1
 #define ON_THE_GROUND 0
-#define FALLING_DOWN 8
 
 #define NUM_MONSTER_LOOKS 7
 
@@ -23,6 +22,7 @@ struct Character
     uint8_t jumpstate;
     int8_t health;
     uint8_t damage;
+    uint8_t jumpheight;
     enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN, JUMP, JUMPMOVE} movement;
 };
 
