@@ -8,6 +8,7 @@
 
 void initcharacter(struct Character* character)
 {
+    character->movement = FOLLOW_PROTAGONIST;
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
@@ -56,12 +57,14 @@ void initcharacter(struct Character* character)
             character->height = 3;
             character->health = 99;
             character->damage = 15;
+            character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
             character->height = 3;
             character->health = 99;
             character->damage = 20;
+            character->movement = JUMP;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
@@ -374,6 +377,24 @@ void move(struct Character* character)
             }
             break;
         case HIDDEN:
+            break;
+        case JUMP:
+            if(character->jumpstate == ON_THE_GROUND)
+            {    
+                character->jumpstate = 1;
+            }
+            break;
+       case JUMPMOVE:
+            if(character->jumpstate == ON_THE_GROUND)
+            {    
+                character->jumpstate = 1;
+            }
+            if (protagonist->x < character->x)
+                    moveleft(character);
+                else if (protagonist->x > character->x)
+                    moveright(character);
+                else
+                    draw(character);
             break;
     }
 }
