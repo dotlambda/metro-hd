@@ -362,7 +362,12 @@ void redraw()
     else if (doors & 0b00000001)
         drawdoorright_closed();
 
-    draw(monster);
+    if (monster->movement != HIDDEN)
+        draw(monster);
+    if (projectile->movement != HIDDEN)
+        draw(projectile);
+    if (bombstruct->movement != HIDDEN)
+        draw(bombstruct);
 
     draw(protagonist);
 }
