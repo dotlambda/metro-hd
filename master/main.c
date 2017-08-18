@@ -265,7 +265,7 @@ void drawdoorleft_closed()
 
 void selectfloor()
 {
-    switch (random() % 3)
+    switch (random() % 4)
     {
         case 0l:
             floorsprite = floor1;
@@ -279,8 +279,10 @@ void selectfloor()
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
             break;                           
-        default:
-            floorsprite = 0;
+        case 3l:
+            floorsprite = floor4;
+            rotatedfloorsprite = floor4_rotated;
+            break;
     }
     switch (random() % 2)
     {
@@ -447,12 +449,12 @@ void newlevel()
 {
     if (protagonist->x > DISPLAY_WIDTH / 2)
     {
-        level_seed += 2 * MAX_LEVEL_WIDTH;
+        level_seed += 2 * MAX_LEVEL_WIDTH + 1;
         door_back = DOOR_LEFT;
     }
     else // back to the previous level
     {
-        level_seed -= 2 * MAX_LEVEL_WIDTH;
+        level_seed -= 2 * MAX_LEVEL_WIDTH - 1;
         door_back = DOOR_RIGHT;
     }
 
