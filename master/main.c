@@ -265,16 +265,16 @@ void drawdoorleft_closed()
 
 void selectfloor()
 {
-    switch (random() % 2)
+    switch (random() % 3)
     {
         case 0l:
             floorsprite = floor1;
             rotatedfloorsprite = floor1_rotated;
             break;
         case 1l:
-            /*floorsprite = floor2;
+            floorsprite = floor2;
             rotatedfloorsprite = floor2_rotated;
-            break;*/
+            break;
         case 2l:
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
@@ -367,7 +367,7 @@ void redraw()
 
     if (doors & 0b00000010)
         drawdoorleft_closed();
-    else if (doors & 0b00000001)
+    if (doors & 0b00000001)
         drawdoorright_closed();
 
     if (monster->movement != HIDDEN)
@@ -401,7 +401,7 @@ void newlevelpos()
         else
             doors |= 0b00000001;
     }
-    
+
     // draw exit door
     if (level_pos == MAX_LEVEL_WIDTH - 1 && door_back == DOOR_LEFT)
     {
@@ -477,16 +477,16 @@ void newlevel()
     }
     protagonist->y = 25 - protagonist->height;
     
-    level_pos = 0;
     srandom(level_seed);
     selectfloor();
 
+    level_pos = 0;
     newlevelpos();
 }
 
 void newgame()
 {
-    level_seed = 3451627918l;
+    level_seed = 1l;
     num_rockets = 20;
     num_bombs = 20;
 
