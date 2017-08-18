@@ -391,9 +391,6 @@ void newlevelpos()
     nofloor = random();
     nofloor = INT32_MAX; // turn off water
     
-    drawplatform();
-    drawfloor();
-    
     doors = 0;
     
     // draw door to previous level

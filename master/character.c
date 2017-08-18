@@ -148,14 +148,14 @@ void draw(struct Character* character)
             break;
             
         case LOOK_ROCKET:
-        if(character->direction == DIRECTION_LEFT)
-        {
-            sprite = rocket;
-        }
-        else
-        {
-            sprite = rocketinverted;
-        }
+            if(character->direction == DIRECTION_LEFT)
+            {
+                sprite = rocket;
+            }
+            else
+            {
+                sprite = rocketinverted;
+            }
             break;
             
         case LOOK_BOSS_ZAZABI:
