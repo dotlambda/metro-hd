@@ -62,7 +62,7 @@ void initcharacter(struct Character* character)
             character->height = 3;
             character->damage = 20;
             character->jumpheight = 10;
-            character->movement = JUMP;
+            character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
@@ -148,7 +148,14 @@ void draw(struct Character* character)
             break;
             
         case LOOK_ROCKET:
+        if(character->direction == DIRECTION_LEFT)
+        {
             sprite = rocket;
+        }
+        else
+        {
+            sprite = rocketinverted;
+        }
             break;
             
         case LOOK_BOSS_ZAZABI:
@@ -202,13 +209,27 @@ void draw(struct Character* character)
             sprite = bomb;
             break;
         case LOOK_MONSTER_GEEGA:
-            if (character->lookstate) // wings up
+            if(character->direction == DIRECTION_LEFT)
             {
-                sprite = geega1;
+                if (character->lookstate) // wings up and moving left
+                {
+                    sprite = geega1;
+                }
+                else// wings down
+                {
+                    sprite = geega2;
+                }
             }
-            else // wings down
+            else
             {
-                sprite = geega2;
+                if (character->lookstate) // wings up and moving right
+                {
+                    sprite = geega1inverted;
+                }
+                else// wings down
+                {
+                    sprite = geega2inverted;
+                }
             }
             // toggle wing state
             character->lookstate = 1 - character->lookstate;
