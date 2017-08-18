@@ -11,6 +11,7 @@
 #include "character.h"
 #include "globals.h"
 #include "sprites.h"
+#include "rand.h"
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
@@ -280,7 +281,7 @@ void drawdoorleft_closed()
 
 void selectfloor()
 {
-    switch (random() % 4)
+    switch (random_below(4))
     {
         case 0l:
             floorsprite = floor1;
@@ -299,7 +300,7 @@ void selectfloor()
             rotatedfloorsprite = floor4_rotated;
             break;
     }
-    switch (random() % 2)
+    switch (random_below(2))
     {
         case 0l:
             nofloorsprite = water;
@@ -394,21 +395,23 @@ void redraw()
     if (bombstruct->movement != HIDDEN)
         draw(bombstruct);
    
-    if (obstacle(100, 19))
+    if (obstacle(90, 19))
     {
-        drawenergytank(100, 17);
+        drawenergytank(90, 17);
     }
     draw(protagonist);
 }
 
 void newlevelpos()
 {
+    srand(level_seed + level_pos);
     srandom(level_seed + level_pos);
-    platforms_19 = random();
+    
     platforms_13 = random();
+    platforms_19 = random();
     platforms_24 = random();
     platforms_24 |= 3l << 0; // no hill at the display boundary
-    energytankexists = random() % 2;
+    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1);
     nofloor = random();
     nofloor = INT32_MAX; // turn off water
     doors = 0;
@@ -431,7 +434,7 @@ void newlevelpos()
     {
         doors |= 0b00000010;
     }
-    else if (random() % 5 == 0)
+    else if (random_below(5) == 0)
     {
         if (door_back == DOOR_LEFT)
         {
@@ -443,7 +446,7 @@ void newlevelpos()
         }
     }
     
-    monster->look = random() % NUM_MONSTER_LOOKS;
+    monster->look = random_below(NUM_MONSTER_LOOKS);
     initcharacter(monster);
     monster->x = (DISPLAY_WIDTH - monster->width) / 2;
     monster->y = 25 - monster->height;
@@ -497,7 +500,9 @@ void newlevel()
     }
     protagonist->y = 25 - protagonist->height;
     
+    srand(level_seed);
     srandom(level_seed);
+
     selectfloor();
 
     level_pos = 0;
@@ -506,7 +511,7 @@ void newlevel()
 
 void newgame()
 {
-    level_seed = 1l;
+    level_seed = 2845215237l;
     num_rockets = 20;
     num_bombs = 20;
 
