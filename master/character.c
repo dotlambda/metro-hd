@@ -207,13 +207,27 @@ void draw(struct Character* character)
             sprite = bomb;
             break;
         case LOOK_MONSTER_GEEGA:
-            if (character->lookstate) // wings up
+            if(character->direction == DIRECTION_LEFT)
             {
-                sprite = geega1;
+                if (character->lookstate) // wings up and moving left
+                {
+                    sprite = geega1;
+                }
+                else// wings down
+                {
+                    sprite = geega2;
+                }
             }
-            else // wings down
+            else
             {
-                sprite = geega2;
+                if (character->lookstate) // wings up and moving right
+                {
+                    sprite = geega1inverted;
+                }
+                else// wings down
+                {
+                    sprite = geega2inverted;
+                }
             }
             // toggle wing state
             character->lookstate = 1 - character->lookstate;
