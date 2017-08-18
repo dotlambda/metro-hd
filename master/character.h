@@ -3,6 +3,8 @@
 
 #define DIRECTION_LEFT 0
 #define DIRECTION_RIGHT 1
+#define DIRECTION_UP 2
+#define DIRECTION_DOWN 3
 #define ON_THE_GROUND 0
 
 #define NUM_MONSTER_LOOKS 8
@@ -23,7 +25,7 @@ struct Character
     int8_t health;
     uint8_t damage;
     uint8_t jumpheight;
-    enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN, JUMP, JUMPMOVE, BOMB} movement;
+    enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN, JUMP, JUMPMOVE, FLYING_AROUND, BOMB} movement;
 };
 
 void initcharacter(struct Character* character);

@@ -10,6 +10,7 @@ void initcharacter(struct Character* character)
 {
     character->health = 4;
     character->movement = FOLLOW_PROTAGONIST;
+    character->direction = DIRECTION_RIGHT;
     character->jumpheight = 7;
     switch (character->look)
     {
@@ -67,6 +68,7 @@ void initcharacter(struct Character* character)
             character->width = 15;
             character->height = 2;
             character->damage = 10;
+            character->movement = FLYING_AROUND;
             break;
         case LOOK_BOSS_DRAGON:
             character->width = 40;
@@ -83,7 +85,7 @@ void initcharacter(struct Character* character)
             character->width = 16;
             character->height = 4;
             character->damage = 5;
-            character->movement = BACK_AND_FORTH;
+            character->movement = FLYING_AROUND;
             break;
     }
     character->lookstate = 0;
@@ -350,6 +352,8 @@ void checkfalling(struct Character* character)
 
 void jump(struct Character* character)
 {
+    if (character->movement == FLYING_AROUND)
+        return;
     if (character->jumpstate == character->jumpheight)
     {
         if (!movedown(character))
@@ -419,7 +423,28 @@ void move(struct Character* character)
                 else
                     draw(character);
             break;
-       case BOMB:
-           break;
+        case BOMB:
+            break;
+        case FLYING_AROUND:
+            switch (character->direction)
+            {
+                case DIRECTION_LEFT:
+                    if (!moveleft(character) || !(rand() % 20))
+                        character->direction = rand() % 4;
+                    break;
+                case DIRECTION_RIGHT:
+                    if (!moveright(character) || !(rand() % 20))
+                        character->direction = rand() % 4;
+                    break;
+                case DIRECTION_UP:
+                    if (!moveup(character) || !(rand() % 20))
+                        character->direction = rand() % 4;
+                    break;
+                case DIRECTION_DOWN:
+                    if (!movedown(character) || !(rand() % 20))
+                        character->direction = rand() % 4;
+                    break;
+            }
+            break;
     }
 }
