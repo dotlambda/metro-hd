@@ -61,7 +61,7 @@ void initcharacter(struct Character* character)
             character->height = 3;
             character->damage = 20;
             character->jumpheight = 10;
-            character->movement = JUMP;
+            character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
@@ -146,7 +146,14 @@ void draw(struct Character* character)
             break;
             
         case LOOK_ROCKET:
+        if(character->direction == DIRECTION_LEFT)
+        {
             sprite = rocket;
+        }
+        else
+        {
+            sprite = rocketinverted;
+        }
             break;
             
         case LOOK_BOSS_ZAZABI:
