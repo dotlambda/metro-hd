@@ -280,32 +280,29 @@ void drawdoorleft_closed()
 
 void selectfloor()
 {
-    switch (random() % 2)
+    long floor = random() % 2;
+    drawnumber(140, 10, floor);
+    delay(500);
+    if (floor == 1)
     {
-        case 0l:
-            floorsprite = floor1;
-            rotatedfloorsprite = floor1_rotated;
-            break;
-        case 1l:
-            /*floorsprite = floor2;
-            rotatedfloorsprite = floor2_rotated;
-            break;*/
-        case 2l:
-            floorsprite = floor3;
-            rotatedfloorsprite = floor3_rotated;
-            break;                           
-        default:
-            floorsprite = 0;
-    }
-    switch (random() % 2)
+        floorsprite = floor1;
+        rotatedfloorsprite = floor1_rotated;
+    }    
+    else
     {
-        case 0l:
-            nofloorsprite = water;
-            break;
-        case 1l:
-            nofloorsprite = spikes;
-            break;
+        floorsprite = floor3;
+        rotatedfloorsprite = floor3_rotated;
     }
+
+//     switch (random() % 2)
+//     {
+//         case 0l:
+//             nofloorsprite = water;
+//             break;
+//         case 1l:
+//             nofloorsprite = spikes;
+//             break;
+//     }
 }
 
 void drawfloor()
@@ -391,26 +388,11 @@ void redraw()
         draw(projectile);
     if (bombstruct->movement != HIDDEN)
         draw(bombstruct);
-    if (energytankexists == 0)
+   
+    if (obstacle(100, 19))
     {
-        bool hill = 0;
-        for (uint8_t x = 100; x < 109; x++)
-        {
-            if (obstacle_hill(x))
-            {
-                hill = 1;
-            }
-        }
-        if (hill == 1)
-        {
-            drawenergytank(100, 22);
-        }
-        else
-        {
-            drawenergytank(100, 23);
-        }
+        drawenergytank(100, 17);
     }
-        
     draw(protagonist);
 }
 
@@ -421,7 +403,7 @@ void newlevelpos()
     platforms_13 = random();
     platforms_24 = random();
     platforms_24 |= 3l << 0; // no hill at the display boundary
-    energytankexists = random() % 5;
+    energytankexists = random() % 2;
     nofloor = random();
     nofloor = INT32_MAX; // turn off water
     
