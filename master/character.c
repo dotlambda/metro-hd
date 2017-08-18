@@ -79,6 +79,12 @@ void initcharacter(struct Character* character)
             character->damage = 5;
             character->movement = HIDDEN;
             break;
+        case LOOK_MONSTER_GEEGA:
+            character->width = 16;
+            character->height = 4;
+            character->damage = 5;
+            character->movement = BACK_AND_FORTH;
+            break;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -193,6 +199,19 @@ void draw(struct Character* character)
         case LOOK_BOMB:
             sprite = bomb;
             break;
+        case LOOK_MONSTER_GEEGA:
+            if (character->lookstate) // wings up
+            {
+                sprite = geega1;
+            }
+            else // wings down
+            {
+                sprite = geega2;
+            }
+            // toggle wing state
+            character->lookstate = 1 - character->lookstate;
+            break;
+
     }
     
     uint16_t i = 0;
