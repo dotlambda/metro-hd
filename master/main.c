@@ -787,16 +787,37 @@ int main(void)
                 hide(bombstruct);
                 uint8_t blast_x1 = MAX(0, bombstruct->x - 6);
                 uint8_t blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
-                uint8_t blast_y1 = MAX(6, bombstruct->y - 6);
-                uint8_t blast_y2 = MIN(bombstruct->y + bombstruct->height + 6, 25);
-                for (uint8_t x = blast_x1; x < blast_x2; x++)
+                uint8_t blast_y1 = MAX(6, bombstruct->y - 1);
+                uint8_t blast_y2 = MIN(bombstruct->y + bombstruct->height + 3, 25);
+                uint16_t i = 0;
+                for (int16_t y = bombstruct->y - 1; y < bombstruct->y + 3; y++)
                 {
-                    for (uint8_t y = blast_y1; y < blast_y2; y++)
+                    for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
                     {
-                        if (!obstacle(x, y))
-                            page(x, y, 0);
+                        if (x >= 0 && x < DISPLAY_WIDTH
+                            && y >= 6 && y < 25
+                            && !obstacle(x, y))
+                        {
+                            page(x, y, pgm_read_byte_near(explosion + i));
+                        }
+                        i++;
                     }
                 }
+                delay(600);
+                i = 0;
+                for (int16_t y = bombstruct->y - 1; y < bombstruct->y + 3; y++)
+                {
+                    for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
+                    {   
+                        if (x >= 0 && x < DISPLAY_WIDTH
+                            && y >= 6 && y < 25
+                            && !obstacle(x, y))
+                        {
+                            page(x, y, 0);
+                        }
+                        i++;
+                    }
+                } 
                 if (monster->movement != HIDDEN &&
                     blast_x1 < monster->x + monster->width && blast_x2 > monster->x &&
                     blast_y1 < monster->y + monster->height && blast_y2 > monster->y)
