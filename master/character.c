@@ -35,7 +35,7 @@ void initcharacter(struct Character* character)
             character->damage = 20;
             break;
         case LOOK_ROCKET:
-            character->width = 13;
+            character->width = 14;
             character->height = 2;
             character->damage = 2;
             character->movement = HIDDEN;
