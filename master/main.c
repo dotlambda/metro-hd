@@ -280,29 +280,32 @@ void drawdoorleft_closed()
 
 void selectfloor()
 {
-    long floor = random() % 2;
-    drawnumber(140, 10, floor);
-    delay(500);
-    if (floor == 1)
+    switch (random() % 3)
     {
-        floorsprite = floor1;
-        rotatedfloorsprite = floor1_rotated;
-    }    
-    else
-    {
-        floorsprite = floor3;
-        rotatedfloorsprite = floor3_rotated;
+        case 0l:
+            floorsprite = floor1;
+            rotatedfloorsprite = floor1_rotated;
+            break;
+        case 1l:
+            floorsprite = floor2;
+            rotatedfloorsprite = floor2_rotated;
+            break;
+        case 2l:
+            floorsprite = floor3;
+            rotatedfloorsprite = floor3_rotated;
+            break;                           
+        default:
+            floorsprite = 0;
     }
-
-//     switch (random() % 2)
-//     {
-//         case 0l:
-//             nofloorsprite = water;
-//             break;
-//         case 1l:
-//             nofloorsprite = spikes;
-//             break;
-//     }
+    switch (random() % 2)
+    {
+        case 0l:
+            nofloorsprite = water;
+            break;
+        case 1l:
+            nofloorsprite = spikes;
+            break;
+    }
 }
 
 void drawfloor()
@@ -379,7 +382,7 @@ void redraw()
 
     if (doors & 0b00000010)
         drawdoorleft_closed();
-    else if (doors & 0b00000001)
+    if (doors & 0b00000001)
         drawdoorright_closed();
 
     if (monster->movement != HIDDEN)
@@ -406,8 +409,6 @@ void newlevelpos()
     energytankexists = random() % 2;
     nofloor = random();
     nofloor = INT32_MAX; // turn off water
-    
-    
     doors = 0;
     
     // draw door to previous level
@@ -418,7 +419,7 @@ void newlevelpos()
         else
             doors |= 0b00000001;
     }
-    
+
     // draw exit door
     if (level_pos == MAX_LEVEL_WIDTH - 1 && door_back == DOOR_LEFT)
     {
@@ -494,16 +495,16 @@ void newlevel()
     }
     protagonist->y = 25 - protagonist->height;
     
-    level_pos = 0;
     srandom(level_seed);
     selectfloor();
 
+    level_pos = 0;
     newlevelpos();
 }
 
 void newgame()
 {
-    level_seed = 3451627918l;
+    level_seed = 1l;
     num_rockets = 20;
     num_bombs = 20;
 
