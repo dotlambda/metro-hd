@@ -20,11 +20,13 @@
 
 #define DIST_AFTER_DAMAGE 10
 
+
 struct Character* monster;
 struct Character* projectile;
 struct Character* bombstruct;
 uint8_t num_rockets;
 uint8_t num_bombs;
+uint8_t energytankexists;
 enum {DOOR_LEFT, DOOR_RIGHT} door_back;
 
 uint32_t nextmoveevent;
@@ -141,6 +143,19 @@ void drawlabels()
     drawnumber(29, 1, protagonist->health);
     drawnumber(57, 1, num_rockets);
     drawnumber(86, 1, num_bombs);
+}
+
+void drawenergytank(uint8_t x, uint8_t y)
+{
+    uint8_t i = 0;
+    for (uint8_t y_ = y; y_ < y + 2; y_++)
+    {
+        for(uint8_t x_ = x; x_ < x + 9; x_++)
+        {
+            page(x_, y_, pgm_read_byte_near(energytank + i));
+            i++;
+        }
+    }
 }
 
 void drawdoor(int x)
@@ -376,7 +391,26 @@ void redraw()
         draw(projectile);
     if (bombstruct->movement != HIDDEN)
         draw(bombstruct);
-
+    if (energytankexists == 0)
+    {
+        bool hill = 0;
+        for (uint8_t x = 100; x < 109; x++)
+        {
+            if (obstacle_hill(x))
+            {
+                hill = 1;
+            }
+        }
+        if (hill == 1)
+        {
+            drawenergytank(100, 22);
+        }
+        else
+        {
+            drawenergytank(100, 23);
+        }
+    }
+        
     draw(protagonist);
 }
 
@@ -387,12 +421,10 @@ void newlevelpos()
     platforms_13 = random();
     platforms_24 = random();
     platforms_24 |= 3l << 0; // no hill at the display boundary
-    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
+    energytankexists = random() % 5;
     nofloor = random();
     nofloor = INT32_MAX; // turn off water
     
-    drawplatform();
-    drawfloor();
     
     doors = 0;
     
