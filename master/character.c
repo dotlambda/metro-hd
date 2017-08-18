@@ -209,7 +209,7 @@ void draw(struct Character* character)
             sprite = bomb;
             break;
         case LOOK_MONSTER_GEEGA:
-            if(character->direction == DIRECTION_LEFT)
+            if(character->direction == DIRECTION_RIGHT || character->direction == DIRECTION_UP)
             {
                 if (character->lookstate) // wings up and moving left
                 {
@@ -231,8 +231,13 @@ void draw(struct Character* character)
                     sprite = geega2inverted;
                 }
             }
+
             // toggle wing state
-            character->lookstate = 1 - character->lookstate;
+            if (character->lastlookstatechg < getMsTimer())
+            {
+                character->lookstate = 1 - character->lookstate;
+                character->lastlookstatechg = getMsTimer() + 300;
+            }
             break;
 
     }
