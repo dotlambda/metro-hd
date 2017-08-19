@@ -6,6 +6,9 @@
 
 #define PLATFORM_WIDTH 10
 
+#define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
+#define MIN_LEVEL_WIDTH 1
+
 struct Character* protagonist;
 uint8_t num_rockets;
 uint8_t num_bombs;
@@ -14,7 +17,6 @@ uint8_t energytankexists;
 struct Character* monster;
 struct Character* projectile;
 struct Character* bombstruct;
-enum {DOOR_LEFT, DOOR_RIGHT} door_back;
 
 const uint8_t* floorsprite;
 const uint8_t* rotatedfloorsprite;
@@ -22,6 +24,7 @@ const uint8_t* nofloorsprite;
 
 long level_seed;
 long level_pos;
+uint8_t max_level_pos;
 
 long platforms_19;
 long platforms_13;
