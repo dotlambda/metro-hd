@@ -281,31 +281,43 @@ void drawdoorleft_closed()
 
 void selectfloor()
 {
-    switch (random_below(4))
+    switch (random_below(7))
     {
-        case 0l:
+        case 0:
             floorsprite = floor1;
             rotatedfloorsprite = floor1_rotated;
             break;
-        case 1l:
+        case 1:
             floorsprite = floor2;
             rotatedfloorsprite = floor2_rotated;
             break;
-        case 2l:
+        case 2:
             floorsprite = floor3;
             rotatedfloorsprite = floor3_rotated;
             break;                           
-        case 3l:
+        case 3:
             floorsprite = floor4;
             rotatedfloorsprite = floor4_rotated;
+            break;
+        case 4:
+            floorsprite = floor5;
+            rotatedfloorsprite = floor5_rotated;
+            break;
+        case 5:
+            floorsprite = floor6;
+            rotatedfloorsprite = floor6_rotated;
+            break;
+        case 6:
+            floorsprite = floor7;
+            rotatedfloorsprite = floor7_rotated;
             break;
     }
     switch (random_below(2))
     {
-        case 0l:
+        case 0:
             nofloorsprite = water;
             break;
-        case 1l:
+        case 1:
             nofloorsprite = spikes;
             break;
     }
