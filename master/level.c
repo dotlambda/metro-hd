@@ -210,7 +210,7 @@ void newlevel()
     }
     else // back to the previous level
     {
-        level_seed -= 2 * MAX_LEVEL_WIDTH - 1;
+        level_seed -= 2 * MAX_LEVEL_WIDTH + 1;
         door_back = DOOR_RIGHT;
     }
 
