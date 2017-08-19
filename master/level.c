@@ -1,0 +1,264 @@
+#include <stdlib.h>
+#include "level.h"
+#include "display.h"
+#include "character.h"
+#include "drawing.h"
+#include "sprites.h"
+#include "rand.h"
+
+#define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
+#define MIN_LEVEL_WIDTH 1
+
+long obstacle(uint8_t x, uint8_t y)
+{
+    if (y == 5) // ceiling
+        return 1l;
+    if (doors & 0b00000010 && (x < 4 || (y >= 20 && x < 6)))
+        return 1l;
+    else if (doors & 0b00000001 && (x >= DISPLAY_WIDTH - 4 || (y >= 20 && x >= DISPLAY_WIDTH - 6)))
+        return 1l;
+    else if (y == 25)
+        return nofloor & (7l << x / 16 * 3);
+    else if (y == 19)
+        return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 13)
+        return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 24)
+         return !(platforms_24 & (3l << (x / 16 * 2)));
+    else
+        return 0l;
+}
+
+long obstacle_hill(uint8_t x)
+{
+    return !(platforms_24 & (3l << (x / 16 * 2)));
+}
+
+long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
+{
+    srandom(level_seed + level_pos);
+    long platforms_13 = random();
+    long platforms_19 = random();
+    long platforms_24 = random();
+    platforms_24 |= 3l << 0; // no hill at the display boundary
+    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
+    long nofloor = random();
+    nofloor = INT32_MAX; // turn off water
+    
+    if (y == 5) // ceiling
+        return 1l;
+    else if (y == 25)
+        return nofloor & (7l << x / 16 * 3);
+    else if (y == 19)
+        return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 13)
+        return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
+    else if (y == 24)
+         return !(platforms_24 & (3l << (x / 16 * 2)));
+    else
+        return 0l;
+}
+
+void redraw()
+{
+    clear();
+    
+    drawlabels();
+    
+    // print ceiling 
+    for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
+    {
+        page(x, 5, pgm_read_byte_near(floorsprite + x % 16));
+    }
+
+    drawplatform();
+    drawfloor();
+
+    if (doors & 0b00000010)
+        drawdoorleft_closed();
+    if (doors & 0b00000001)
+        drawdoorright_closed();
+
+    if (monster->movement != HIDDEN)
+        draw(monster);
+    if (projectile->movement != HIDDEN)
+        draw(projectile);
+    if (bombstruct->movement != HIDDEN)
+        draw(bombstruct);
+   
+    if (obstacle(90, 19))
+    {
+        drawenergytank(90, 17);
+    }
+    draw(protagonist);
+}
+
+void selectfloor()
+{
+    switch (random_below(7))
+    {
+        case 0:
+            floorsprite = floor1;
+            rotatedfloorsprite = floor1_rotated;
+            break;
+        case 1:
+            floorsprite = floor2;
+            rotatedfloorsprite = floor2_rotated;
+            break;
+        case 2:
+            floorsprite = floor3;
+            rotatedfloorsprite = floor3_rotated;
+            break;                           
+        case 3:
+            floorsprite = floor4;
+            rotatedfloorsprite = floor4_rotated;
+            break;
+        case 4:
+            floorsprite = floor5;
+            rotatedfloorsprite = floor5_rotated;
+            break;
+        case 5:
+            floorsprite = floor6;
+            rotatedfloorsprite = floor6_rotated;
+            break;
+        case 6:
+            floorsprite = floor7;
+            rotatedfloorsprite = floor7_rotated;
+            break;
+    }
+    switch (random_below(2))
+    {
+        case 0:
+            nofloorsprite = water;
+            break;
+        case 1:
+            nofloorsprite = spikes;
+            break;
+    }
+}
+
+void newlevelpos()
+{
+    srand(level_seed + level_pos);
+    srandom(level_seed + level_pos);
+    
+    platforms_13 = random();
+    platforms_19 = random();
+    platforms_24 = random();
+    platforms_24 |= 3l << 0; // no hill at the display boundary
+    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1);
+    nofloor = random();
+    nofloor = INT32_MAX; // turn off water
+    doors = 0;
+    
+    // draw door to previous level
+    if (level_pos == 0)
+    {
+        if (door_back == DOOR_LEFT)
+            doors |= 0b00000010;
+        else
+            doors |= 0b00000001;
+    }
+
+    // draw exit door
+    if (level_pos == MAX_LEVEL_WIDTH - 1 && door_back == DOOR_LEFT)
+    {
+        doors |= 0b00000001;
+    }
+    else if (level_pos == -MAX_LEVEL_WIDTH + 1 && door_back == DOOR_RIGHT)
+    {
+        doors |= 0b00000010;
+    }
+    else if (random_below(4) == 0)
+    {
+        if (door_back == DOOR_LEFT)
+        {
+            doors |= 0b00000001;
+        }
+        else
+        {
+            doors |= 0b00000010;
+        }
+    }
+    
+    monster->look = random_below(NUM_MONSTER_LOOKS);
+    initcharacter(monster);
+    monster->x = (DISPLAY_WIDTH - monster->width) / 2;
+    monster->y = 25 - monster->height;
+    // draw monster higher if it's on a hill
+    for (uint8_t x = monster->x; x < monster->x + monster->width; x++)
+    {
+        if (obstacle_hill(x))
+        {
+            monster->y--;
+            break;
+        }
+    }
+        
+    projectile->movement = HIDDEN;
+    bombstruct->movement = HIDDEN;
+
+    redraw();
+}
+
+void newlevel()
+{
+    if (protagonist->x > DISPLAY_WIDTH / 2)
+    {
+        level_seed += 2 * MAX_LEVEL_WIDTH + 1;
+        door_back = DOOR_LEFT;
+    }
+    else // back to the previous level
+    {
+        level_seed -= 2 * MAX_LEVEL_WIDTH - 1;
+        door_back = DOOR_RIGHT;
+    }
+
+    if (protagonist->x > DISPLAY_WIDTH / 2)
+    {
+        movedoorleft();
+    }
+    else
+    {
+        movedoorright();
+    }
+    
+    if (protagonist->x > DISPLAY_WIDTH / 2)
+    {
+        protagonist->x = 6 + 1;
+        protagonist->direction = DIRECTION_RIGHT;
+    }
+    else
+    {
+        protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
+        protagonist->direction = DIRECTION_LEFT;
+    }
+    protagonist->y = 25 - protagonist->height;
+    
+    srand(level_seed);
+    srandom(level_seed);
+
+    selectfloor();
+
+    level_pos = 0;
+    newlevelpos();
+}
+
+void newgame()
+{
+    level_seed = 2845215237l;
+    num_rockets = 20;
+    num_bombs = 20;
+
+    protagonist->look = LOOK_PROTAGONIST;
+    initcharacter(protagonist);
+    protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
+
+    projectile->look = LOOK_ROCKET;
+    initcharacter(projectile);
+    
+    bombstruct->look = LOOK_BOMB;
+    initcharacter(bombstruct);
+
+    newlevel();
+}

@@ -1,13 +1,24 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef LEVEL_H
+#define LEVEL_H
 
 #include <inttypes.h>
-
 #include "character.h"
 
 #define PLATFORM_WIDTH 10
 
 struct Character* protagonist;
+uint8_t num_rockets;
+uint8_t num_bombs;
+uint8_t energytankexists;
+
+struct Character* monster;
+struct Character* projectile;
+struct Character* bombstruct;
+enum {DOOR_LEFT, DOOR_RIGHT} door_back;
+
+const uint8_t* floorsprite;
+const uint8_t* rotatedfloorsprite;
+const uint8_t* nofloorsprite;
 
 long level_seed;
 long level_pos;
@@ -24,5 +35,11 @@ long obstacle(uint8_t x, uint8_t y);
 long obstacle_hill(uint8_t x);
 
 long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos);
+
+void redraw();
+void selectfloor();
+void newlevelpos();
+void newlevel();
+void newgame();
 
 #endif

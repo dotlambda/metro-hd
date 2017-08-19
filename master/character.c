@@ -2,7 +2,7 @@
 #include <avr/pgmspace.h>
 #include "timer.h"
 #include "character.h"
-#include "globals.h"
+#include "level.h"
 #include "display.h"
 #include "sprites.h"
 
