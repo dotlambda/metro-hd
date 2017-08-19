@@ -16,7 +16,7 @@
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
-#define MAX_LEVEL_WIDTH 6 // max 6 displays for one level
+#define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
 #define DIST_AFTER_DAMAGE 10
@@ -446,7 +446,7 @@ void newlevelpos()
     {
         doors |= 0b00000010;
     }
-    else if (random_below(5) == 0)
+    else if (random_below(4) == 0)
     {
         if (door_back == DOOR_LEFT)
         {
