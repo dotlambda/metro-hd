@@ -430,16 +430,16 @@ int main(void)
                 // if the monster is right of the protagonist
                 if (monsters[i]->x + monsters[i]->width/2 >= protagonist->x + protagonist->width)
                 {
-                    uint8_t i = 0;
+                    uint8_t j = 0;
                     while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monsters[i]->x)
                     {
                         if (!moveleft(protagonist))
                             break;
-                        if (i == 0 || i == 2)
+                        if (j == 0 || j == 2)
                             moveup(protagonist);
-                        if (i > 3 && i % 2 == 0)
+                        if (j > 3 && j % 2 == 0)
                             movedown(protagonist);
-                        i++;
+                        j++;
                         draw(monsters[i]);
                         delay(50);
                     }
@@ -451,16 +451,16 @@ int main(void)
                 }
                 else
                 {
-                    uint8_t i = 0;
+                    uint8_t j = 0;
                     while (monsters[i]->x + monsters[i]->width + DIST_AFTER_DAMAGE > protagonist->x)
                     {
                         if (!moveright(protagonist))
                             break;
-                        if (i == 0 || i == 2)
+                        if (j == 0 || j == 2)
                             moveup(protagonist);
-                        if (i > 3 && i % 2 == 0)
+                        if (j > 3 && j % 2 == 0)
                             movedown(protagonist);
-                        i++;
+                        j++;
                         draw(monsters[i]);
                         delay(50);
                     }
