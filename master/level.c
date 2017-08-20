@@ -211,6 +211,10 @@ void newlevelpos()
             }
         }
     }
+    // no water/spikes when there is a frog/sidehopper
+    // these would otherwise fall into the void
+    if (monsters[0]->movement == JUMPMOVE)
+        nofloor = UINT32_MAX;
 
     projectile->movement = HIDDEN;
     bombstruct->movement = HIDDEN;
