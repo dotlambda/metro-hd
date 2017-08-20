@@ -2,6 +2,7 @@
 #define LEVEL_H
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include "character.h"
 
 #define PLATFORM_WIDTH 10
@@ -12,7 +13,6 @@
 struct Character* protagonist;
 uint8_t num_rockets;
 uint8_t num_bombs;
-uint8_t energytankexists;
 
 struct Character* monster;
 struct Character* projectile;
@@ -31,6 +31,9 @@ long platforms_13;
 long platforms_24;
 long nofloor;
 uint8_t doors; // 0b000000ij where i==1 if there is a door on the left and j==1 if there is one on the right
+uint8_t energytank_x;
+uint8_t energytank_y;
+bool energytankexists;
 
 long obstacle(uint8_t x, uint8_t y);
 

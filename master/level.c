@@ -82,11 +82,30 @@ void redraw()
         draw(projectile);
     if (bombstruct->movement != HIDDEN)
         draw(bombstruct);
-   
-    if (obstacle(90, 19))
+
+    energytank_x = really_random_below(DISPLAY_WIDTH - 9);
+    
+    if (really_random_below(2) == 0)
     {
-        drawenergytank(90, 17);
+        energytank_y = 19 - 2;
     }
+    else
+    {
+        energytank_y = 13 - 2;
+    }
+    energytankexists = true;
+    for (uint8_t x = energytank_x; x < energytank_x + 9; x++)
+    {
+        if (!obstacle(x, energytank_y + 2))
+        {
+            energytankexists = false;
+        }
+    }
+    if (energytankexists)
+    {
+        drawenergytank(energytank_x, energytank_y);
+    }
+    
     draw(protagonist);
 }
 

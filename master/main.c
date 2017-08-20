@@ -452,6 +452,8 @@ int main(void)
                 draw(monster);
             nextprojectilevent = getMsTimer() + 500;
         }
+        
+        
 
         if(B_PAUSE)
         {
@@ -469,7 +471,6 @@ int main(void)
             while (!B_PAUSE);
             while (B_PAUSE); // wait until button is released
             redraw();
-        
         }
     }
 }
