@@ -15,3 +15,16 @@ int random_below(int RANGE)
     x /= RAND_INV_RANGE (RANGE);
     return x;
 }
+
+int seed = 0;
+int really_random_below(int RANGE)
+{
+    srand(seed);
+    int x;
+    do {
+        x = seed = rand();
+    }
+    while (x >= RANGE * RAND_INV_RANGE (RANGE));
+    x /= RAND_INV_RANGE (RANGE);
+    return x;
+}
