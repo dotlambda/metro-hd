@@ -99,19 +99,6 @@ void drawlabels()
     drawnumber(86, 1, num_bombs);
 }
 
-void drawenergytank(uint8_t x, uint8_t y)
-{
-    uint8_t i = 0;
-    for (uint8_t y_ = y; y_ < y + 2; y_++)
-    {
-        for(uint8_t x_ = x; x_ < x + 9; x_++)
-        {
-            page(x_, y_, pgm_read_byte_near(energytank + i));
-            i++;
-        }
-    }
-}
-
 void drawdoor(int x)
 {
     uint8_t i = 0;

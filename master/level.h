@@ -17,6 +17,7 @@ uint8_t num_bombs;
 struct Character* monster;
 struct Character* projectile;
 struct Character* bombstruct;
+struct Character* energytankstruct;
 
 const uint8_t* floorsprite;
 const uint8_t* rotatedfloorsprite;
@@ -31,9 +32,6 @@ long platforms_13;
 long platforms_24;
 long nofloor;
 uint8_t doors; // 0b000000ij where i==1 if there is a door on the left and j==1 if there is one on the right
-uint8_t energytank_x;
-uint8_t energytank_y;
-bool energytankexists;
 
 long obstacle(uint8_t x, uint8_t y);
 

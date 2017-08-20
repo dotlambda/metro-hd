@@ -127,7 +127,7 @@ int main(void)
     projectile = &projectile_;
 
     struct Character energytank_;
-    energytank = &energytank_;
+    energytankstruct = &energytank_;
     
     struct Character bomb_;
     bombstruct = &bomb_;
@@ -458,11 +458,19 @@ int main(void)
             takingdamage(monster->damage);
         }
 
-        if(collision(protagonist, energytank))
+        if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))
         {
-            energytankexists = 0;
-            hide(energytank);
-            protagonist->health += 50;
+            hide(energytankstruct);
+            if(protagonist->health + 30 > 99)
+            {
+                protagonist->health = 99;
+                drawnumber(29, 1, 99);
+            }
+            else
+            {
+                protagonist->health += 30;
+                drawnumber(29, 1, protagonist->health);
+            }
         }
 
         //PAUSE SCREEN
