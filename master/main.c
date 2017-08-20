@@ -227,7 +227,7 @@ int main(void)
         {
             newlevel();
         }
-        
+        //PROJECTILE
         if (projectile->movement == HIDDEN
             && num_rockets > 0
             && nextprojectilevent < getMsTimer()
@@ -277,7 +277,20 @@ int main(void)
             else
                 nextprojectilevent = getMsTimer() + 35;
         }
-        
+
+        if (projectile->movement != HIDDEN && monster->movement != HIDDEN && collision(projectile, monster))
+        {
+            hide(projectile);
+            monster->health -= projectile->damage;
+            if (monster->health <= 0)
+                hide(monster);
+            else
+                draw(monster);
+            nextprojectilevent = getMsTimer() + 500;
+        }
+        //PROJECTILE END
+
+        //BOMB
         if (nextbombevent < getMsTimer())
         {
             if (bombstruct->movement != HIDDEN)
@@ -356,9 +369,9 @@ int main(void)
                 draw(bombstruct);
             }
         }
-            
+        //BOMB END
 
-        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
+        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) //PROTAGONIST fell into water/spikes
         {
             hide(protagonist);
             drawfloor();
@@ -388,12 +401,12 @@ int main(void)
             takingdamage(20);
         }
         
-        if (monster->movement != HIDDEN && monster->y > DISPLAY_HEIGHT - monster->height) // fell into water/spikes
+        if (monster->movement != HIDDEN && monster->y > DISPLAY_HEIGHT - monster->height) //MONSTER fell into water/spikes
         {
             hide(monster);
             drawfloor();
         }
-        
+        //KNOCKBACK after collision
         if (monster->movement != HIDDEN && collision(protagonist, monster))
         {
             // if the monster is right of the protagonist
@@ -442,19 +455,20 @@ int main(void)
             takingdamage(monster->damage);
         }
 
-        if (projectile->movement != HIDDEN && monster->movement != HIDDEN && collision(projectile, monster))
+        if((protagonist->x < energytank_x + 8 && protagonist->x + protagonist->width > energytank_x &&
+            protagonist->y < energytank_y + 2 && protagonist->y + protagonist->height > energytank_y))
         {
-            hide(projectile);
-            monster->health -= projectile->damage;
-            if (monster->health <= 0)
-                hide(monster);
-            else
-                draw(monster);
-            nextprojectilevent = getMsTimer() + 500;
+            for (int16_t x = energytank_x; x < energytank_x + 8; ++x)
+            {
+                for (int16_t y = energytank_y; y < energytank_y + 2; ++y)
+                {
+                    if (x >= 0 && y >= 0 && x < DISPLAY_WIDTH)
+                        page(x, y, 0x00);
+                }
+            }
         }
-        
-        
 
+        //PAUSE SCREEN
         if(B_PAUSE)
         {
             while (B_PAUSE); // wait until button is released
