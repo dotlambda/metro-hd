@@ -491,13 +491,13 @@ int main(void)
                 switch (random_below(3))
                 {
                     case 0:
-                        xparasite1struct->x = monsters[i]->x + monster[i]->width / 2;
-                        xparasite1struct->y = monsters[i]->y + monster[i]->height / 2;
+                        xparasite1struct->x = monsters[i]->x + monsters[i]->width / 2;
+                        xparasite1struct->y = monsters[i]->y + monsters[i]->height / 2;
                         draw(xparasite1struct);
                         break;
                     case 1:
-                        xparasite2struct->x = monsters[i]->x + monster[i]->width / 2;
-                        xparasite2struct->y = monsters[i]->y + monster[i]->height / 2;
+                        xparasite2struct->x = monsters[i]->x + monsters[i]->width / 2;
+                        xparasite2struct->y = monsters[i]->y + monsters[i]->height / 2;
                         draw(xparasite2struct);
                         break;
                     case 2:
