@@ -86,27 +86,9 @@ void redraw()
     if (bombstruct->movement != HIDDEN)
         draw(bombstruct);
 
-    energytank_x = really_random_below(DISPLAY_WIDTH - 9);
-    
-    if (really_random_below(2) == 0)
+    if (energytankstruct->movement != HIDDEN)
     {
-        energytank_y = 19 - 2;
-    }
-    else
-    {
-        energytank_y = 13 - 2;
-    }
-    energytankexists = true;
-    for (uint8_t x = energytank_x; x < energytank_x + 9; x++)
-    {
-        if (!obstacle(x, energytank_y + 2))
-        {
-            energytankexists = false;
-        }
-    }
-    if (energytankexists)
-    {
-        drawenergytank(energytank_x, energytank_y);
+        draw(energytankstruct);
     }
     
     draw(protagonist);
@@ -233,6 +215,25 @@ void newlevelpos()
     projectile->movement = HIDDEN;
     bombstruct->movement = HIDDEN;
 
+    energytankstruct->look = LOOK_ENERGYTANK;
+    initcharacter(energytankstruct);
+    energytankstruct->x = really_random_below(DISPLAY_WIDTH - 9);
+    if (really_random_below(2) == 0)
+    {
+        energytankstruct->y = 19 - energytankstruct->height;
+    }
+    else
+    {
+        energytankstruct->y = 13 - energytankstruct->height;
+    }
+    for (uint8_t x = energytankstruct->x; x < energytankstruct->x + 9; x++)
+    {
+        if (!obstacle(x, energytankstruct->y + energytankstruct->height))
+        {
+            energytankstruct->movement = HIDDEN;
+        }
+    }
+    
     redraw();
 }
 

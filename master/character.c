@@ -88,6 +88,11 @@ void initcharacter(struct Character* character)
             character->damage = 5;
             character->movement = FLYING_AROUND;
             break;
+        case LOOK_ENERGYTANK:
+            character->width = 9;
+            character->height = 2;
+            character->movement = ENERGYTANK;
+            break;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -239,6 +244,9 @@ void draw(struct Character* character)
                 character->lookstate = 1 - character->lookstate;
                 character->lastlookstatechg = getMsTimer() + 300;
             }
+            break;
+        case LOOK_ENERGYTANK:
+            sprite = energytank;
             break;
 
     }
@@ -476,6 +484,8 @@ void move(struct Character* character)
                 if (!moveright(character) || !really_random_below(20))
                     character->direction = really_random_below(2);
             }
+            break;
+        case ENERGYTANK:
             break;
     }
 }
