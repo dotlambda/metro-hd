@@ -6,9 +6,6 @@
 #include "sprites.h"
 #include "rand.h"
 
-#define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
-#define MIN_LEVEL_WIDTH 1
-
 long obstacle(uint8_t x, uint8_t y)
 {
     if (y == 5) // ceiling
@@ -162,31 +159,13 @@ void newlevelpos()
     // draw door to previous level
     if (level_pos == 0)
     {
-        if (door_back == DOOR_LEFT)
-            doors |= 0b00000010;
-        else
-            doors |= 0b00000001;
+        doors |= 0b00000010;
     }
 
     // draw exit door
-    if (level_pos == MAX_LEVEL_WIDTH - 1 && door_back == DOOR_LEFT)
+    if (level_pos == max_level_pos)
     {
         doors |= 0b00000001;
-    }
-    else if (level_pos == -MAX_LEVEL_WIDTH + 1 && door_back == DOOR_RIGHT)
-    {
-        doors |= 0b00000010;
-    }
-    else if (random_below(4) == 0)
-    {
-        if (door_back == DOOR_LEFT)
-        {
-            doors |= 0b00000001;
-        }
-        else
-        {
-            doors |= 0b00000010;
-        }
     }
     
     monster->look = random_below(NUM_MONSTER_LOOKS);
@@ -229,41 +208,36 @@ void newlevel()
     if (protagonist->x > DISPLAY_WIDTH / 2)
     {
         level_seed += 2 * MAX_LEVEL_WIDTH + 1;
-        door_back = DOOR_LEFT;
     }
     else // back to the previous level
     {
         level_seed -= 2 * MAX_LEVEL_WIDTH + 1;
-        door_back = DOOR_RIGHT;
     }
+
+    srand(level_seed);
+    srandom(level_seed);
+    
+    max_level_pos = random_below(MAX_LEVEL_WIDTH);
 
     if (protagonist->x > DISPLAY_WIDTH / 2)
     {
+        level_pos = 0;
         movedoorleft();
-    }
-    else
-    {
-        movedoorright();
-    }
-    
-    if (protagonist->x > DISPLAY_WIDTH / 2)
-    {
         protagonist->x = 6 + 1;
         protagonist->direction = DIRECTION_RIGHT;
     }
     else
     {
+        level_pos = max_level_pos;
+        movedoorright();
         protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
         protagonist->direction = DIRECTION_LEFT;
     }
+    
     protagonist->y = 25 - protagonist->height;
     
-    srand(level_seed);
-    srandom(level_seed);
-
     selectfloor();
 
-    level_pos = 0;
     newlevelpos();
 }
 
