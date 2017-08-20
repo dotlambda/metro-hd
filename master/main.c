@@ -129,6 +129,9 @@ int main(void)
 
     struct Character projectile_;
     projectile = &projectile_;
+
+    struct Character energytank_;
+    energytank = &energytank_;
     
     struct Character bomb_;
     bombstruct = &bomb_;
@@ -471,17 +474,11 @@ int main(void)
             }
         }
 
-        if((protagonist->x < energytank_x + 8 && protagonist->x + protagonist->width > energytank_x &&
-            protagonist->y < energytank_y + 2 && protagonist->y + protagonist->height > energytank_y))
+        if(collision(protagonist, energytank))
         {
-            for (int16_t x = energytank_x; x < energytank_x + 8; ++x)
-            {
-                for (int16_t y = energytank_y; y < energytank_y + 2; ++y)
-                {
-                    if (x >= 0 && y >= 0 && x < DISPLAY_WIDTH)
-                        page(x, y, 0x00);
-                }
-            }
+            energytankexists = 0;
+            hide(energytank);
+            protagonist->health += 50;
         }
 
         //PAUSE SCREEN
