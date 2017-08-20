@@ -132,6 +132,12 @@ int main(void)
 
     struct Character energytank_;
     energytankstruct = &energytank_;
+
+    struct Character xparasite1_;
+    xparasite1struct = &xparasite1_;
+
+    struct Character xparasite2_;
+    xparasite2struct = &xparasite2_;
     
     struct Character bomb_;
     bombstruct = &bomb_;
@@ -477,6 +483,37 @@ int main(void)
                 }
                 takingdamage(monsters[i]->damage);
             }
+        }
+        for(int i = 0; i <= NUM_MONSTERS; i++)
+        {
+            if(monsters[i]->movement == HIDDEN)
+            {
+                switch (random_below(3))
+                {
+                    case 0:
+                        xparasite1struct->x = monsters[i]->x + monster[i]->width / 2;
+                        xparasite1struct->y = monsters[i]->y + monster[i]->height / 2;
+                        draw(xparasite1struct);
+                        break;
+                    case 1:
+                        xparasite2struct->x = monsters[i]->x + monster[i]->width / 2;
+                        xparasite2struct->y = monsters[i]->y + monster[i]->height / 2;
+                        draw(xparasite2struct);
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+        }
+        if (collision(protagonist, xparasite1struct) && xparasite1struct->movement != HIDDEN)
+        {
+            xparasite1struct->movement = HIDDEN;
+            drawnumber(57, 1, num_rockets + 2);
+        }
+        if (collision(protagonist, xparasite2struct) && xparasite2struct->movement != HIDDEN)
+        {
+            xparasite2struct->movement = HIDDEN;
+            drawnumber(86, 1, num_bombs + 2);
         }
 
         if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))

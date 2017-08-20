@@ -88,6 +88,16 @@ void initcharacter(struct Character* character)
             character->damage = 5;
             character->movement = FLYING_AROUND;
             break;
+        case LOOK_XPARASITE1:
+            character->width = 6;
+            character->height = 2;
+            character->movement = ENERGYTANK;
+            break;
+        case LOOK_XPARASITE2:
+            character->width = 6;
+            character->height = 2;
+            character->movement = ENERGYTANK;
+            break;
         case LOOK_ENERGYTANK:
             character->width = 9;
             character->height = 2;
@@ -247,6 +257,12 @@ void draw(struct Character* character)
             break;
         case LOOK_ENERGYTANK:
             sprite = energytank;
+            break;
+        case LOOK_XPARASITE1:
+            sprite = xparasite1;
+            break;
+        case LOOK_XPARASITE2
+            sprite = xparasite2;
             break;
 
     }
