@@ -400,9 +400,9 @@ void move(struct Character* character)
     switch (character->movement)
     {
         case FOLLOW_PROTAGONIST:
-            if (protagonist->x < character->x)
+            if (protagonist->x < character->x && obstacle(character->x - 1, 25))
                 moveleft(character);
-            else if (protagonist->x > character->x)
+            else if (protagonist->x > character->x && obstacle(character->x + character->width, 25))
                 moveright(character);
             else
                 draw(character);

@@ -228,12 +228,6 @@ int main(void)
             newlevel();
         }
         
-        //falls sich Monster und Character begegnen
-        /*if (collision(x, y, a, b))
-        {
-            clear();
-        }*/
-        
         if (projectile->movement == HIDDEN
             && num_rockets > 0
             && nextprojectilevent < getMsTimer()
@@ -364,10 +358,41 @@ int main(void)
         }
             
 
-        /*if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
+        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) // fell into water/spikes
         {
-            Game_Over();
-        }*/
+            hide(protagonist);
+            drawfloor();
+            if (monster->x < protagonist->x)
+            {
+                while (!obstacle(protagonist->x, 25))
+                {
+                    protagonist->x++;
+                }
+            }
+            else
+            {
+                while(!obstacle(protagonist->x + protagonist->width - 1, 25))
+                {
+                    protagonist->x--;
+                }
+            }
+            protagonist->y = 25 - protagonist->height;
+            for (uint8_t x = protagonist->x; x < protagonist->x + protagonist->width; x++)
+            {
+                if (obstacle_hill(x))
+                {
+                    protagonist->y--;
+                    break;
+                }
+            }
+            takingdamage(20);
+        }
+        
+        if (monster->movement != HIDDEN && monster->y > DISPLAY_HEIGHT - monster->height) // fell into water/spikes
+        {
+            hide(monster);
+            drawfloor();
+        }
         
         if (monster->movement != HIDDEN && collision(protagonist, monster))
         {

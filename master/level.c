@@ -43,7 +43,7 @@ long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
     platforms_24 |= 3l << 0; // no hill at the display boundary
     platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
     long nofloor = random();
-    nofloor = INT32_MAX; // turn off water
+    //nofloor = INT32_MAX; // turn off water
     
     if (y == 5) // ceiling
         return 1l;
@@ -145,10 +145,18 @@ void newlevelpos()
     platforms_13 = random();
     platforms_19 = random();
     platforms_24 = random();
-    platforms_24 |= 3l << 0; // no hill at the display boundary
-    platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1);
+    platforms_24 |= 1l << 0; // no hill at the display boundary
+    platforms_24 |= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
     nofloor = random();
-    nofloor = INT32_MAX; // turn off water
+    nofloor|= 1l << 0; 
+    nofloor|= 1l << 3 * (DISPLAY_WIDTH/16 - 1);
+    for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
+    {
+        if (!(platforms_24 & (3l << 2 * pos)))
+        {
+            nofloor |= 1l << 3 * pos;
+        }
+    }
     doors = 0;
     
     // draw door to previous level
@@ -184,7 +192,22 @@ void newlevelpos()
     monster->look = random_below(NUM_MONSTER_LOOKS);
     initcharacter(monster);
     monster->x = (DISPLAY_WIDTH - monster->width) / 2;
+    
+    // move monster to the right if there is water/spikes below
+    uint8_t nofloor = 1;
+    while (nofloor)
+    {
+        nofloor = 0;
+        for (uint8_t x = monster->x; x < monster->x + monster->width; x++)
+        {
+            if (!obstacle(x, 25))
+                nofloor = 1;
+        }
+        if (nofloor)
+            monster->x++;
+    }
     monster->y = 25 - monster->height;
+    
     // draw monster higher if it's on a hill
     for (uint8_t x = monster->x; x < monster->x + monster->width; x++)
     {
