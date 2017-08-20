@@ -1,10 +1,6 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#define DIRECTION_LEFT 0
-#define DIRECTION_RIGHT 1
-#define DIRECTION_UP 2
-#define DIRECTION_DOWN 3
 #define ON_THE_GROUND 0
 
 #define NUM_MONSTER_LOOKS 8
@@ -20,7 +16,8 @@ struct Character
     uint32_t lastlookstatechg;
     uint8_t width;  // in pixels
     uint8_t height; // in pages
-    uint8_t direction;
+    enum {DIRECTION_LEFT, DIRECTION_RIGHT} direction;
+    enum {DIRECTION_UP, DIRECTION_DOWN} verticaldirection;
     uint8_t jumpstate;
     int8_t health;
     uint8_t damage;

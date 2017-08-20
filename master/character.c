@@ -5,6 +5,7 @@
 #include "level.h"
 #include "display.h"
 #include "sprites.h"
+#include "rand.h"
 
 void initcharacter(struct Character* character)
 {
@@ -209,7 +210,7 @@ void draw(struct Character* character)
             sprite = bomb;
             break;
         case LOOK_MONSTER_GEEGA:
-            if(character->direction == DIRECTION_RIGHT || character->direction == DIRECTION_UP)
+            if(character->direction == DIRECTION_RIGHT)
             {
                 if (character->lookstate) // wings up and moving left
                 {
@@ -343,6 +344,7 @@ uint8_t moveup(struct Character* character)
         page(x, character->y + character->height - 1, 0x00);
     --character->y;
     draw(character);
+    character->verticaldirection = DIRECTION_UP;
 
     return 1;
 }
@@ -360,6 +362,7 @@ uint8_t movedown(struct Character* character)
         page(x, character->y, 0x00);
     ++character->y;
     draw(character);
+    character->verticaldirection = DIRECTION_DOWN;
 
     return 1;
 }
@@ -379,8 +382,19 @@ void checkfalling(struct Character* character)
 void jump(struct Character* character)
 {
     if (character->movement == FLYING_AROUND)
-        return;
-    if (character->jumpstate == character->jumpheight)
+    {
+        if (character->verticaldirection == DIRECTION_UP)
+        {
+            if (character->y <= 7 || !moveup(character) || !really_random_below(20))
+                character->verticaldirection = really_random_below(2);
+        }
+        else
+        {
+            if (character->y >= 25 - character->height - 1 || !movedown(character) || !really_random_below(20))
+                character->verticaldirection = really_random_below(2);
+        }
+    }
+    else if (character->jumpstate == character->jumpheight)
     {
         if (!movedown(character))
             character->jumpstate = ON_THE_GROUND;
@@ -452,24 +466,15 @@ void move(struct Character* character)
         case BOMB:
             break;
         case FLYING_AROUND:
-            switch (character->direction)
+            if (character->direction == DIRECTION_LEFT)
             {
-                case DIRECTION_LEFT:
-                    if (!moveleft(character) || !(rand() % 20))
-                        character->direction = rand() % 4;
-                    break;
-                case DIRECTION_RIGHT:
-                    if (!moveright(character) || !(rand() % 20))
-                        character->direction = rand() % 4;
-                    break;
-                case DIRECTION_UP:
-                    if (!moveup(character) || !(rand() % 20))
-                        character->direction = rand() % 4;
-                    break;
-                case DIRECTION_DOWN:
-                    if (!movedown(character) || !(rand() % 20))
-                        character->direction = rand() % 4;
-                    break;
+                if (!moveleft(character) || !really_random_below(20))
+                    character->direction = really_random_below(2);
+            }
+            else
+            {
+                if (!moveright(character) || !really_random_below(20))
+                    character->direction = really_random_below(2);
             }
             break;
     }
