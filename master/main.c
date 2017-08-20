@@ -309,6 +309,11 @@ int main(void)
             if (bombstruct->movement != HIDDEN)
             {
                 jump(bombstruct);
+                if (bombstruct->y > 25 - bombstruct->height)
+                {
+                    hide(bombstruct);
+                    drawfloor();
+                }
                 nextbombevent = getMsTimer() + 100;
             }
             else if (B_DOWN && num_bombs > 0)
