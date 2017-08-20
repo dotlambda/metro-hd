@@ -24,8 +24,8 @@ uint32_t nextjumpevent = 0;
 uint32_t nextprojectilevent = 0;
 uint32_t nextbombevent = 0;
 uint32_t explode = 0;
-uint32_t nextmonstermoveevent = 0;
-uint32_t nextmonsterjumpevent = 0;
+uint32_t nextmonstermoveevent[NUM_MONSTERS];
+uint32_t nextmonsterjumpevent[NUM_MONSTERS];
 
 void init();
 
@@ -119,10 +119,14 @@ int main(void)
     
     struct Character protagonist_;
     protagonist = &protagonist_;
-        
-    struct Character monster_;
-    monster = &monster_;
- 
+    
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
+    {
+        nextmonstermoveevent[i] = 0;
+        nextmonsterjumpevent[i] = 0;
+        monsters[i] = &monsters_[i];
+    }
+
     struct Character projectile_;
     projectile = &projectile_;
     
@@ -134,15 +138,18 @@ int main(void)
     while (1)
     {
         //monster in Bewegung
-        if(monster->movement != HIDDEN && nextmonstermoveevent < getMsTimer())
+        for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         {
-            move(monster);
-            nextmonstermoveevent = getMsTimer() + 100;
-        }
-        if(monster->movement != HIDDEN && nextmonsterjumpevent < getMsTimer())
-        {
-            jump(monster);
-            nextmonsterjumpevent = getMsTimer() + 150;
+            if(monsters[i]->movement != HIDDEN && nextmonstermoveevent[i] < getMsTimer())
+            {
+                move(monsters[i]);
+                nextmonstermoveevent[i] = getMsTimer() + 100;
+            }
+            if(monsters[i]->movement != HIDDEN && nextmonsterjumpevent[i] < getMsTimer())
+            {
+                jump(monsters[i]);
+                nextmonsterjumpevent[i] = getMsTimer() + 150;
+            }
         }
         
         //Protagonist kann sich bewegen
@@ -278,15 +285,18 @@ int main(void)
                 nextprojectilevent = getMsTimer() + 35;
         }
 
-        if (projectile->movement != HIDDEN && monster->movement != HIDDEN && collision(projectile, monster))
+        for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         {
-            hide(projectile);
-            monster->health -= projectile->damage;
-            if (monster->health <= 0)
-                hide(monster);
-            else
-                draw(monster);
-            nextprojectilevent = getMsTimer() + 500;
+            if (projectile->movement != HIDDEN && monsters[i]->movement != HIDDEN && collision(projectile, monsters[i]))
+            {
+                hide(projectile);
+                monsters[i]->health -= projectile->damage;
+                if (monsters[i]->health <= 0)
+                    hide(monsters[i]);
+                else
+                    draw(monsters[i]);
+                nextprojectilevent = getMsTimer() + 500;
+            }
         }
         //PROJECTILE END
 
@@ -348,15 +358,18 @@ int main(void)
                         i++;
                     }
                 } 
-                if (monster->movement != HIDDEN &&
-                    blast_x1 < monster->x + monster->width && blast_x2 > monster->x &&
-                    blast_y1 < monster->y + monster->height && blast_y2 > monster->y)
+                for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
                 {
-                    monster->health -= bombstruct->damage;
-                    if (monster->health <= 0)
-                        hide(monster);
-                    else
-                        draw(monster);
+                    if (monsters[i]->movement != HIDDEN &&
+                        blast_x1 < monsters[i]->x + monsters[i]->width && blast_x2 > monsters[i]->x &&
+                        blast_y1 < monsters[i]->y + monsters[i]->height && blast_y2 > monsters[i]->y)
+                    {
+                        monsters[i]->health -= bombstruct->damage;
+                        if (monsters[i]->health <= 0)
+                            hide(monsters[i]);
+                        else
+                            draw(monsters[i]);
+                    }
                 }
                 if (blast_x1 < protagonist->x + protagonist->width && blast_x2 > protagonist->x &&
                     blast_y1 < protagonist->y + protagonist->height && blast_y2 > protagonist->y)
@@ -375,7 +388,7 @@ int main(void)
         {
             hide(protagonist);
             drawfloor();
-            if (monster->x < protagonist->x)
+            if (monsters[0]->x < protagonist->x)
             {
                 while (!obstacle(protagonist->x, 25))
                 {
@@ -401,58 +414,61 @@ int main(void)
             takingdamage(20);
         }
         
-        if (monster->movement != HIDDEN && monster->y > DISPLAY_HEIGHT - monster->height) //MONSTER fell into water/spikes
+        for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         {
-            hide(monster);
-            drawfloor();
-        }
-        //KNOCKBACK after collision
-        if (monster->movement != HIDDEN && collision(protagonist, monster))
-        {
-            // if the monster is right of the protagonist
-            if (monster->x + monster->width/2 >= protagonist->x + protagonist->width)
+            if (monsters[i]->movement != HIDDEN && monsters[i]->y > DISPLAY_HEIGHT - monsters[i]->height) //MONSTER fell into water/spikes
             {
-                uint8_t i = 0;
-                while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monster->x)
-                {
-                    if (!moveleft(protagonist))
-                        break;
-                    if (i == 0 || i == 2)
-                        moveup(protagonist);
-                    if (i > 3 && i % 2 == 0)
-                        movedown(protagonist);
-                    i++;
-                    draw(monster);
-                    delay(50);
-                }
-                while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monster->x)
-                {
-                    if (!moveright(monster))
-                        break;
-                }
+                hide(monsters[i]);
+                drawfloor();
             }
-            else
+            //KNOCKBACK after collision
+            if (monsters[i]->movement != HIDDEN && collision(protagonist, monsters[i]))
             {
-                uint8_t i = 0;
-                while (monster->x + monster->width + DIST_AFTER_DAMAGE > protagonist->x)
+                // if the monster is right of the protagonist
+                if (monsters[i]->x + monsters[i]->width/2 >= protagonist->x + protagonist->width)
                 {
-                    if (!moveright(protagonist))
-                        break;
-                    if (i == 0 || i == 2)
-                        moveup(protagonist);
-                    if (i > 3 && i % 2 == 0)
-                        movedown(protagonist);
-                    i++;
-                    draw(monster);
-                    delay(50);
+                    uint8_t i = 0;
+                    while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monsters[i]->x)
+                    {
+                        if (!moveleft(protagonist))
+                            break;
+                        if (i == 0 || i == 2)
+                            moveup(protagonist);
+                        if (i > 3 && i % 2 == 0)
+                            movedown(protagonist);
+                        i++;
+                        draw(monsters[i]);
+                        delay(50);
+                    }
+                    while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monsters[i]->x)
+                    {
+                        if (!moveright(monsters[i]))
+                            break;
+                    }
                 }
-                while (monster->x + monster->width + DIST_AFTER_DAMAGE > protagonist->x)
+                else
                 {
-                    if (!moveleft(monster))
-                        break;
+                    uint8_t i = 0;
+                    while (monsters[i]->x + monsters[i]->width + DIST_AFTER_DAMAGE > protagonist->x)
+                    {
+                        if (!moveright(protagonist))
+                            break;
+                        if (i == 0 || i == 2)
+                            moveup(protagonist);
+                        if (i > 3 && i % 2 == 0)
+                            movedown(protagonist);
+                        i++;
+                        draw(monsters[i]);
+                        delay(50);
+                    }
+                    while (monsters[i]->x + monsters[i]->width + DIST_AFTER_DAMAGE > protagonist->x)
+                    {
+                        if (!moveleft(monsters[i]))
+                            break;
+                    }
                 }
+                takingdamage(monsters[i]->damage);
             }
-            takingdamage(monster->damage);
         }
 
         if((protagonist->x < energytank_x + 8 && protagonist->x + protagonist->width > energytank_x &&

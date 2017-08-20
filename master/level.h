@@ -14,7 +14,9 @@ struct Character* protagonist;
 uint8_t num_rockets;
 uint8_t num_bombs;
 
-struct Character* monster;
+#define NUM_MONSTERS 3
+struct Character monsters_[NUM_MONSTERS];
+struct Character* monsters[NUM_MONSTERS];
 struct Character* projectile;
 struct Character* bombstruct;
 

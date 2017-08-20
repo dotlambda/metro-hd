@@ -76,8 +76,11 @@ void redraw()
     if (doors & 0b00000001)
         drawdoorright_closed();
 
-    if (monster->movement != HIDDEN)
-        draw(monster);
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
+    {
+        if (monsters[i]->movement != HIDDEN)
+            draw(monsters[i]);
+    }
     if (projectile->movement != HIDDEN)
         draw(projectile);
     if (bombstruct->movement != HIDDEN)
@@ -187,35 +190,46 @@ void newlevelpos()
         doors |= 0b00000001;
     }
     
-    monster->look = random_below(NUM_MONSTER_LOOKS);
-    initcharacter(monster);
-    monster->x = (DISPLAY_WIDTH - monster->width) / 2;
-    
-    // move monster to the right if there is water/spikes below
-    uint8_t nofloor = 1;
-    while (nofloor)
+    monsters[0]->look = random_below(NUM_MONSTER_LOOKS);
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
-        nofloor = 0;
-        for (uint8_t x = monster->x; x < monster->x + monster->width; x++)
+        if (i > 0 && monsters[0]->look != LOOK_MONSTER_MEMU)
         {
-            if (!obstacle(x, 25))
-                nofloor = 1;
+            monsters[i]->movement = HIDDEN;
+            continue;
         }
-        if (nofloor)
-            monster->x++;
-    }
-    monster->y = 25 - monster->height;
+        // make memus appear in swarms
+        if (i > 0)
+            monsters[i]->look = LOOK_MONSTER_MEMU;
+        initcharacter(monsters[i]);
+        monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
     
-    // draw monster higher if it's on a hill
-    for (uint8_t x = monster->x; x < monster->x + monster->width; x++)
-    {
-        if (obstacle_hill(x))
+        // move monster to the right if there is water/spikes below
+        uint8_t nofloor = 1;
+        while (nofloor)
         {
-            monster->y--;
-            break;
+            nofloor = 0;
+            for (uint8_t x = monsters[i]->x; x < monsters[i]->x + monsters[i]->width; x++)
+            {
+                if (!obstacle(x, 25))
+                    nofloor = 1;
+            }
+            if (nofloor)
+                monsters[i]->x++;
         }
-    }
+        monsters[i]->y = 25 - monsters[i]->height;
         
+        // draw monster higher if it's on a hill
+        for (uint8_t x = monsters[i]->x; x < monsters[i]->x + monsters[i]->width; x++)
+        {
+            if (obstacle_hill(x))
+            {
+                monsters[i]->y--;
+                break;
+            }
+        }
+    }
+
     projectile->movement = HIDDEN;
     bombstruct->movement = HIDDEN;
 
