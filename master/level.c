@@ -153,9 +153,8 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
-
         monsters[0]->look = LOOK_BOSS_DRAGON;
-        monsters[0]->direction = DIRECTION_LEFT;
+        monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
         
         for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
         {
