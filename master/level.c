@@ -67,7 +67,7 @@ void redraw()
     {
         page(x, 5, pgm_read_byte_near(floorsprite + x % 16));
     }
-
+    
     drawplatform();
     drawfloor();
 
@@ -143,6 +143,7 @@ void newlevelpos()
     srand(level_seed + level_pos);
     srandom(level_seed + level_pos);
 
+    // bosslevel
     if (level_seed == INITIAL_LEVEL + LEVEL_BOSS_DRAGON * (2 * MAX_LEVEL_WIDTH + 1)
         || level_seed == INITIAL_LEVEL - (LEVEL_BOSS_DRAGON - 1) * (2 * MAX_LEVEL_WIDTH + 1))
     {
@@ -151,11 +152,18 @@ void newlevelpos()
         platforms_24 = UINT32_MAX;
         nofloor = UINT32_MAX;
         doors = 0b00000011;
+        
 
         monsters[0]->look = LOOK_BOSS_DRAGON;
         monsters[0]->direction = DIRECTION_LEFT;
+        
+        for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+        {
+            fireballs[i]->look = LOOK_FIREBALL;
+            initcharacter(fireballs[i]);
+        }
     }
-    else
+    else // normal level
     {
         platforms_13 = random();
         platforms_19 = random();
@@ -227,6 +235,11 @@ void newlevelpos()
                 monsters[i]->y--;
                 break;
             }
+        }
+        
+        for (uint8_t i; i < NUM_FIREBALLS; ++i)
+        {
+            fireballs[i]->movement = HIDDEN;
         }
     }
     // no water/spikes when there is a frog/sidehopper

@@ -11,13 +11,14 @@
 #define MIN_LEVEL_WIDTH 1
 
 #define INITIAL_LEVEL 845215237l 
-#define LEVEL_BOSS_DRAGON 5 // 1 would be the first level
+#define LEVEL_BOSS_DRAGON 2 // 1 would be the first level
 
 struct Character* protagonist;
 uint8_t num_rockets;
 uint8_t num_bombs;
 
 #define NUM_MONSTERS 3
+#define NUM_FIREBALLS 3
 struct Character monsters_[NUM_MONSTERS];
 struct Character* monsters[NUM_MONSTERS];
 struct Character* projectile;
@@ -25,6 +26,8 @@ struct Character* bombstruct;
 struct Character* energytankstruct;
 struct Character xparasites_[NUM_MONSTERS];
 struct Character* xparasites[NUM_MONSTERS];
+struct Character fireballs_[NUM_FIREBALLS];
+struct Character* fireballs[NUM_FIREBALLS];
 
 const uint8_t* floorsprite;
 const uint8_t* rotatedfloorsprite;

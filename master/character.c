@@ -75,6 +75,7 @@ void initcharacter(struct Character* character)
             character->width = 30;
             character->height = 9;
             character->damage = 15;
+            character->movement = XPARASITE;
             break;
         case LOOK_BOMB:
             character->width = 4;
@@ -103,14 +104,15 @@ void initcharacter(struct Character* character)
             character->height = 2;
             character->movement = ENERGYTANK;
             break;
-//         case LOOK_MONSTER_HOLTZ:
-//             character->width = 9;
-//             character->height = 2;
-//             character->movement = BACK_AND_FORTH;
         case LOOK_BOSS_SECROB:
             character->width = 37;
             character->height = 6;
             character->movement = FOLLOW_PROTAGONIST;
+        case LOOK_FIREBALL:
+            character->width = 8;
+            character->height = 2;
+            character->damage = 20;
+            character->movement = HIDDEN;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -272,17 +274,6 @@ void draw(struct Character* character)
         case LOOK_XPARASITE2:
             sprite = xparasite2;
             break;
-//         case LOOK_MONSTER_HOLTZ:
-//             if (character->lookstate) // wings up 
-//             {
-//                 sprite = holtzup;
-//             }
-//             else// wings down
-//             {
-//                 sprite = holtzdown;
-//             }
-//             character->lookstate = 1 - character->lookstate;
-//             break;
         case LOOK_BOSS_SECROB:
              if (character->lookstate)  
             {
@@ -294,7 +285,9 @@ void draw(struct Character* character)
             }
             character->lookstate = 1 - character->lookstate;
             break;
-            
+        case LOOK_FIREBALL:
+            sprite = fireball2;
+            break;
     }
     
     uint16_t i = 0;
@@ -451,7 +444,11 @@ void jump(struct Character* character)
     else if (character->jumpstate == character->jumpheight)
     {
         if (!movedown(character))
+        {
             character->jumpstate = ON_THE_GROUND;
+            if (character->movement == FIREBALL)
+                hide(character);
+        }
     }
     else if (character->jumpstate != ON_THE_GROUND)
     {
@@ -486,6 +483,7 @@ void move(struct Character* character)
                 moveright(character);
             break;
         case PROJECTILE:
+        case FIREBALL:
             if (character->direction == DIRECTION_LEFT)
             {
                 if (!moveleft(character))
@@ -535,5 +533,6 @@ void move(struct Character* character)
             break;
         case XPARASITE:
             break;
+        
     }
 }
