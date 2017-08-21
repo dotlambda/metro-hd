@@ -119,7 +119,7 @@ void newxparasite(uint8_t i) // i is the index of the dead monster
     if (xparasites[i]->movement != HIDDEN)
     {
         xparasites[i]->x = monsters[i]->x + monsters[i]->width / 2;
-        xparasites[i]->y = monsters[i]->y + monsters[i]->height / 2;
+        xparasites[i]->y = monsters[i]->y;
         draw(xparasites[i]);
     }
 }
