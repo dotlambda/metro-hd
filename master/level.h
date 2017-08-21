@@ -20,8 +20,8 @@ struct Character* monsters[NUM_MONSTERS];
 struct Character* projectile;
 struct Character* bombstruct;
 struct Character* energytankstruct;
-struct Character* xparasite1struct;
-struct Character* xparasite2struct;
+struct Character xparasites_[NUM_MONSTERS];
+struct Character* xparasites[NUM_MONSTERS];
 
 const uint8_t* floorsprite;
 const uint8_t* rotatedfloorsprite;

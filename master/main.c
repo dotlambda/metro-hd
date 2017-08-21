@@ -101,6 +101,29 @@ bool collision(struct Character* protagonist, struct Character* monster)
         protagonist->y < monster->y + monster->height && protagonist->y + protagonist->height > monster->y);
 }
 
+void newxparasite(uint8_t i) // i is the index of the dead monster
+{
+    switch (really_random_below(3))
+    {
+        case 0:
+            xparasites[i]->look = LOOK_XPARASITE1;
+            initcharacter(xparasites[i]);
+            break;
+        case 1:
+            xparasites[i]->look = LOOK_XPARASITE2;
+            initcharacter(xparasites[i]);
+            break;
+        case 2:
+            break;
+    }
+    if (xparasites[i]->movement != HIDDEN)
+    {
+        xparasites[i]->x = monsters[i]->x + monsters[i]->width / 2;
+        xparasites[i]->y = monsters[i]->y + monsters[i]->height / 2;
+        draw(xparasites[i]);
+    }
+}
+
 int main(void)
 {
 	init();
@@ -133,11 +156,10 @@ int main(void)
     struct Character energytank_;
     energytankstruct = &energytank_;
 
-    struct Character xparasite1_;
-    xparasite1struct = &xparasite1_;
-
-    struct Character xparasite2_;
-    xparasite2struct = &xparasite2_;
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
+    {
+        xparasites[i] = &xparasites_[i];
+    }
     
     struct Character bomb_;
     bombstruct = &bomb_;
@@ -304,23 +326,7 @@ int main(void)
                 if (monsters[i]->health <= 0)
                 {
                     hide(monsters[i]);
-                    switch (random_below(3))
-                    {
-                        case 0:
-                            xparasite1struct->x = monsters[i]->x + monsters[i]->width / 2;
-                            xparasite1struct->y = 23;
-                            draw(xparasite1struct);
-                            xparasite1struct->movement = BOMB;
-                            break;
-                        case 1:
-                            xparasite2struct->x = monsters[i]->x + monsters[i]->width / 2;
-                            xparasite2struct->y = 23;
-                            draw(xparasite2struct);
-                            xparasite2struct->movement = BOMB;
-                            break;
-                        case 2:
-                            break;
-                    }
+                    newxparasite(i); 
                 }
                 else
                 {
@@ -404,23 +410,7 @@ int main(void)
                         if (monsters[i]->health <= 0)
                         {
                             hide(monsters[i]);
-                            switch (random_below(3))
-                            {
-                                case 0:
-                                    xparasite1struct->x = monsters[i]->x + monsters[i]->width / 2;
-                                    xparasite1struct->y = monsters[i]->y + monsters[i]->height / 2;
-                                    draw(xparasite1struct);
-                                    xparasite1struct->movement = BOMB;
-                                    break;
-                                case 1:
-                                    xparasite2struct->x = monsters[i]->x + monsters[i]->width / 2;
-                                    xparasite2struct->y = monsters[i]->y + monsters[i]->height / 2;
-                                    draw(xparasite2struct);
-                                    xparasite2struct->movement = BOMB;
-                                    break;
-                                case 2:
-                                    break;
-                            }
+                            newxparasite(i);
                         }
                         else
                         {
@@ -528,21 +518,30 @@ int main(void)
             }
         }
         
-        if (xparasite1struct->movement != HIDDEN && collision(protagonist, xparasite1struct))
+        for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         {
-            hide(xparasite1struct);
-            num_rockets += 2;
-            if (num_rockets > 20)
-                num_rockets = 20;
-            drawnumber(57, 1, num_rockets);
-        }
-        if (xparasite2struct->movement != HIDDEN && collision(protagonist, xparasite2struct))
-        {
-            hide(xparasite2struct);
-            num_bombs += 2;
-            if (num_bombs > 20)
-                num_bombs = 20;
-            drawnumber(86, 1, num_bombs);
+            if (xparasites[i]->movement != HIDDEN && collision(protagonist, xparasites[i]))
+            {
+                hide(xparasites[i]);
+                if (xparasites[i]->look == LOOK_XPARASITE1)
+                {
+                    num_rockets += 2;
+                    if (num_rockets > 20)
+                        num_rockets = 20;
+                    drawnumber(57, 1, num_rockets);
+                }
+                else
+                {
+                    num_bombs += 2;
+                    if (num_bombs > 20)
+                        num_bombs = 20;
+                    drawnumber(86, 1, num_bombs);
+                }
+            }
+            else if (xparasites[i]->movement != HIDDEN)
+            {
+                draw(xparasites[i]);
+            }
         }
 
         if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))

@@ -91,12 +91,12 @@ void initcharacter(struct Character* character)
         case LOOK_XPARASITE1:
             character->width = 6;
             character->height = 2;
-            character->movement = HIDDEN;
+            character->movement = XPARASITE;
             break;
         case LOOK_XPARASITE2:
             character->width = 6;
             character->height = 2;
-            character->movement = HIDDEN;
+            character->movement = XPARASITE;
             break;
         case LOOK_ENERGYTANK:
             character->width = 9;
@@ -502,6 +502,8 @@ void move(struct Character* character)
             }
             break;
         case ENERGYTANK:
+            break;
+        case XPARASITE:
             break;
     }
 }
