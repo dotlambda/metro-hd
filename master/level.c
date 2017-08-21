@@ -238,6 +238,9 @@ void newlevelpos()
         }
     }
     
+    xparasite1struct->movement = HIDDEN;
+    xparasite2struct->movement = HIDDEN;
+    
     redraw();
 }
 
@@ -294,6 +297,12 @@ void newgame()
     
     bombstruct->look = LOOK_BOMB;
     initcharacter(bombstruct);
-
+    
+    xparasite1struct->look = LOOK_XPARASITE1;
+    initcharacter(xparasite1struct);
+    
+    xparasite2struct->look = LOOK_XPARASITE2;
+    initcharacter(xparasite2struct);
+    
     newlevel();
 }
