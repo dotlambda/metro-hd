@@ -103,6 +103,14 @@ void initcharacter(struct Character* character)
             character->height = 2;
             character->movement = ENERGYTANK;
             break;
+//         case LOOK_MONSTER_HOLTZ:
+//             character->width = 9;
+//             character->height = 2;
+//             character->movement = BACK_AND_FORTH;
+        case LOOK_BOSS_SECROB:
+            character->width = 37;
+            character->height = 6;
+            character->movement = FOLLOW_PROTAGONIST;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -264,7 +272,29 @@ void draw(struct Character* character)
         case LOOK_XPARASITE2:
             sprite = xparasite2;
             break;
-
+//         case LOOK_MONSTER_HOLTZ:
+//             if (character->lookstate) // wings up 
+//             {
+//                 sprite = holtzup;
+//             }
+//             else// wings down
+//             {
+//                 sprite = holtzdown;
+//             }
+//             character->lookstate = 1 - character->lookstate;
+//             break;
+        case LOOK_BOSS_SECROB:
+             if (character->lookstate)  
+            {
+                sprite = securityrobup;
+            }
+            else
+            {
+                sprite = securityrobdown;
+            }
+            character->lookstate = 1 - character->lookstate;
+            break;
+            
     }
     
     uint16_t i = 0;
