@@ -143,7 +143,8 @@ void newlevelpos()
     srand(level_seed + level_pos);
     srandom(level_seed + level_pos);
 
-    if (level_seed == INITIAL_LEVEL + LEVEL_BOSS_DRAGON * (2 * MAX_LEVEL_WIDTH + 1))
+    if (level_seed == INITIAL_LEVEL + LEVEL_BOSS_DRAGON * (2 * MAX_LEVEL_WIDTH + 1)
+        || level_seed == INITIAL_LEVEL - (LEVEL_BOSS_DRAGON - 1) * (2 * MAX_LEVEL_WIDTH + 1))
     {
         platforms_13 = UINT32_MAX;
         platforms_19 = UINT32_MAX;
