@@ -72,7 +72,7 @@ void initcharacter(struct Character* character)
             character->movement = FLYING_AROUND;
             break;
         case LOOK_BOSS_DRAGON:
-            character->width = 40;
+            character->width = 30;
             character->height = 9;
             character->damage = 15;
             break;

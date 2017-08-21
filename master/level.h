@@ -10,6 +10,9 @@
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
+#define INITIAL_LEVEL 845215237l 
+#define LEVEL_BOSS_DRAGON 5 // 1 would be the first level, higher levels are to the right
+
 struct Character* protagonist;
 uint8_t num_rockets;
 uint8_t num_bombs;

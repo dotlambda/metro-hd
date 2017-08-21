@@ -142,37 +142,52 @@ void newlevelpos()
 {
     srand(level_seed + level_pos);
     srandom(level_seed + level_pos);
-    
-    platforms_13 = random();
-    platforms_19 = random();
-    platforms_24 = random();
-    platforms_24 |= 1l << 0; // no hill at the display boundary
-    platforms_24 |= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
-    nofloor = random();
-    nofloor|= 1l << 0; 
-    nofloor|= 1l << 3 * (DISPLAY_WIDTH/16 - 1);
-    for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
+
+    if (level_seed == INITIAL_LEVEL + LEVEL_BOSS_DRAGON * (2 * MAX_LEVEL_WIDTH + 1))
     {
-        if (!(platforms_24 & (3l << 2 * pos)))
-        {
-            nofloor |= 1l << 3 * pos;
-        }
+        platforms_13 = UINT32_MAX;
+        platforms_19 = UINT32_MAX;
+        platforms_24 = UINT32_MAX;
+        nofloor = UINT32_MAX;
+        doors = 0b00000011;
+
+        monsters[0]->look = LOOK_BOSS_DRAGON;
+        monsters[0]->direction = DIRECTION_LEFT;
     }
-    doors = 0;
-    
-    // draw door to previous level
-    if (level_pos == 0)
+    else
     {
-        doors |= 0b00000010;
+        platforms_13 = random();
+        platforms_19 = random();
+        platforms_24 = random();
+        platforms_24 |= 1l << 0; // no hill at the display boundary
+        platforms_24 |= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
+        nofloor = random();
+        nofloor|= 1l << 0; 
+        nofloor|= 1l << 3 * (DISPLAY_WIDTH/16 - 1);
+        for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
+        {
+            if (!(platforms_24 & (3l << 2 * pos)))
+            {
+                nofloor |= 1l << 3 * pos;
+            }
+        }
+        doors = 0;
+    
+        // draw door to previous level
+        if (level_pos == 0)
+        {
+            doors |= 0b00000010;
+        }
+
+        // draw exit door
+        if (level_pos == max_level_pos)
+        {
+            doors |= 0b00000001;
+        }
+    
+        monsters[0]->look = random_below(NUM_MONSTER_LOOKS);
     }
 
-    // draw exit door
-    if (level_pos == max_level_pos)
-    {
-        doors |= 0b00000001;
-    }
-    
-    monsters[0]->look = random_below(NUM_MONSTER_LOOKS);
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
         if (i > 0 && monsters[0]->look != LOOK_MONSTER_MEMU)
@@ -180,9 +195,11 @@ void newlevelpos()
             monsters[i]->movement = HIDDEN;
             continue;
         }
-        // make memus appear in swarms
-        if (i > 0)
+        else if (i > 0)
+        {
+            // make memus appear in swarms
             monsters[i]->look = LOOK_MONSTER_MEMU;
+        }
         initcharacter(monsters[i]);
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
     
@@ -242,7 +259,8 @@ void newlevelpos()
     {
         xparasites[i]->movement = HIDDEN;
     }
-    
+
+        
     redraw();
 }
 
@@ -286,7 +304,7 @@ void newlevel()
 
 void newgame()
 {
-    level_seed = 2845215237l;
+    level_seed = INITIAL_LEVEL;
     num_rockets = 20;
     num_bombs = 20;
 
