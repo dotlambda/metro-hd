@@ -210,7 +210,11 @@ void newlevelpos()
         }
         initcharacter(monsters[i]);
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
-    
+        if (monsters[i]->look == LOOK_BOSS_DRAGON)
+        {
+            monsters[i]->x = DISPLAY_WIDTH - 6 - monsters[i]->width;
+        }
+            
         // move monster to the right if there is water/spikes below
         uint8_t nofloor = 1;
         while (nofloor)

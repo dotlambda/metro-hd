@@ -135,7 +135,7 @@ int main(void)
     uint16_t i = 0;
     for (uint8_t y = 3; y < 3 + 20; y++)
     {
-        for (uint8_t x = 22; x < 22 + 115; x++)
+        for (uint8_t x = 15; x < 15 + 126; x++)
         {
             page(x, y, pgm_read_byte_near(splash + i));
             i++;
@@ -553,7 +553,8 @@ int main(void)
                 draw(xparasites[i]);
             }
         }
-
+        
+        
         if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))
         {
             hide(energytankstruct);
