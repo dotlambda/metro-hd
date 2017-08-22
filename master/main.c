@@ -607,6 +607,11 @@ int main(void)
                     hide(fireballs[i]);
                     takingdamage(fireballs[i]->damage);
                 }
+                if(collision(projectile, fireballs[i]) && fireballs[i]->movement != HIDDEN)
+                {
+                    hide(projectile);
+                    hide(fireballs[i]);
+                }
             }
         }
 
