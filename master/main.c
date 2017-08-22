@@ -553,8 +553,11 @@ int main(void)
                 draw(xparasites[i]);
             }
         }
-        
-        
+
+        if(energytankstruct->movement != HIDDEN)
+        {
+            draw(energytankstruct);
+        }
         if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))
         {
             hide(energytankstruct);
@@ -607,6 +610,11 @@ int main(void)
                 {
                     hide(fireballs[i]);
                     takingdamage(fireballs[i]->damage);
+                }
+                if(collision(projectile, fireballs[i]) && fireballs[i]->movement != HIDDEN)
+                {
+                    hide(projectile);
+                    hide(fireballs[i]);
                 }
             }
         }
