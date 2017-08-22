@@ -225,7 +225,7 @@ void drawfloor()
     {
         for (int x = 16 * pos; x < 16 * (pos + 1); ++x)
         {
-            if (!(nofloor & (7l << 3 * pos))) // there is a 1/8 chance of drawing water/spikes
+            if (!(nofloor & (3l << 2 * pos))) // there is a 1/8 chance of drawing water/spikes
                 page(x, 25, pgm_read_byte_near(nofloorsprite + x % 16));
             else
                 page(x, 25, pgm_read_byte_near(floorsprite + x % 16));
