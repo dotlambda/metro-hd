@@ -131,6 +131,50 @@ int main(void)
 {
 	init();
 
+    uint8_t width = 8;
+    uint8_t height = 16;
+    uint8_t xpos = 0;
+    for (uint8_t ypos = 2; ypos <= 104 - height; ++ypos)
+    {
+        if (ypos % 4 == 0)
+        {
+            uint8_t i = 0;
+            for (uint8_t y = ypos / 4; y < ypos / 4 + height / 4; ++y)
+            {
+                for (uint8_t x = xpos; x < xpos + width; ++x)
+                {
+                    page(x, y, pgm_read_byte_near(protagonistleft + i));
+                    ++i;
+                }
+            }
+        }
+        else
+        {
+            uint8_t i = 0;
+            uint8_t offset = 2 * (ypos % 4); // *2 because each pixel is encoded in 2 bits
+            for (uint8_t y = ypos / 4; y < ypos / 4 + height / 4 + 1; ++y)
+            {
+                for (uint8_t x = xpos; x < xpos + width; ++x)
+                {
+                    if (y == ypos / 4)
+                        page(x, y, pgm_read_byte_near(protagonistleft + i) << offset);
+                    else if (y == ypos / 4 + height / 4)
+                        page(x, y, pgm_read_byte_near(protagonistleft + i - width) >> (8 - offset));
+                    else
+                        page(x, y, (pgm_read_byte_near(protagonistleft + i) << offset)
+                            | (pgm_read_byte_near(protagonistleft + i - width) >> (8 - offset)));
+                    ++i;
+                }
+            }
+        }
+        delay(50);
+        for (uint8_t x = xpos; x < xpos + width; ++x)
+        {
+            page(x, ypos / 4, 0);
+        }
+    }
+
+
     // show splash screen until button A is pressed
     uint16_t i = 0;
     for (uint8_t y = 3; y < 3 + 20; y++)
