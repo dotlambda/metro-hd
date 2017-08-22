@@ -553,6 +553,10 @@ int main(void)
                 draw(xparasites[i]);
             }
         }
+        if(energytankstruct != HIDDEN)
+        {
+            draw(energytankstruct);
+        }
 
         if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))
         {
