@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <inttypes.h>
+#include "timer.h"
 #include "level.h"
 #include "display.h"
 #include "character.h"
@@ -321,7 +323,7 @@ void newlevel()
 
 void newgame()
 {
-    level_seed = INITIAL_LEVEL;
+    level_seed = getMsTimer();
     num_rockets = 20;
     num_bombs = 20;
 
