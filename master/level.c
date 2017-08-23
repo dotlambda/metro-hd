@@ -8,20 +8,20 @@
 
 long obstacle(uint8_t x, uint8_t y)
 {
-    if (y == 5) // ceiling
+    if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
         return 1l;
-    if (doors & 0b00000010 && (x < 4 || (y >= 20 && x < 6)))
+    if (doors & 0b00000010 && (x < 4 || (y >= DOOR_Y && x < 6)))
         return 1l;
-    else if (doors & 0b00000001 && (x >= DISPLAY_WIDTH - 4 || (y >= 20 && x >= DISPLAY_WIDTH - 6)))
+    else if (doors & 0b00000001 && (x >= DISPLAY_WIDTH - 4 || (y >= DOOR_Y && x >= DISPLAY_WIDTH - 6)))
         return 1l;
-    else if (y == 25)
+    else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (7l << x / 16 * 3);
-    else if (y == 19)
+    else if (y >= HILL_Y && y < HILL_Y + 4)
         return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
-    else if (y == 13)
+    else if (y >= 13 * 4 && y < 14 * 4)
         return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
-    else if (y == 24)
-         return !(platforms_24 & (3l << (x / 16 * 2)));
+    else if (y >= 24 * 4 && y < 25 * 4)
+        return !(platforms_24 & (3l << (x / 16 * 2)));
     else
         return 0l;
 }
@@ -42,16 +42,16 @@ long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
     long nofloor = random();
     //nofloor = INT32_MAX; // turn off water
     
-    if (y == 5) // ceiling
+    if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
         return 1l;
-    else if (y == 25)
+    else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (7l << x / 16 * 3);
-    else if (y == 19)
+    else if (y >= HILL_Y && y < HILL_Y + 4)
         return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
-    else if (y == 13)
+    else if (y >= 13 * 4 && y < 14 * 4)
         return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
-    else if (y == 24)
-         return !(platforms_24 & (3l << (x / 16 * 2)));
+    else if (y >= 24 * 4 && y < 25 * 4)
+        return !(platforms_24 & (3l << (x / 16 * 2)));
     else
         return 0l;
 }
@@ -219,20 +219,20 @@ void newlevelpos()
             nofloor = 0;
             for (uint8_t x = monsters[i]->x; x < monsters[i]->x + monsters[i]->width; x++)
             {
-                if (!obstacle(x, 25))
+                if (!obstacle(x, FLOOR_Y))
                     nofloor = 1;
             }
             if (nofloor)
                 monsters[i]->x++;
         }
-        monsters[i]->y = 25 - monsters[i]->height;
-        
+
+        monsters[i]->y = FLOOR_Y - monsters[i]->height;
         // draw monster higher if it's on a hill
         for (uint8_t x = monsters[i]->x; x < monsters[i]->x + monsters[i]->width; x++)
         {
             if (obstacle_hill(x))
             {
-                monsters[i]->y--;
+                monsters[i]->y -= 4;
                 break;
             }
         }
@@ -255,11 +255,11 @@ void newlevelpos()
     energytankstruct->x = really_random_below(DISPLAY_WIDTH - 9);
     if (really_random_below(2) == 0)
     {
-        energytankstruct->y = 19 - energytankstruct->height;
+        energytankstruct->y = 19 * 4 - energytankstruct->height;
     }
     else
     {
-        energytankstruct->y = 13 - energytankstruct->height;
+        energytankstruct->y = 13 * 4 - energytankstruct->height;
     }
     for (uint8_t x = energytankstruct->x; x < energytankstruct->x + 9; x++)
     {
@@ -309,7 +309,7 @@ void newlevel()
         protagonist->direction = DIRECTION_LEFT;
     }
     
-    protagonist->y = 25 - protagonist->height;
+    protagonist->y = FLOOR_Y - protagonist->height;
     
     selectfloor();
 

@@ -15,7 +15,7 @@ struct Character
     uint8_t lookstate; // to e.g. store whether the wings are turned upwards or downwards
     uint32_t lastlookstatechg;
     uint8_t width;  // in pixels
-    uint8_t height; // in pages
+    uint8_t height; // in pixels
     enum {DIRECTION_LEFT, DIRECTION_RIGHT} direction;
     enum {DIRECTION_UP, DIRECTION_DOWN} verticaldirection;
     uint8_t jumpstate;

@@ -12,105 +12,105 @@ void initcharacter(struct Character* character)
     character->health = 4;
     character->movement = FOLLOW_PROTAGONIST;
     character->direction = DIRECTION_RIGHT;
-    character->jumpheight = 7;
+    character->jumpheight = 28;
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
             character->width = 8;
-            character->height = 4;
+            character->height = 16;
             character->health = 99;
             break;
         case LOOK_MONSTER_LITTLE: 
             character->width = 8;
-            character->height = 2;
+            character->height = 8;
             character->damage = 10;
             break;
         case LOOK_EYEMONSTER:
             character->width = 12;
-            character->height = 4;
+            character->height = 16;
             character->damage = 15;
             break;
         case LOOK_MONSTER_ZOOMER:
             character->width = 15;
-            character->height = 3;
+            character->height = 12;
             character->damage = 20;
             break;
         case LOOK_ROCKET:
             character->width = 14;
-            character->height = 2;
+            character->height = 8;
             character->damage = 2;
             character->movement = HIDDEN;
             break;
         case LOOK_BOSS_ZAZABI:
             character->width = 17;
-            character->height = 8;
+            character->height = 32;
             character->damage = 30;
             break;
         case LOOK_MONSTER_METROID:
             character->width = 14;
-            character->height = 3;
+            character->height = 12;
             character->damage = 15;
             break;
         case LOOK_MONSTER_HORNOAD:
             character->width = 14;
-            character->height = 3;
+            character->height = 12;
             character->damage = 15;
-            character->jumpheight = 5;
+            character->jumpheight = 20;
             character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
-            character->height = 3;
+            character->height = 12;
             character->damage = 20;
-            character->jumpheight = 10;
+            character->jumpheight = 40;
             character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_MEMU:
             character->width = 15;
-            character->height = 2;
+            character->height = 8;
             character->damage = 10;
             character->movement = FLYING_AROUND;
             break;
         case LOOK_BOSS_DRAGON:
             character->width = 30;
-            character->height = 9;
+            character->height = 36;
             character->damage = 15;
             character->movement = XPARASITE;
             break;
         case LOOK_BOMB:
             character->width = 4;
-            character->height = 1;
+            character->height = 4;
             character->damage = 5;
             character->movement = HIDDEN;
             break;
         case LOOK_MONSTER_GEEGA:
             character->width = 16;
-            character->height = 4;
+            character->height = 16;
             character->damage = 5;
             character->movement = FLYING_AROUND;
             break;
         case LOOK_XPARASITE1:
             character->width = 6;
-            character->height = 2;
+            character->height = 8;
             character->movement = XPARASITE;
             break;
         case LOOK_XPARASITE2:
             character->width = 6;
-            character->height = 2;
+            character->height = 8;
             character->movement = XPARASITE;
             break;
         case LOOK_ENERGYTANK:
             character->width = 9;
-            character->height = 2;
+            character->height = 8;
             character->movement = ENERGYTANK;
             break;
         case LOOK_BOSS_SECROB:
             character->width = 37;
-            character->height = 6;
+            character->height = 24;
             character->movement = FOLLOW_PROTAGONIST;
         case LOOK_FIREBALL:
             character->width = 8;
-            character->height = 2;
+            character->height = 8;
             character->damage = 20;
             character->movement = HIDDEN;
     }
@@ -290,12 +290,38 @@ void draw(struct Character* character)
             break;
     }
     
-    uint16_t i = 0;
-    for (uint8_t y = character->y; y < character->y + character->height; y++)
+    uint8_t offset = 2 * (character->y % 4);
+    if (offset == 0)
     {
+        uint16_t i = 0;
+        for (uint8_t y = character->y / 4; y < character->y / 4 + character->height / 4; y++)
+        {
+            for (uint8_t x = character->x; x < character->x + character->width; x++)
+            {
+                page(x, y, pgm_read_byte_near(sprite + i));
+                i++;
+            }
+        }
+    }
+    else
+    {
+        uint16_t i = 0;
         for (uint8_t x = character->x; x < character->x + character->width; x++)
         {
-            page(x, y, pgm_read_byte_near(sprite + i));
+            page(x, character->y / 4, pgm_read_byte_near(sprite + i) << offset);
+            i++;
+        }
+        for (uint8_t y = character->y / 4 + 1; y < character->y / 4 + character->height / 4; y++)
+        {
+            for (uint8_t x = character->x; x < character->x + character->width; x++)
+            {
+                page(x, y, pgm_read_byte_near(sprite + i) << offset | pgm_read_byte_near(sprite + i - character->width) >> (8 - offset));
+                i++;
+            }
+        }
+        for (uint8_t x = character->x; x < character->x + character->width; x++)
+        {
+            page(x, character->y / 4 + character->height / 4, pgm_read_byte_near(sprite + i - character->width) >> (8 - offset));
             i++;
         }
     }
@@ -306,7 +332,7 @@ void hide(struct Character* character)
     character->movement = HIDDEN;
     for (int16_t x = character->x; x < character->x + character->width; ++x)
     {
-        for (int16_t y = character->y; y < character->y + character->height; ++y)
+        for (int16_t y = character->y / 4; y <= (character->y + character->height - 1) / 4; ++y)
         {
             if (x >= 0 && y >= 0 && x < DISPLAY_WIDTH)
                 page(x, y, 0x00);
@@ -324,8 +350,12 @@ uint8_t moveleft(struct Character* character)
     {
         if (obstacle(character->x - 1, y))
         {
-            if (character->y + character->height == 25 && obstacle_hill(character->x - 1))
+            if (character->y + character->height == FLOOR_Y && obstacle_hill(character->x - 1))
             {
+                // move up by 1 page
+                moveup(character);
+                moveup(character);
+                moveup(character);
                 moveup(character);
             }
             else
@@ -336,7 +366,7 @@ uint8_t moveleft(struct Character* character)
         }
     }
 
-    for (uint8_t y = character->y; y < character->y + character->height; ++y)
+    for (uint8_t y = character->y / 4; y <= (character->y + character->height - 1) / 4; ++y)
         page(character->x + character->width - 1, y, 0x00);
     character->x--;
     draw(character);
@@ -356,8 +386,12 @@ uint8_t moveright(struct Character* character)
     {
         if (obstacle(character->x + character->width, y))
         {
-            if (character->y + character->height == 25 && obstacle_hill(character->x + character->width))
+            if (character->y + character->height == FLOOR_Y && obstacle_hill(character->x + character->width))
             {
+                // move up by 1 page
+                moveup(character);
+                moveup(character);
+                moveup(character);
                 moveup(character);
             }
             else
@@ -368,7 +402,7 @@ uint8_t moveright(struct Character* character)
         }
     }
 
-    for (uint8_t y = character->y; y < character->y + character->height; ++y)
+    for (uint8_t y = character->y / 4; y <= (character->y + character->height - 1) / 4; ++y)
         page(character->x, y, 0x00);
     character->x++;
     draw(character);
@@ -388,7 +422,7 @@ uint8_t moveup(struct Character* character)
     }
 
     for (uint8_t x = character->x; x < character->x + character->width; ++x)
-        page(x, character->y + character->height - 1, 0x00);
+        page(x, (character->y + character->height - 1) / 4, 0x00);
     --character->y;
     draw(character);
     character->verticaldirection = DIRECTION_UP;
@@ -406,7 +440,7 @@ uint8_t movedown(struct Character* character)
     }
 
     for (uint8_t x = character->x; x < character->x + character->width; ++x)
-        page(x, character->y, 0x00);
+        page(x, character->y / 4, 0x00);
     ++character->y;
     draw(character);
     character->verticaldirection = DIRECTION_DOWN;
@@ -432,12 +466,16 @@ void jump(struct Character* character)
     {
         if (character->verticaldirection == DIRECTION_UP)
         {
-            if (character->y <= 7 || !moveup(character) || !really_random_below(20))
+            // don't touch the ceiling
+            // switch direction randomly or if the character can't continue in its current direction
+            if (character->y <= CEILING_Y + 8 || !moveup(character) || !really_random_below(20))
                 character->verticaldirection = really_random_below(2);
         }
         else
         {
-            if (character->y >= 25 - character->height - 1 || !movedown(character) || !really_random_below(20))
+            // don't touch the ground
+            // switch direction randomly or if the character can't continue in its current direction
+            if (character->y >= FLOOR_Y - character->height - 4 || !movedown(character) || !really_random_below(20))
                 character->verticaldirection = really_random_below(2);
         }
     }
@@ -465,9 +503,9 @@ void move(struct Character* character)
     switch (character->movement)
     {
         case FOLLOW_PROTAGONIST:
-            if (protagonist->x < character->x && obstacle(character->x - 1, 25))
+            if (protagonist->x < character->x && obstacle(character->x - 1, FLOOR_Y))
                 moveleft(character);
-            else if (protagonist->x > character->x && obstacle(character->x + character->width, 25))
+            else if (protagonist->x > character->x && obstacle(character->x + character->width, FLOOR_Y))
                 moveright(character);
             else
                 draw(character);
@@ -505,7 +543,7 @@ void move(struct Character* character)
             break;
        case JUMPMOVE:
             if(character->jumpstate == ON_THE_GROUND)
-            {    
+            {
                 character->jumpstate = 1;
             }
             if (protagonist->x < character->x)

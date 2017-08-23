@@ -7,6 +7,11 @@
 
 #define PLATFORM_WIDTH 10
 
+#define FLOOR_Y 100
+#define DOOR_Y 80
+#define HILL_Y 76
+#define CEILING_Y 20
+
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
@@ -45,7 +50,7 @@ uint8_t doors; // 0b000000ij where i==1 if there is a door on the left and j==1 
 
 long obstacle(uint8_t x, uint8_t y);
 
-// whether there is a platform at y=24
+// whether there is a platform at 96<=y<100
 long obstacle_hill(uint8_t x);
 
 long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos);

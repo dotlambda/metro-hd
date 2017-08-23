@@ -55,6 +55,7 @@ void takingdamage(uint8_t damage)
     uint32_t blinking_time = getMsTimer();
     while(blinking_time + blink_for >= getMsTimer())
     {
+        // make protagonist and energy level blink (latter only if energy <= 0)
         hide(protagonist);
         if (protagonist->health <= 0)
         {
@@ -131,50 +132,6 @@ int main(void)
 {
 	init();
 
-    uint8_t width = 8;
-    uint8_t height = 16;
-    uint8_t xpos = 0;
-    for (uint8_t ypos = 2; ypos <= 104 - height; ++ypos)
-    {
-        if (ypos % 4 == 0)
-        {
-            uint8_t i = 0;
-            for (uint8_t y = ypos / 4; y < ypos / 4 + height / 4; ++y)
-            {
-                for (uint8_t x = xpos; x < xpos + width; ++x)
-                {
-                    page(x, y, pgm_read_byte_near(protagonistleft + i));
-                    ++i;
-                }
-            }
-        }
-        else
-        {
-            uint8_t i = 0;
-            uint8_t offset = 2 * (ypos % 4); // *2 because each pixel is encoded in 2 bits
-            for (uint8_t y = ypos / 4; y < ypos / 4 + height / 4 + 1; ++y)
-            {
-                for (uint8_t x = xpos; x < xpos + width; ++x)
-                {
-                    if (y == ypos / 4)
-                        page(x, y, pgm_read_byte_near(protagonistleft + i) << offset);
-                    else if (y == ypos / 4 + height / 4)
-                        page(x, y, pgm_read_byte_near(protagonistleft + i - width) >> (8 - offset));
-                    else
-                        page(x, y, (pgm_read_byte_near(protagonistleft + i) << offset)
-                            | (pgm_read_byte_near(protagonistleft + i - width) >> (8 - offset)));
-                    ++i;
-                }
-            }
-        }
-        delay(50);
-        for (uint8_t x = xpos; x < xpos + width; ++x)
-        {
-            page(x, ypos / 4, 0);
-        }
-    }
-
-
     // show splash screen until button A is pressed
     uint16_t i = 0;
     for (uint8_t y = 3; y < 3 + 20; y++)
@@ -189,7 +146,7 @@ int main(void)
     
     struct Character protagonist_;
     protagonist = &protagonist_;
-    
+
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
         nextmonstermoveevent[i] = 0;
@@ -233,7 +190,7 @@ int main(void)
             if(monsters[i]->movement != HIDDEN && nextmonsterjumpevent[i] < getMsTimer())
             {
                 jump(monsters[i]);
-                nextmonsterjumpevent[i] = getMsTimer() + 150;
+                nextmonsterjumpevent[i] = getMsTimer() + 40;
             }
         }
         
@@ -298,7 +255,7 @@ int main(void)
             if (nextjumpevent < getMsTimer())
             {
                 jump(protagonist);
-                nextjumpevent = getMsTimer() + 150;
+                nextjumpevent = getMsTimer() + 40;
             }
         }
         else if (B_UP)
@@ -309,13 +266,13 @@ int main(void)
         // change level when protagonist touches the door
         if (doors & 0b00000001
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
-            && protagonist->y >= 20 - protagonist->height)
+            && protagonist->y >= DOOR_Y - protagonist->height)
         {
             newlevel();
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
-            && protagonist->y >= 20 - protagonist->height)
+            && protagonist->y >= DOOR_Y - protagonist->height)
         {
             newlevel();
         }
@@ -328,7 +285,7 @@ int main(void)
         {
             uint8_t enough_space = 1;
             projectile->direction = protagonist->direction;
-            projectile->y = protagonist->y + 1;
+            projectile->y = protagonist->y + 4;
             if (protagonist->direction == DIRECTION_LEFT)
             {
                 if (protagonist->x < projectile->width)
@@ -423,16 +380,16 @@ int main(void)
                 hide(bombstruct);
                 uint8_t blast_x1 = MAX(0, bombstruct->x - 6);
                 uint8_t blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
-                uint8_t blast_y1 = MAX(6, bombstruct->y - 1);
-                uint8_t blast_y2 = MIN(bombstruct->y + bombstruct->height + 3, 25);
+                uint8_t blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 4);
+                uint8_t blast_y2 = MIN(bombstruct->y + bombstruct->height + 8, FLOOR_Y);
                 uint16_t i = 0;
-                for (int16_t y = bombstruct->y - 1; y < bombstruct->y + 3; y++)
+                for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
                 {
                     for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
                     {
                         if (x >= 0 && x < DISPLAY_WIDTH
-                            && y >= 6 && y < 25
-                            && !obstacle(x, y))
+                            && y > CEILING_Y / 4 && y < FLOOR_Y / 4
+                            && !obstacle(x, 4 * y))
                         {
                             page(x, y, pgm_read_byte_near(explosion + i));
                         }
@@ -441,13 +398,13 @@ int main(void)
                 }
                 delay(600);
                 i = 0;
-                for (int16_t y = bombstruct->y - 1; y < bombstruct->y + 3; y++)
+                for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
                 {
                     for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
                     {   
                         if (x >= 0 && x < DISPLAY_WIDTH
-                            && y >= 6 && y < 25
-                            && !obstacle(x, y))
+                            && y > CEILING_Y / 4 && y < FLOOR_Y / 4
+                            && !obstacle(x, 4 * y))
                         {
                             page(x, y, 0);
                         }
@@ -491,19 +448,19 @@ int main(void)
             drawfloor();
             if (monsters[0]->x < protagonist->x)
             {
-                while (!obstacle(protagonist->x, 25))
+                while (!obstacle(protagonist->x, FLOOR_Y))
                 {
                     protagonist->x++;
                 }
             }
             else
             {
-                while(!obstacle(protagonist->x + protagonist->width - 1, 25))
+                while(!obstacle(protagonist->x + protagonist->width - 1, FLOOR_Y))
                 {
                     protagonist->x--;
                 }
             }
-            protagonist->y = 25 - protagonist->height;
+            protagonist->y = FLOOR_Y - protagonist->height;
             for (uint8_t x = protagonist->x; x < protagonist->x + protagonist->width; x++)
             {
                 if (obstacle_hill(x))
@@ -625,13 +582,13 @@ int main(void)
                 if (fireballs[i]->movement != HIDDEN && nextfireballjumpevent[i] < getMsTimer())
                 {
                     jump(fireballs[i]);
-                    nextfireballjumpevent[i] = getMsTimer() + 100;
+                    nextfireballjumpevent[i] = getMsTimer() + 25;
                 }
                 if (fireballs[i]->movement == HIDDEN && monsters[0]->movement != HIDDEN && nextfireevent < getMsTimer())
                 {
                     fireballs[i]->movement = FIREBALL;
                     fireballs[i]->jumpstate = 1;
-                    fireballs[i]->jumpheight = 2 + really_random_below(4);
+                    fireballs[i]->jumpheight = 8 + 4 * really_random_below(4);
                     if (protagonist->x < monsters[0]->x)
                     {
                         fireballs[i]->x = monsters[0]->x - fireballs[i]->width;
@@ -642,7 +599,7 @@ int main(void)
                         fireballs[i]->x = monsters[0]->x + monsters[0]->width;
                         fireballs[i]->direction = DIRECTION_RIGHT;
                     }
-                    fireballs[i]->y = monsters[0]->y + 2;
+                    fireballs[i]->y = monsters[0]->y + 8;
                     draw(fireballs[i]);
                     nextfireevent = getMsTimer() + (really_random_below(5) == 0 ? 1000 : 400);
                 }

@@ -124,7 +124,7 @@ void black()
     {
         sendbyte(0, 1);
     }
-    for (uint16_t i = 5 * DISPLAY_WIDTH; i < DISPLAY_WIDTH * DISPLAY_HEIGHT; i++)
+    for (uint16_t i = 5 * DISPLAY_WIDTH; i < DISPLAY_WIDTH * DISPLAY_HEIGHT / 4; i++)
     {
         sendbyte(0xFF, 1);
     }
