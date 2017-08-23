@@ -255,7 +255,10 @@ int main(void)
             if (nextjumpevent < getMsTimer())
             {
                 jump(protagonist);
-                nextjumpevent = getMsTimer() + 40;
+                if (protagonist->jumpstate == protagonist->jumpheight)
+                    nextjumpevent = getMsTimer() + 20;
+                else
+                    nextjumpevent = getMsTimer() + 30;
             }
         }
         else if (B_UP)
