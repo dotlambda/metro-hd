@@ -23,6 +23,8 @@ struct Character
     uint8_t damage;
     uint8_t jumpheight;
     enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, PROJECTILE, HIDDEN, JUMP, JUMPMOVE, FLYING_AROUND, BOMB, ENERGYTANK, XPARASITE, FIREBALL, SECROB} movement;
+    uint8_t x_pace;
+    uint8_t y_pace;
 };
 
 void initcharacter(struct Character* character);

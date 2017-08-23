@@ -12,6 +12,8 @@ void initcharacter(struct Character* character)
     character->health = 4;
     character->movement = FOLLOW_PROTAGONIST;
     character->jumpheight = 28;
+    character->x_pace = 100;
+    character->y_pace = 40;
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
@@ -107,6 +109,9 @@ void initcharacter(struct Character* character)
             character->width = 37;
             character->height = 24;
             character->movement = SECROB;
+            character->jumpheight = 40;
+            character->damage = 10;
+            character->y_pace = 10;
             break;
         case LOOK_FIREBALL:
             character->width = 8;
@@ -276,13 +281,20 @@ void draw(struct Character* character)
             sprite = xparasite2;
             break;
         case LOOK_BOSS_SECROB:
-            if (character->lookstate)  
-            {
-                sprite = securityrobup;
+            if (character->jumpstate == ON_THE_GROUND)
+            {    
+                if (character->lookstate)  
+                {
+                    sprite = securityrobup;
+                }
+                else
+                {
+                    sprite = securityrobdown;
+                }
             }
             else
             {
-                sprite = securityrobdown;
+                sprite = securityrobup;
             }
             if (character->lastlookstatechg < getMsTimer())
             {
@@ -491,6 +503,10 @@ void jump(struct Character* character)
             character->jumpstate = ON_THE_GROUND;
             if (character->movement == FIREBALL)
                 hide(character);
+            else if (character->movement == SECROB)
+            {
+                character->x_pace = 100;
+            }
         }
     }
     else if (character->jumpstate != ON_THE_GROUND)
@@ -577,12 +593,12 @@ void move(struct Character* character)
         case XPARASITE:
             break;
         case SECROB:
-            if (character->x == (DISPLAY_WIDTH - character->width) / 2)
-            {
-                //TODO shoot
-                character->direction = 1 - character->direction;
-            }
-            else if (character->x >= DISPLAY_WIDTH - character->width - 8)
+//             if (character->x == (DISPLAY_WIDTH - character->width) / 2)
+//             {
+//                 //TODO shoot
+//                 character->direction = 1 - character->direction;
+//             }
+            if (character->x >= DISPLAY_WIDTH - character->width - 8)
             {
                 character->direction = DIRECTION_LEFT;
             }
@@ -597,6 +613,11 @@ void move(struct Character* character)
             else
             {
                 moveright(character);
+            }
+            if (character->jumpstate == ON_THE_GROUND && really_random_below(50) == 0)
+            {
+                character->x_pace = 5;
+                character->jumpstate = 1;
             }
             break;
     }

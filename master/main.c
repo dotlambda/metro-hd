@@ -185,12 +185,12 @@ int main(void)
             if(monsters[i]->movement != HIDDEN && nextmonstermoveevent[i] < getMsTimer())
             {
                 move(monsters[i]);
-                nextmonstermoveevent[i] = getMsTimer() + 100;
+                nextmonstermoveevent[i] = getMsTimer() + monsters[i]->x_pace;
             }
             if(monsters[i]->movement != HIDDEN && nextmonsterjumpevent[i] < getMsTimer())
             {
                 jump(monsters[i]);
-                nextmonsterjumpevent[i] = getMsTimer() + 40;
+                nextmonsterjumpevent[i] = getMsTimer() + monsters[i]->y_pace;
             }
         }
         
