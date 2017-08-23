@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 
+void drawsplash();
 void drawdigit(uint8_t x, uint8_t y, uint8_t digit);
 void drawnumber(uint8_t x, uint8_t y, uint8_t number);
 void drawlabels();

@@ -120,6 +120,12 @@ void initcharacter(struct Character* character)
             character->damage = 20;
             character->movement = HIDDEN;
             break;
+        case LOOK_ARROW:
+            character->width = 6;
+            character->height = 4;
+            character->damage = 10;
+            character->movement = HIDDEN;
+            break;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -334,6 +340,11 @@ void draw(struct Character* character)
         case LOOK_FIREBALL:
             sprite = fireball2;
             break;
+        case LOOK_ARROW:
+            if (character->direction == DIRECTION_LEFT)
+                sprite = secrobmunitionleft;
+            else
+                sprite = secrobmunitionright;
     }
     
     uint8_t offset = 2 * (character->y % 4);
@@ -508,6 +519,8 @@ void checkfalling(struct Character* character)
 
 void jump(struct Character* character)
 {
+    if (character->movement == ARROW)
+        return;
     if (character->movement == FLYING_AROUND)
     {
         if (character->verticaldirection == DIRECTION_UP)
@@ -572,6 +585,7 @@ void move(struct Character* character)
             break;
         case PROJECTILE:
         case FIREBALL:
+        case ARROW:
             if (character->direction == DIRECTION_LEFT)
             {
                 if (!moveleft(character))
@@ -625,7 +639,6 @@ void move(struct Character* character)
         case SECROB:
 //             if (character->x == (DISPLAY_WIDTH - character->width) / 2)
 //             {
-//                 //TODO shoot
 //                 character->direction = 1 - character->direction;
 //             }
             if (character->x >= DISPLAY_WIDTH - character->width - 8)

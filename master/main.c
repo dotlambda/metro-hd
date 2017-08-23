@@ -134,15 +134,7 @@ int main(void)
 	init();
 
     // show splash screen until button A is pressed
-    uint16_t i = 0;
-    for (uint8_t y = 3; y < 3 + 20; y++)
-    {
-        for (uint8_t x = 15; x < 15 + 126; x++)
-        {
-            page(x, y, pgm_read_byte_near(splash + i));
-            i++;
-        }
-    }
+    drawsplash();
     while (!B_A);
     
     struct Character protagonist_;
@@ -582,16 +574,6 @@ int main(void)
         {
             for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
             {
-                if (fireballs[i]->movement != HIDDEN && nextfireballmoveevent[i] < getMsTimer())
-                {
-                    move(fireballs[i]);
-                    nextfireballmoveevent[i] = getMsTimer() + 30;
-                }
-                if (fireballs[i]->movement != HIDDEN && nextfireballjumpevent[i] < getMsTimer())
-                {
-                    jump(fireballs[i]);
-                    nextfireballjumpevent[i] = getMsTimer() + 25;
-                }
                 if (fireballs[i]->movement == HIDDEN && monsters[0]->movement != HIDDEN && nextfireevent < getMsTimer())
                 {
                     fireballs[i]->movement = FIREBALL;
@@ -611,12 +593,50 @@ int main(void)
                     draw(fireballs[i]);
                     nextfireevent = getMsTimer() + (really_random_below(5) == 0 ? 1000 : 400);
                 }
+            }
+        }
+        else if (monsters[0]->look == LOOK_BOSS_SECROB)
+        {
+            if (monsters[0]->x == (DISPLAY_WIDTH - monsters[0]->width) / 2 && monsters[0]->jumpstate == ON_THE_GROUND)
+            {   
+                if(fireballs[0]->movement == HIDDEN && fireballs[1]->movement == HIDDEN && 
+                    fireballs[2]->movement == HIDDEN && fireballs[3]->movement == HIDDEN)
+                {
+                    fireballs[0]->y = fireballs[2]->y = monsters[0]->y + 4;
+                    fireballs[1]->y = fireballs[3]->y = monsters[0]->y + 12;
+                    fireballs[0]->x = fireballs[1]->x = monsters[0]->x - fireballs[0]->width;
+                    fireballs[2]->x = fireballs[3]->x = monsters[0]->x + monsters[0]->width;
+                    fireballs[0]->direction = fireballs[1]->direction = DIRECTION_LEFT;
+                    fireballs[2]->direction = fireballs[3]->direction = DIRECTION_RIGHT;
+                    draw(fireballs[0]);
+                    draw(fireballs[1]);
+                    draw(fireballs[2]);
+                    draw(fireballs[3]);
+                    fireballs[0]->movement = fireballs[1]->movement = fireballs[2]->movement = fireballs[3]->movement = ARROW;
+                    nextmonstermoveevent[0] = nextmonsterjumpevent[0] = getMsTimer() + 2000;
+                }
+            }
+        }
+        if (monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB)
+        {
+            for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+            {
+                if (fireballs[i]->movement != HIDDEN && nextfireballmoveevent[i] < getMsTimer())
+                {
+                    move(fireballs[i]);
+                    nextfireballmoveevent[i] = getMsTimer() + 30;
+                }
+                if (fireballs[i]->movement != HIDDEN && nextfireballjumpevent[i] < getMsTimer())
+                {
+                    jump(fireballs[i]);
+                    nextfireballjumpevent[i] = getMsTimer() + 25;
+                }
                 if (fireballs[i]->movement != HIDDEN && collision(fireballs[i], protagonist))
                 {
                     hide(fireballs[i]);
                     takingdamage(fireballs[i]->damage);
                 }
-                if(collision(projectile, fireballs[i]) && fireballs[i]->movement != HIDDEN)
+                if(fireballs[i]->movement != HIDDEN && collision(projectile, fireballs[i]))
                 {
                     hide(projectile);
                     hide(fireballs[i]);
