@@ -77,8 +77,9 @@ void takingdamage(uint8_t damage)
     }
     if (protagonist->health <= 0)
     {
+        // game over
         uint16_t i = 0;
-        for (uint8_t y = 0; y < DISPLAY_HEIGHT; y++)
+        for (uint8_t y = 0; y < DISPLAY_HEIGHT / 4; y++)
         {
             for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
             {
@@ -357,7 +358,7 @@ int main(void)
             if (bombstruct->movement != HIDDEN)
             {
                 jump(bombstruct);
-                if (bombstruct->y > 25 - bombstruct->height)
+                if (bombstruct->y > FLOOR_Y - bombstruct->height)
                 {
                     hide(bombstruct);
                     drawfloor();

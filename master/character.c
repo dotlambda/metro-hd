@@ -76,6 +76,7 @@ void initcharacter(struct Character* character)
             character->width = 30;
             character->height = 36;
             character->damage = 15;
+            character->health = 20;
             character->movement = XPARASITE;
             break;
         case LOOK_BOMB:
@@ -228,14 +229,42 @@ void draw(struct Character* character)
             break;
 
         case LOOK_BOSS_DRAGON:
+        if(character->movement != FOLLOW_PROTAGONIST)
+        {
             if (character->direction == DIRECTION_LEFT)
             {
-                sprite = dragon_left;
+                sprite = dragon2_left;
             }
             else
             {
-                sprite = dragon_right;
+                sprite = dragon2_right;
             }
+        }
+        else
+        {
+            if (character->direction == DIRECTION_LEFT)
+            {
+                if(character->lookstate)
+                {
+                    sprite = dragon2_left;
+                }
+                else
+                {
+                    sprite = dragon2_flying_left;
+                }
+            }
+            else
+                if(!character->lookstate)
+                {
+                    sprite = dragon2_right;
+                }
+                else
+                {
+                    sprite = dragon2_flying_right;
+                }
+
+            character->lookstate = 1 - character->lookstate;
+        }
             break;
         case LOOK_BOMB:
             sprite = bomb;
@@ -562,7 +591,7 @@ void move(struct Character* character)
                 character->jumpstate = 1;
             }
             break;
-       case JUMPMOVE:
+        case JUMPMOVE:
             if(character->jumpstate == ON_THE_GROUND)
             {
                 character->jumpstate = 1;
@@ -592,6 +621,7 @@ void move(struct Character* character)
             break;
         case XPARASITE:
             break;
+
         case SECROB:
 //             if (character->x == (DISPLAY_WIDTH - character->width) / 2)
 //             {
@@ -620,5 +650,26 @@ void move(struct Character* character)
                 character->jumpstate = 1;
             }
             break;
+
+        case BOSS_DRAGON_GROUND:
+            if(character->health > 10)
+            {
+                if(character->direction == DIRECTION_LEFT)
+                {
+                    moveleft(character);
+                }
+                else
+                {
+                    moveright(character);
+                }
+            }
+            else
+            {
+                while(character->y != 7)
+                {
+                    moveup(character);
+                }
+                character->movement == FOLLOW_PROTAGONIST;
+            }
     }
 }
