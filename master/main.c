@@ -358,7 +358,7 @@ int main(void)
             if (bombstruct->movement != HIDDEN)
             {
                 jump(bombstruct);
-                if (bombstruct->y > 25 - bombstruct->height)
+                if (bombstruct->y > FLOOR_Y - bombstruct->height)
                 {
                     hide(bombstruct);
                     drawfloor();
