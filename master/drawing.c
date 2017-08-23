@@ -4,6 +4,19 @@
 #include "sprites.h"
 #include "level.h"
 
+void drawsplash()
+{
+    uint16_t i = 0;
+    for (uint8_t y = 3; y < 3 + 20; y++)
+    {
+        for (uint8_t x = 15; x < 15 + 126; x++)
+        {
+            page(x, y, pgm_read_byte_near(splash + i));
+            i++;
+        }
+    }
+}
+
 void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
 {
     const uint8_t* sprite = NULL;
