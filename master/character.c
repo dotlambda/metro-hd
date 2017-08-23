@@ -106,12 +106,14 @@ void initcharacter(struct Character* character)
         case LOOK_BOSS_SECROB:
             character->width = 37;
             character->height = 6;
-            character->movement = FOLLOW_PROTAGONIST;
+            character->movement = SECROB;
+            break;
         case LOOK_FIREBALL:
             character->width = 8;
             character->height = 2;
             character->damage = 20;
             character->movement = HIDDEN;
+            break;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -274,7 +276,7 @@ void draw(struct Character* character)
             sprite = xparasite2;
             break;
         case LOOK_BOSS_SECROB:
-             if (character->lookstate)  
+            if (character->lookstate)  
             {
                 sprite = securityrobup;
             }
@@ -282,7 +284,11 @@ void draw(struct Character* character)
             {
                 sprite = securityrobdown;
             }
-            character->lookstate = 1 - character->lookstate;
+            if (character->lastlookstatechg < getMsTimer())
+            {
+                character->lookstate = 1 - character->lookstate;
+                character->lastlookstatechg = getMsTimer() + 300;
+            }
             break;
         case LOOK_FIREBALL:
             sprite = fireball2;
@@ -532,6 +538,28 @@ void move(struct Character* character)
             break;
         case XPARASITE:
             break;
-        
+        case SECROB:
+            if (character->x == (DISPLAY_WIDTH - character->width) / 2)
+            {
+                //TODO shoot
+                character->direction = 1 - character->direction;
+            }
+            else if (character->x >= DISPLAY_WIDTH - character->width - 8)
+            {
+                character->direction = DIRECTION_LEFT;
+            }
+            else if (character->x == 8)
+            {
+                character->direction = DIRECTION_RIGHT;
+            }
+            if  (character->direction == DIRECTION_LEFT)
+            {
+                moveleft(character);
+            }
+            else
+            {
+                moveright(character);
+            }
+            break;
     }
 }

@@ -144,8 +144,9 @@ void newlevelpos()
     srandom(level_seed + level_pos);
 
     // bosslevel
-    if (level_seed == INITIAL_LEVEL + LEVEL_BOSS_DRAGON * (2 * MAX_LEVEL_WIDTH + 1)
-        || level_seed == INITIAL_LEVEL - (LEVEL_BOSS_DRAGON - 1) * (2 * MAX_LEVEL_WIDTH + 1))
+//     if (level_seed == INITIAL_LEVEL + LEVEL_BOSS_DRAGON * (2 * MAX_LEVEL_WIDTH + 1)
+//         || level_seed == INITIAL_LEVEL - (LEVEL_BOSS_DRAGON - 1) * (2 * MAX_LEVEL_WIDTH + 1))
+    if ((level_seed - INITIAL_LEVEL) / (2 * MAX_LEVEL_WIDTH + 1))
     {
         platforms_13 = UINT32_MAX;
         platforms_19 = UINT32_MAX;
@@ -153,7 +154,19 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
-        monsters[0]->look = LOOK_BOSS_DRAGON;
+        switch(random_below(3))
+        {
+            case 0:
+                monsters[0]->look = LOOK_BOSS_DRAGON;
+                break;
+            case 1: 
+                monsters[0]->look = LOOK_BOSS_SECROB;
+                break;
+            case 2: 
+                monsters[0]->look = LOOK_BOSS_ZAZABI;
+                break;
+        }
+            
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
         
         for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
@@ -210,11 +223,18 @@ void newlevelpos()
         }
         initcharacter(monsters[i]);
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
-        if (monsters[i]->look == LOOK_BOSS_DRAGON)
+        if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI)
         {
-            monsters[i]->x = DISPLAY_WIDTH - 6 - monsters[i]->width;
-        }
+            if (protagonist->x <= DISPLAY_WIDTH/2)
+            {
+                monsters[i]->x = DISPLAY_WIDTH - 8 - monsters[i]->width;
+            }
+            else
+            {
+                monsters[i]->x = 8;
+            }
             
+        }
         // move monster to the right if there is water/spikes below
         uint8_t nofloor = 1;
         while (nofloor)
