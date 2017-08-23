@@ -74,7 +74,7 @@ void initcharacter(struct Character* character)
             character->width = 30;
             character->height = 36;
             character->damage = 15;
-            character->health = 200;
+            character->health = 20;
             character->movement = XPARASITE;
             break;
         case LOOK_BOMB:
@@ -631,7 +631,7 @@ void move(struct Character* character)
             break;
 
         case BOSS_DRAGON_GROUND:
-            if(character->health > 100)
+            if(character->health > 10)
             {
                 if(character->direction == DIRECTION_LEFT)
                 {
