@@ -23,7 +23,7 @@ uint8_t num_rockets;
 uint8_t num_bombs;
 
 #define NUM_MONSTERS 3
-#define NUM_FIREBALLS 3
+#define NUM_FIREBALLS 4
 struct Character monsters_[NUM_MONSTERS];
 struct Character* monsters[NUM_MONSTERS];
 struct Character* projectile;

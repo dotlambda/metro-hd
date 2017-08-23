@@ -146,8 +146,6 @@ void newlevelpos()
     srandom(level_seed + level_pos);
 
     // bosslevel
-//     if (level_seed == INITIAL_LEVEL + LEVEL_BOSS_DRAGON * (2 * MAX_LEVEL_WIDTH + 1)
-//         || level_seed == INITIAL_LEVEL - (LEVEL_BOSS_DRAGON - 1) * (2 * MAX_LEVEL_WIDTH + 1))
     if ((level_seed - INITIAL_LEVEL) / (2 * MAX_LEVEL_WIDTH + 1))
     {
         platforms_13 = UINT32_MAX;
@@ -160,9 +158,19 @@ void newlevelpos()
         {
             case 0:
                 monsters[0]->look = LOOK_BOSS_DRAGON;
+                for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+                {
+                    fireballs[i]->look = LOOK_FIREBALL;
+                    initcharacter(fireballs[i]);
+                }
                 break;
-            case 1: 
+            case 1:
                 monsters[0]->look = LOOK_BOSS_SECROB;
+                for (uint8_t i = 0; i < 4; ++i)
+                {
+                    fireballs[i]->look = LOOK_ARROW;
+                    initcharacter(fireballs[i]);
+                }
                 break;
             case 2: 
                 monsters[0]->look = LOOK_BOSS_ZAZABI;
@@ -170,12 +178,6 @@ void newlevelpos()
         }
             
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
-        
-        for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
-        {
-            fireballs[i]->look = LOOK_FIREBALL;
-            initcharacter(fireballs[i]);
-        }
     }
     else // normal level
     {
