@@ -136,7 +136,7 @@ int main(void)
     uint16_t i = 0;
     for (uint8_t y = 3; y < 3 + 20; y++)
     {
-        for (uint8_t x = 22; x < 22 + 115; x++)
+        for (uint8_t x = 15; x < 15 + 126; x++)
         {
             page(x, y, pgm_read_byte_near(splash + i));
             i++;
@@ -490,9 +490,9 @@ int main(void)
                     {
                         if (!moveleft(protagonist))
                             break;
-                        if (j == 0 || j == 2)
+                        if (j < 4)
                             moveup(protagonist);
-                        if (j > 3 && j % 2 == 0)
+                        else
                             movedown(protagonist);
                         j++;
                         draw(monsters[i]);
@@ -511,9 +511,9 @@ int main(void)
                     {
                         if (!moveright(protagonist))
                             break;
-                        if (j == 0 || j == 2)
+                        if (j < 4)
                             moveup(protagonist);
-                        if (j > 3 && j % 2 == 0)
+                        else
                             movedown(protagonist);
                         j++;
                         draw(monsters[i]);
@@ -555,6 +555,10 @@ int main(void)
             }
         }
 
+        if(energytankstruct->movement != HIDDEN)
+        {
+            draw(energytankstruct);
+        }
         if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))
         {
             hide(energytankstruct);
@@ -607,6 +611,11 @@ int main(void)
                 {
                     hide(fireballs[i]);
                     takingdamage(fireballs[i]->damage);
+                }
+                if(collision(projectile, fireballs[i]) && fireballs[i]->movement != HIDDEN)
+                {
+                    hide(projectile);
+                    hide(fireballs[i]);
                 }
             }
         }

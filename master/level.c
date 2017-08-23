@@ -15,7 +15,7 @@ long obstacle(uint8_t x, uint8_t y)
     else if (doors & 0b00000001 && (x >= DISPLAY_WIDTH - 4 || (y >= DOOR_Y && x >= DISPLAY_WIDTH - 6)))
         return 1l;
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
-        return nofloor & (7l << x / 16 * 3);
+        return nofloor & (3l << x / 16 * 2);
     else if (y >= HILL_Y && y < HILL_Y + 4)
         return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y >= 13 * 4 && y < 14 * 4)
@@ -45,7 +45,7 @@ long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
     if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
         return 1l;
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
-        return nofloor & (7l << x / 16 * 3);
+        return nofloor & (3l << x / 16 * 2);
     else if (y >= HILL_Y && y < HILL_Y + 4)
         return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y >= 13 * 4 && y < 14 * 4)
@@ -153,9 +153,8 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
-
         monsters[0]->look = LOOK_BOSS_DRAGON;
-        monsters[0]->direction = DIRECTION_LEFT;
+        monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
         
         for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
         {
@@ -172,12 +171,12 @@ void newlevelpos()
         platforms_24 |= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
         nofloor = random();
         nofloor|= 1l << 0; 
-        nofloor|= 1l << 3 * (DISPLAY_WIDTH/16 - 1);
+        nofloor|= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
         for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
         {
             if (!(platforms_24 & (3l << 2 * pos)))
             {
-                nofloor |= 1l << 3 * pos;
+                nofloor |= 1l << 2 * pos;
             }
         }
         doors = 0;
@@ -211,7 +210,11 @@ void newlevelpos()
         }
         initcharacter(monsters[i]);
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
-    
+        if (monsters[i]->look == LOOK_BOSS_DRAGON)
+        {
+            monsters[i]->x = DISPLAY_WIDTH - 6 - monsters[i]->width;
+        }
+            
         // move monster to the right if there is water/spikes below
         uint8_t nofloor = 1;
         while (nofloor)

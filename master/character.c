@@ -11,7 +11,6 @@ void initcharacter(struct Character* character)
 {
     character->health = 4;
     character->movement = FOLLOW_PROTAGONIST;
-    character->direction = DIRECTION_RIGHT;
     character->jumpheight = 28;
     switch (character->look)
     {
