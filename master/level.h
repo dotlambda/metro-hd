@@ -23,7 +23,7 @@ uint8_t num_rockets;
 uint8_t num_bombs;
 
 #define NUM_MONSTERS 3
-#define NUM_FIREBALLS 4
+#define NUM_FIREBALLS 6
 struct Character monsters_[NUM_MONSTERS];
 struct Character* monsters[NUM_MONSTERS];
 struct Character* projectile;
@@ -35,8 +35,10 @@ struct Character fireballs_[NUM_FIREBALLS];
 struct Character* fireballs[NUM_FIREBALLS];
 
 const uint8_t* floorsprite;
-const uint8_t* rotatedfloorsprite;
+const uint8_t* leftrotatedfloorsprite;
+const uint8_t* rightrotatedfloorsprite;
 const uint8_t* nofloorsprite;
+const uint8_t* ceilingsprite;
 
 long level_seed;
 long level_pos;

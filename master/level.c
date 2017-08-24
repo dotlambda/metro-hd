@@ -67,7 +67,7 @@ void redraw()
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
     {
-        page(x, 5, pgm_read_byte_near(floorsprite + x % 16));
+        page(x, 5, pgm_read_byte_near(ceilingsprite + x % 16));
     }
     
     drawplatform();
@@ -98,6 +98,7 @@ void redraw()
 
 void selectfloor()
 {
+    const uint8_t* rotatedfloorsprite = NULL;
     switch (random_below(7))
     {
         case 0:
@@ -129,6 +130,9 @@ void selectfloor()
             rotatedfloorsprite = floor7_rotated;
             break;
     }
+    ceilingsprite = floorsprite;
+    leftrotatedfloorsprite = rotatedfloorsprite;
+    rightrotatedfloorsprite = rotatedfloorsprite;
     switch (random_below(2))
     {
         case 0:
@@ -142,6 +146,8 @@ void selectfloor()
 
 void newlevelpos()
 {
+    protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
+    
     srand(level_seed + level_pos);
     srandom(level_seed + level_pos);
 
@@ -173,6 +179,15 @@ void newlevelpos()
                     fireballs[i]->look = LOOK_ARROW;
                     initcharacter(fireballs[i]);
                 }
+                for (uint8_t i = 4; i < 6; ++i)
+                {
+                    fireballs[i]->look = LOOK_ARROW_UP;
+                    initcharacter(fireballs[i]);
+                }
+                protagonist->jumpheight = 36;
+                ceilingsprite = climbceiling;
+                leftrotatedfloorsprite = climbleft;
+                rightrotatedfloorsprite = climbright;
                 break;
             case 2: 
                 monsters[0]->look = LOOK_BOSS_ZAZABI;
@@ -309,6 +324,9 @@ void newlevelpos()
 
 void newlevel()
 {
+    protagonist->look = LOOK_PROTAGONIST;
+    initcharacter(protagonist);
+    
     if (protagonist->x > DISPLAY_WIDTH / 2)
     {
         level_seed += 2 * MAX_LEVEL_WIDTH + 1;
@@ -351,8 +369,6 @@ void newgame()
     num_rockets = 20;
     num_bombs = 20;
 
-    protagonist->look = LOOK_PROTAGONIST;
-    initcharacter(protagonist);
     protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
 
     projectile->look = LOOK_ROCKET;

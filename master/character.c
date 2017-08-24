@@ -110,7 +110,7 @@ void initcharacter(struct Character* character)
             character->width = 37;
             character->height = 24;
             character->movement = SECROB;
-            character->jumpheight = 40;
+            character->jumpheight = 32;
             character->damage = 10;
             character->y_pace = 10;
             break;
@@ -122,6 +122,12 @@ void initcharacter(struct Character* character)
             break;
         case LOOK_ARROW:
             character->width = 6;
+            character->height = 4;
+            character->damage = 10;
+            character->movement = HIDDEN;
+            break;
+        case LOOK_ARROW_UP:
+            character->width = 3;
             character->height = 4;
             character->damage = 10;
             character->movement = HIDDEN;
@@ -143,26 +149,60 @@ void draw(struct Character* character)
                 character->lookstate = 1 - character->lookstate;
                 character->lastlookstatechg = getMsTimer();
             }
+            
+            character->height = 16;
             if (character->direction == DIRECTION_LEFT)
             {
                 if (character->lookstate)
                 {
-                    sprite = protagonistleft;
+                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
+                    {
+                        character->height = 20;
+                        sprite = protagonistleftclimb;
+                    }
+                    else
+                    {    
+                        sprite = protagonistleft;
+                    }
                 }
                 else 
                 {
-                    sprite = protagleftwalk;
+                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
+                    {
+                        character->height = 20;
+                        sprite = protagonistleftclimbtwo;
+                    }
+                    else
+                    {
+                        sprite = protagleftwalk;
+                    }
                 }
             }
             else
             {
                 if (character->lookstate)
                 {
-                    sprite = protagonistright;
+                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
+                    {
+                        character->height = 20;
+                        sprite = protagonistrightclimb;
+                    }
+                    else
+                    {
+                        sprite = protagonistright;
+                    }
                 }   
                 else 
                 {
-                    sprite = protagrightwalk;
+                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
+                    {
+                        character->height = 20;
+                        sprite = protagonistrightclimbtwo;
+                    }
+                    else
+                    {
+                        sprite = protagrightwalk;
+                    }
                 }
             }
             break;
@@ -239,11 +279,11 @@ void draw(struct Character* character)
         {
             if (character->direction == DIRECTION_LEFT)
             {
-                sprite = dragon2_left;
+                sprite = dragon_left;
             }
             else
             {
-                sprite = dragon2_right;
+                sprite = dragon_right;
             }
         }
         else
@@ -348,6 +388,10 @@ void draw(struct Character* character)
                 sprite = secrobmunitionleft;
             else
                 sprite = secrobmunitionright;
+            break;
+        case LOOK_ARROW_UP:
+            sprite = secrobmunitionup;
+            break;
     }
     
     uint8_t offset = 2 * (character->y % 4);
@@ -525,8 +569,15 @@ void jump(struct Character* character)
     if (character->look == LOOK_BOSS_DRAGON)
         return;
     if (character->movement == ARROW)
+    {
         return;
-    if (character->movement == FLYING_AROUND)
+    }
+    else if (character->movement == ARROW_UP)
+    {
+        if (!moveup(character))
+            hide(character);
+    }
+    else if (character->movement == FLYING_AROUND)
     {
         if (character->verticaldirection == DIRECTION_UP)
         {
@@ -736,6 +787,8 @@ void move(struct Character* character)
                     moveright(character);
                 }
             }
+            break;
+        case ARROW_UP:
             break;
     }
 }

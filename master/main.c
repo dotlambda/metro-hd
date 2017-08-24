@@ -243,11 +243,57 @@ int main(void)
                 nextmoveevent = getMsTimer() + 50;
             }
         }
-        if (protagonist->jumpstate != ON_THE_GROUND)
+        if (protagonist->jumpstate == CLIMBING)
         {
             if (nextjumpevent < getMsTimer())
             {
-                jump(protagonist);
+                if (B_DOWN)
+                {
+                    if (protagonist->x == 4 || protagonist->x == DISPLAY_WIDTH - 4 - protagonist->width)
+                    {
+                        movedown(protagonist);
+                    }
+                    else
+                    {
+                        hide(protagonist);
+                        protagonist->jumpstate = protagonist->jumpheight;
+                        jump(protagonist);
+                    }
+                }
+                if (B_UP && protagonist->y != CEILING_Y + 4)
+                {
+                    moveup(protagonist);
+                }
+                if (protagonist->y != CEILING_Y + 4
+                    && protagonist->x != 4 && protagonist->x != DISPLAY_WIDTH - 4 - protagonist->width)
+                {
+                    // fall down if she's not right below the ceiling or at the left/right boundary
+                    hide(protagonist);
+                    protagonist->jumpstate = protagonist->jumpheight;
+                    jump(protagonist);
+                }
+                nextjumpevent = getMsTimer() + 50;
+            }
+        }
+        else if (protagonist->jumpstate != ON_THE_GROUND)
+        {
+            if (nextjumpevent < getMsTimer())
+            {
+                if (monsters[0]->look == LOOK_BOSS_SECROB
+                    && (protagonist->y == CEILING_Y + 4
+                        || protagonist->x == 4
+                        || protagonist->x == DISPLAY_WIDTH - 4 - protagonist->width)
+                   )
+                {
+                    hide(protagonist);
+                    protagonist->jumpstate = CLIMBING;
+                    draw(protagonist);
+                }
+                else
+                {
+                    jump(protagonist);
+                }
+                    
                 if (protagonist->jumpstate == protagonist->jumpheight)
                     nextjumpevent = getMsTimer() + 20;
                 else
@@ -355,9 +401,13 @@ int main(void)
                     hide(bombstruct);
                     drawfloor();
                 }
-                nextbombevent = getMsTimer() + 100;
+                else if (!collision(protagonist, bombstruct)) // don't make the bomb overwrite protagonist
+                {
+                    draw(protagonist);
+                }
+                nextbombevent = getMsTimer() + 20;
             }
-            else if (B_DOWN && num_bombs > 0)
+            else if (B_B && num_bombs > 0)
             {
                 bombstruct->x = protagonist->x;
                 bombstruct->y = protagonist->y + protagonist->height - bombstruct->height;
@@ -598,7 +648,7 @@ int main(void)
         else if (monsters[0]->look == LOOK_BOSS_SECROB)
         {
             if (monsters[0]->x == (DISPLAY_WIDTH - monsters[0]->width) / 2 && monsters[0]->jumpstate == ON_THE_GROUND)
-            {   
+            {
                 if(fireballs[0]->movement == HIDDEN && fireballs[1]->movement == HIDDEN && 
                     fireballs[2]->movement == HIDDEN && fireballs[3]->movement == HIDDEN)
                 {
@@ -613,8 +663,20 @@ int main(void)
                     draw(fireballs[2]);
                     draw(fireballs[3]);
                     fireballs[0]->movement = fireballs[1]->movement = fireballs[2]->movement = fireballs[3]->movement = ARROW;
-                    nextmonstermoveevent[0] = nextmonsterjumpevent[0] = getMsTimer() + 2000;
+                    nextmonstermoveevent[0] = nextmonsterjumpevent[0] = getMsTimer() + 1500;
                 }
+            }
+            if (monsters[0]->jumpstate == ON_THE_GROUND
+                && fireballs[4]->movement == HIDDEN && fireballs[5]->movement == HIDDEN
+                && really_random_below(1000) == 0)
+            {
+                fireballs[4]->y = fireballs[5]->y = monsters[0]->y - fireballs[4]->height;
+                fireballs[4]->x = monsters[0]->x + monsters[0]->width / 4;
+                fireballs[5]->x = monsters[0]->x + monsters[0]->width / 4 * 3;
+                draw(fireballs[4]);
+                draw(fireballs[5]);
+                fireballs[4]->movement = fireballs[5]->movement = ARROW_UP;
+                nextmonstermoveevent[0] = nextmonsterjumpevent[0] = getMsTimer() + 1500;
             }
         }
         if (monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB)
