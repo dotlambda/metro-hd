@@ -16,15 +16,16 @@ int random_below(int RANGE)
     return x;
 }
 
-int seed = 0;
+int seed = 1;
 int really_random_below(int RANGE)
 {
     srand(seed);
     int x;
     do {
-        x = seed = rand();
+        x = rand();
     }
     while (x >= RANGE * RAND_INV_RANGE (RANGE));
+    seed = x;
     x /= RAND_INV_RANGE (RANGE);
     return x;
 }
