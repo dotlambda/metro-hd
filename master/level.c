@@ -163,6 +163,8 @@ void newlevelpos()
                     fireballs[i]->look = LOOK_FIREBALL;
                     initcharacter(fireballs[i]);
                 }
+                platforms_13 = 0b00111111111111111111111111111100;
+                platforms_19 = 0b00111111111111111111111111111100;
                 break;
             case 1:
                 monsters[0]->look = LOOK_BOSS_SECROB;
