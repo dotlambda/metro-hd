@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include <stdbool.h>
+#include <avr/eeprom.h>
 #include "character.h"
 
 #define PLATFORM_WIDTH 10
@@ -40,6 +41,8 @@ const uint8_t* rightrotatedfloorsprite;
 const uint8_t* nofloorsprite;
 const uint8_t* ceilingsprite;
 
+uint32_t initial_level;
+uint8_t level;
 long level_seed;
 long level_pos;
 uint8_t max_level_pos;

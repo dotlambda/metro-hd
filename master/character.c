@@ -73,11 +73,11 @@ void initcharacter(struct Character* character)
             character->movement = FLYING_AROUND;
             break;
         case LOOK_BOSS_DRAGON:
-            character->width = 30;
-            character->height = 36;
+            character->width = 28;
+            character->height = 33;
             character->damage = 15;
-            character->health = 20;
-            character->movement = XPARASITE;
+            character->health = 4;
+            character->movement = BOSS_DRAGON_GROUND;
             break;
         case LOOK_BOMB:
             character->width = 4;
@@ -316,8 +316,11 @@ void draw(struct Character* character)
                 {
                     sprite = dragon2_flying_right;
                 }
-
-            character->lookstate = 1 - character->lookstate;
+            if (character->lastlookstatechg < getMsTimer())
+            {
+                character->lookstate = 1 - character->lookstate;
+                character->lastlookstatechg = getMsTimer() + 300;
+            }
         }
             break;
         case LOOK_BOMB:
@@ -573,6 +576,8 @@ void checkfalling(struct Character* character)
 
 void jump(struct Character* character)
 {
+    if (character->look == LOOK_BOSS_DRAGON)
+        return;
     if (character->movement == ARROW)
     {
         return;
@@ -726,9 +731,9 @@ void move(struct Character* character)
             break;
 
         case BOSS_DRAGON_GROUND:
-            if(character->health > 10)
+            if(character->health > 2)
             {
-                if(character->direction == DIRECTION_LEFT)
+                if(protagonist->x <= DISPLAY_WIDTH / 2)
                 {
                     moveleft(character);
                 }
@@ -739,11 +744,58 @@ void move(struct Character* character)
             }
             else
             {
-                while(character->y != 7)
+                while(character->y != CEILING_Y + 16)
                 {
                     moveup(character);
                 }
-                character->movement == FOLLOW_PROTAGONIST;
+                while(character->x != 120)
+                {
+                    moveright(character);
+                }
+                moveleft(character);
+                character->movement = FLYING_AROUND;
+            }
+            break;
+        case BOSS_DRAGON_AIR:
+            if (character->y + character->height >= protagonist->height - 2 && character->y >= CEILING_Y + 15)
+            {
+                switch(really_random_below(10))
+                {
+                    case 0:
+                        moveup(character);
+                        moveup(character);
+                        moveup(character);
+                        moveup(character);
+                        moveup(character);
+                        moveup(character);
+                        moveup(character);
+                        moveup(character);
+                        break;
+                    case 1:
+                        movedown(character);
+                        movedown(character);
+                        movedown(character);
+                        movedown(character);
+                        movedown(character);
+                        movedown(character);
+                        movedown(character);
+                        movedown(character);
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                }
+                if(protagonist->x <= DISPLAY_WIDTH / 2)
+                {
+                    moveleft(character);
+                }
+                else
+                {
+                    moveright(character);
+                }
             }
             break;
         case ARROW_UP:
