@@ -147,13 +147,13 @@ void selectfloor()
 void newlevelpos()
 {
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
-    
-    srand(level_seed + level_pos);
-    srandom(level_seed + level_pos);
 
-    // bosslevel
-    if ((level_seed - INITIAL_LEVEL) / (2 * MAX_LEVEL_WIDTH + 1))
+    if (level % 5 == 0) // boss level
     {
+        level_pos = 0;
+        srand(level_seed);
+        srandom(level_seed);
+
         platforms_13 = UINT32_MAX;
         platforms_19 = UINT32_MAX;
         platforms_24 = UINT32_MAX;
@@ -198,6 +198,9 @@ void newlevelpos()
     }
     else // normal level
     {
+        srand(level_seed + level_pos);
+        srandom(level_seed + level_pos);
+
         platforms_13 = random();
         platforms_19 = random();
         platforms_24 = random();
@@ -324,17 +327,19 @@ void newlevelpos()
 
 void newlevel()
 {
+
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
     
     if (protagonist->x > DISPLAY_WIDTH / 2)
     {
-        level_seed += 2 * MAX_LEVEL_WIDTH + 1;
+        level++;
     }
     else // back to the previous level
     {
-        level_seed -= 2 * MAX_LEVEL_WIDTH + 1;
+        level--;
     }
+    level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
 
     srand(level_seed);
     srandom(level_seed);
@@ -365,7 +370,7 @@ void newlevel()
 
 void newgame()
 {
-    level_seed = getMsTimer();
+    initial_level = getMsTimer();
     num_rockets = 20;
     num_bombs = 20;
 
