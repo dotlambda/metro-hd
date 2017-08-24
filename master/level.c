@@ -285,7 +285,7 @@ void newlevelpos()
         }
     }
     
-    for (uint8_t i; i < NUM_FIREBALLS; ++i)
+    for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
     {
         fireballs[i]->movement = HIDDEN;
     }
