@@ -327,11 +327,7 @@ void newlevelpos()
 }
 
 void newlevel()
-{
-
-    protagonist->look = LOOK_PROTAGONIST;
-    initcharacter(protagonist);
-    
+{    
     if (protagonist->x > DISPLAY_WIDTH / 2)
     {
         level++;
@@ -377,6 +373,9 @@ void newgame()
 
     protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
 
+    protagonist->look = LOOK_PROTAGONIST;
+    initcharacter(protagonist);
+    
     projectile->look = LOOK_ROCKET;
     initcharacter(projectile);
     
