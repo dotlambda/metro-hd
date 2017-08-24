@@ -670,7 +670,7 @@ int main(void)
         }
         else if (monsters[0]->look == LOOK_BOSS_SECROB)
         {
-            if (monsters[0]->x == (DISPLAY_WIDTH - monsters[0]->width) / 2 && monsters[0]->jumpstate == ON_THE_GROUND)
+            if (really_random_below(1000) == 0 && monsters[0]->jumpstate == ON_THE_GROUND && monsters[0]->x > 6 + fireballs[0]->width && monsters[0]->x < DISPLAY_WIDTH - 6 - monsters[0]->width - fireballs[0]->width)
             {
                 if(fireballs[0]->movement == HIDDEN && fireballs[1]->movement == HIDDEN && 
                     fireballs[2]->movement == HIDDEN && fireballs[3]->movement == HIDDEN)

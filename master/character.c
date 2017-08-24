@@ -110,7 +110,7 @@ void initcharacter(struct Character* character)
             character->width = 37;
             character->height = 24;
             character->movement = SECROB;
-            character->jumpheight = 32;
+            character->jumpheight = 36;
             character->health = 10;
             character->damage = 10;
             character->y_pace = 10;
@@ -723,7 +723,7 @@ void move(struct Character* character)
             {
                 moveright(character);
             }
-            if (character->jumpstate == ON_THE_GROUND && really_random_below(50) == 0)
+            if (character->jumpstate == ON_THE_GROUND && really_random_below(20) == 0)
             {
                 character->x_pace = 5;
                 character->jumpstate = 1;
