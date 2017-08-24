@@ -278,12 +278,13 @@ void newlevelpos()
                 break;
             }
         }
-        
-        for (uint8_t i; i < NUM_FIREBALLS; ++i)
-        {
-            fireballs[i]->movement = HIDDEN;
-        }
     }
+    
+    for (uint8_t i; i < NUM_FIREBALLS; ++i)
+    {
+        fireballs[i]->movement = HIDDEN;
+    }
+    
     // no water/spikes when there is a frog/sidehopper
     // these would otherwise fall into the void
     if (monsters[0]->movement == JUMPMOVE)

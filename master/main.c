@@ -379,7 +379,15 @@ int main(void)
                 if (monsters[i]->health <= 0)
                 {
                     hide(monsters[i]);
-                    newxparasite(i); 
+                    if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                    {
+                        monsters[i]->look = LOOK_BIGXPARASITE;
+                        initcharacter(monsters[i]);
+                    }
+                    else
+                    {
+                        newxparasite(i); 
+                    }
                 }
                 else
                 {
@@ -396,6 +404,13 @@ int main(void)
             if (bombstruct->movement != HIDDEN)
             {
                 jump(bombstruct);
+                for (uint8_t i = 0; i < NUM_MONSTERS; i++)
+                {
+                    if(monsters[i]->movement != HIDDEN)
+                    {
+                        draw(monsters[i]);
+                    }
+                }
                 if (bombstruct->y > FLOOR_Y - bombstruct->height)
                 {
                     hide(bombstruct);
@@ -467,7 +482,15 @@ int main(void)
                         if (monsters[i]->health <= 0)
                         {
                             hide(monsters[i]);
-                            newxparasite(i);
+                            if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                            {
+                                monsters[i]->look = LOOK_BIGXPARASITE;
+                                initcharacter(monsters[i]);
+                            }
+                            else
+                            {
+                                newxparasite(i); 
+                            }
                         }
                         else
                         {
@@ -679,30 +702,27 @@ int main(void)
                 nextmonstermoveevent[0] = nextmonsterjumpevent[0] = getMsTimer() + 1500;
             }
         }
-        if (monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB)
+        for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
         {
-            for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+            if (fireballs[i]->movement != HIDDEN && nextfireballmoveevent[i] < getMsTimer())
             {
-                if (fireballs[i]->movement != HIDDEN && nextfireballmoveevent[i] < getMsTimer())
-                {
-                    move(fireballs[i]);
-                    nextfireballmoveevent[i] = getMsTimer() + 30;
-                }
-                if (fireballs[i]->movement != HIDDEN && nextfireballjumpevent[i] < getMsTimer())
-                {
-                    jump(fireballs[i]);
-                    nextfireballjumpevent[i] = getMsTimer() + 25;
-                }
-                if (fireballs[i]->movement != HIDDEN && collision(fireballs[i], protagonist))
-                {
-                    hide(fireballs[i]);
-                    takingdamage(fireballs[i]->damage);
-                }
-                if(fireballs[i]->movement != HIDDEN && collision(projectile, fireballs[i]))
-                {
-                    hide(projectile);
-                    hide(fireballs[i]);
-                }
+                move(fireballs[i]);
+                nextfireballmoveevent[i] = getMsTimer() + 30;
+            }
+            if (fireballs[i]->movement != HIDDEN && nextfireballjumpevent[i] < getMsTimer())
+            {
+                jump(fireballs[i]);
+                nextfireballjumpevent[i] = getMsTimer() + 25;
+            }
+            if (fireballs[i]->movement != HIDDEN && collision(fireballs[i], protagonist))
+            {
+                hide(fireballs[i]);
+                takingdamage(fireballs[i]->damage);
+            }
+            if(fireballs[i]->movement != HIDDEN && collision(projectile, fireballs[i]))
+            {
+                hide(projectile);
+                hide(fireballs[i]);
             }
         }
 

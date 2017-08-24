@@ -111,6 +111,7 @@ void initcharacter(struct Character* character)
             character->height = 24;
             character->movement = SECROB;
             character->jumpheight = 32;
+            character->health = 10;
             character->damage = 10;
             character->y_pace = 10;
             break;
@@ -131,6 +132,13 @@ void initcharacter(struct Character* character)
             character->height = 4;
             character->damage = 10;
             character->movement = HIDDEN;
+            break;
+        case LOOK_BIGXPARASITE:
+            character->width = 15;
+            character->height = 16;
+            character->damage = 5;
+            character->health = 4;
+            character->movement = FLYING_AROUND;
             break;
     }
     character->lookstate = 0;
@@ -389,6 +397,8 @@ void draw(struct Character* character)
         case LOOK_ARROW_UP:
             sprite = secrobmunitionup;
             break;
+        case LOOK_BIGXPARASITE:
+            sprite = bigxparasite;
     }
     
     uint8_t offset = 2 * (character->y % 4);
