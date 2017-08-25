@@ -167,9 +167,7 @@ int main(void)
     
     struct Character bomb_;
     bombstruct = &bomb_;
-    
-    left_door_open = true;
-    right_door_open = true;    
+        
     newgame();
     
     while (1)
@@ -309,14 +307,14 @@ int main(void)
         
         // change level when protagonist touches the door
         if (doors & 0b00000001
-            && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
-            && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
+            && protagonist->x >= DISPLAY_WIDTH - 4 - protagonist->width 
+            && protagonist->y >= DOOR_Y - protagonist->height && door_open)
         {
             newlevel();
         }
         else if (doors & 0b00000010
-            && protagonist->x <= 6 
-            && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
+            && protagonist->x <= 4 
+            && protagonist->y >= DOOR_Y - protagonist->height && door_open)
         {
             newlevel();
         }
@@ -365,48 +363,44 @@ int main(void)
         else if (projectile->movement != HIDDEN
             && nextprojectilevent < getMsTimer())
         {
-	    int i = 0;
             move(projectile);
 	    if (projectile->x <= 7 && (doors & 0b00000010))
 	    {
-		/*for(int y = 20; y < 25; y++)
+		for(int y = 20; y < 25; x++)
 		{
 			for(int x = 5; x <= 6; x++)
 			{
 				page(x, y, 0b00000000);
 			}
 		}
-		i = 0;
-		for (uint8_t f = 20; f < 25; f++)
+		for (uint8_t y = 20; y < 25; y++)
     		{
-        		for (uint8_t g = 0; g < 6; g++)
+        		for (uint8_t x = 0; x < 6; x++)
         		{
-            			page(g, f, pgm_read_byte_near(doorleft_open + i));
+            			page(x, y, pgm_read_byte_near(doorleft_open + i));
             			i++;
         		}
-    		}*/
-		left_door_open = true;
+    		}
+		door_open = true;
 	    }
-	    i = 0;
-	    if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && (doors & 0b00000001))
+	    if (projectile->x <= 153 && (doors & 0b00000001))
 	    {
-		/*for(int y = 20; y < 25; y++)
+		for(int y = 20; y < 25; x++)
 		{
 			for(int x = 154; x <= 155; x++)
 			{
 				page(x, y, 0b00000000);
 			}
 		}
-		i = 0;
-		for (uint8_t f = 20; f < 25; f++)
+		for (uint8_t y = 20; y < 25; y++)
     		{
-        		for (uint8_t g = 0; g < 6; g++)
+        		for (uint8_t x = 0; x < 6; x++)
         		{
-            			page(g, f, pgm_read_byte_near(doorright_open + i));
+            			page(x, y, pgm_read_byte_near(doorright_open + i));
             			i++;
         		}
-    		}*/
-		right_door_open = true;
+    		}
+		door_open = true;
 	    }
 			
             if (projectile->movement == HIDDEN)

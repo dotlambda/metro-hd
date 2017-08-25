@@ -51,7 +51,7 @@ F_OSC = 16000000L
 ## General Flags
 TARGET = $(PROJECT)
 #CC = avr-gcc.exe
-CC = avr-gcc
+CC = avr-gcc -std=c99
 
 #
 # Paths

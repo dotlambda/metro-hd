@@ -293,7 +293,7 @@ void draw(struct Character* character)
                 sprite = dragon_right;
             }
         }
-	    break;
+
         case LOOK_NEO_RIDLEY_DRAGON:
         if(character->movement != FOLLOW_PROTAGONIST)
         {
