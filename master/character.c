@@ -47,6 +47,7 @@ void initcharacter(struct Character* character)
             character->width = 17;
             character->height = 32;
             character->damage = 30;
+            character->movement = ZAZABI;
             break;
         case LOOK_MONSTER_METROID:
             character->width = 14;
@@ -766,6 +767,42 @@ void move(struct Character* character)
             }
             break;
         case ARROW_UP:
+            break;
+        case ZAZABI:
+            if (character->jumpstate == ON_THE_GROUND)
+            {
+                if (really_random_below(10) == 0)
+                {
+                    // begin jumping in the opposite direction
+                    character->direction = 1 - character->direction;
+                    character->jumpstate = 1;
+                    character->y_pace = 40;
+                    character->jumpheight = 30 + really_random_below(20);
+                    character->x_pace = 15 + really_random_below(15);
+                }
+            }
+            else
+            {
+                if (character->y_pace == 100) // Zazabi is moving down in a straight line
+                {
+                    break;
+                }
+                else if (character->x + character->width / 2 == protagonist->x + protagonist->width / 2 // if Zazabi is right above the protagonist
+                    && really_random_below(3) == 0) // 1/3 chance of slowly moving down on the protagonist
+                {
+                    // fall down slowly
+                    character->y_pace = 100;
+                    character->jumpstate = character->jumpheight;
+                }
+                else
+                {
+                    if (character->direction == DIRECTION_LEFT)
+                        moveleft(character);
+                    else
+                        moveright(character);
+                }
+
+            }
             break;
     }
 }

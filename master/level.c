@@ -166,6 +166,8 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
+        monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
+
         switch(random_below(3))
         {
             case 0:
@@ -197,10 +199,9 @@ void newlevelpos()
                 break;
             case 2: 
                 monsters[0]->look = LOOK_BOSS_ZAZABI;
+                monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
                 break;
         }
-            
-        monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
     }
     else // normal level
     {
