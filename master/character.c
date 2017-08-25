@@ -6,6 +6,7 @@
 #include "display.h"
 #include "sprites.h"
 #include "rand.h"
+#include "drawing.h"
 
 void initcharacter(struct Character* character)
 {
@@ -404,41 +405,7 @@ void draw(struct Character* character)
             sprite = bigxparasite;
     }
     
-    uint8_t offset = 2 * (character->y % 4);
-    if (offset == 0)
-    {
-        uint16_t i = 0;
-        for (uint8_t y = character->y / 4; y < character->y / 4 + character->height / 4; y++)
-        {
-            for (uint8_t x = character->x; x < character->x + character->width; x++)
-            {
-                page(x, y, pgm_read_byte_near(sprite + i));
-                i++;
-            }
-        }
-    }
-    else
-    {
-        uint16_t i = 0;
-        for (uint8_t x = character->x; x < character->x + character->width; x++)
-        {
-            page(x, character->y / 4, pgm_read_byte_near(sprite + i) << offset);
-            i++;
-        }
-        for (uint8_t y = character->y / 4 + 1; y < character->y / 4 + character->height / 4; y++)
-        {
-            for (uint8_t x = character->x; x < character->x + character->width; x++)
-            {
-                page(x, y, pgm_read_byte_near(sprite + i) << offset | pgm_read_byte_near(sprite + i - character->width) >> (8 - offset));
-                i++;
-            }
-        }
-        for (uint8_t x = character->x; x < character->x + character->width; x++)
-        {
-            page(x, character->y / 4 + character->height / 4, pgm_read_byte_near(sprite + i - character->width) >> (8 - offset));
-            i++;
-        }
-    }
+    drawsprite_px(character->x, character->y, character->width, character->height, sprite);
 }
 
 void hide(struct Character* character)
