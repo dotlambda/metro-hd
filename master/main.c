@@ -3,6 +3,7 @@
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <util/delay.h>
+#include <avr/eeprom.h>
 #include "uart.h"
 #include "adc.h"
 #include "timer.h"
@@ -45,10 +46,13 @@ void takingdamage(uint8_t damage)
     protagonist->health = protagonist->health - damage;
     if(protagonist->health > 0)
     {
+        eeprom_write_byte(&health_stored, protagonist->health);
         drawnumber(29, 1, protagonist->health);
     }
     else
     {
+        initial_level = 0;
+        eeprom_write_dword(&initial_level_stored, initial_level);
         drawnumber(29, 1, 0);
         blink_for = 2000;
     }
@@ -134,8 +138,21 @@ int main(void)
 	init();
 
     // show splash screen until button A is pressed
-    drawsplash();
-    while (!B_A);
+    initial_level = eeprom_read_dword(&initial_level_stored);
+    drawsplash(initial_level != 0);
+    while (1)
+    {
+        if (B_A)
+        {
+            initial_level = 0; // start a new game
+            break;
+        }
+        if (initial_level != 0 && B_B)
+        {
+            break;
+        }
+    }
+            
     
     struct Character protagonist_;
     protagonist = &protagonist_;
@@ -310,12 +327,14 @@ int main(void)
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
             && protagonist->y >= DOOR_Y - protagonist->height)
         {
+            level++;
             newlevel();
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
             && protagonist->y >= DOOR_Y - protagonist->height)
         {
+            level--;
             newlevel();
         }
         
@@ -356,6 +375,7 @@ int main(void)
                 projectile->movement = PROJECTILE;
                 draw(projectile);
                 num_rockets--;
+                eeprom_write_byte(&num_rockets_stored, num_rockets);
                 drawnumber(57, 1, num_rockets);
                 nextprojectilevent = getMsTimer() + 35;
             }
@@ -428,6 +448,7 @@ int main(void)
                 bombstruct->y = protagonist->y + protagonist->height - bombstruct->height;
                 bombstruct->movement = BOMB;
                 num_bombs--;
+                eeprom_write_byte(&num_bombs_stored, num_bombs);
                 drawnumber(86, 1, num_bombs);
                 checkfalling(bombstruct);
                 explode = getMsTimer() + 2000;
