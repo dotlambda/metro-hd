@@ -555,7 +555,7 @@ int main(void)
             {
                 if (obstacle_hill(x))
                 {
-                    protagonist->y--;
+                    protagonist->y -= 4;
                     break;
                 }
             }
