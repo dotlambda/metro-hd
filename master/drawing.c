@@ -4,17 +4,11 @@
 #include "sprites.h"
 #include "level.h"
 
-void drawsplash()
+void drawsplash(uint8_t show_resume_option)
 {
-    uint16_t i = 0;
-    for (uint8_t y = 3; y < 3 + 20; y++)
-    {
-        for (uint8_t x = 15; x < 15 + 126; x++)
-        {
-            page(x, y, pgm_read_byte_near(splash + i));
-            i++;
-        }
-    }
+    drawsprite(15, 3, 126, 19, splash);
+    if (show_resume_option)
+        drawsprite(43, 23, 74, 3, resume);
 }
 
 void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
@@ -53,15 +47,7 @@ void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
             sprite = nine;
             break;
     }
-    uint8_t i = 0;
-    for (uint8_t y_ = y; y_ < y + 3; y_++)
-    {
-        for (uint8_t x_ = x; x_ < x + 3; x_++)
-        {
-            page(x_, y_, pgm_read_byte_near(sprite + i));
-            i++;
-        }
-    }
+    drawsprite(x, y, 3, 3, sprite);
 }
 
 void drawnumber(uint8_t x, uint8_t y, uint8_t number)
@@ -75,37 +61,13 @@ void drawnumber(uint8_t x, uint8_t y, uint8_t number)
 void drawlabels()
 {
     // print energy at the top
-    uint8_t i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 2; x < 25; x++)
-        {
-            page(x, y, pgm_read_byte_near(labelenergy + i));
-            i++;
-        }
-    }
+    drawsprite(2, 1, 23, 3, labelenergy);
     
     // print rocket label
-    i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 40; x < 55; x++)
-        {
-            page(x, y, pgm_read_byte_near(labelrocket + i));
-            i++;
-        }
-    }
+    drawsprite(40, 1, 15, 3, labelrocket);
     
     // print bomb label
-    i = 0;
-    for (uint8_t y = 1; y < 4; y++)
-    {
-        for (uint8_t x = 69; x < 83; x++)
-        {
-            page(x, y, pgm_read_byte_near(labelbomb + i));
-            i++;
-        }
-    }
+    drawsprite(69, 1, 14, 3, labelbomb);
     
     drawnumber(29, 1, protagonist->health);
     drawnumber(57, 1, num_rockets);
@@ -196,15 +158,7 @@ void drawdoorright_closed()
         }
     }
     
-    i = 0;
-    for (uint8_t y = 20; y < 25; y++)
-    {
-        for (uint8_t x = 154; x < DISPLAY_WIDTH; x++)
-        {
-            page(x, y, pgm_read_byte_near(doorright + i));
-            i++;
-        }
-    }
+    drawsprite(154, 20, 6, 5, doorright);
 }
 
 void drawdoorleft_closed()
@@ -221,15 +175,7 @@ void drawdoorleft_closed()
         }
     }
     
-    i = 0;
-    for (uint8_t y = 20; y < 25; y++)
-    {
-        for (uint8_t x = 0; x < 6; x++)
-        {
-            page(x, y, pgm_read_byte_near(doorleft + i));
-            i++;
-        }
-    }
+    drawsprite(0, 20, 6, 5, doorleft);
 }
 
 void drawfloor()
@@ -288,3 +234,51 @@ void drawplatform()
         }
     }
 }
+
+// y and height in pages
+void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+{
+    sendbyte(0b11110100, 0); // set window start column
+    sendbyte(x, 0);
+    sendbyte(0b11110110, 0); // set window end column
+    sendbyte(x + width - 1, 0);
+    sendbyte(0b11110101, 0); // set window start page
+    sendbyte(y, 0);
+    sendbyte(0b11110111, 0); // set window end page
+    sendbyte(y + height - 1, 0);
+    sendbyte(0b11111001, 0); // enable window function
+    for (uint16_t i = 0; i < width * height; ++i)
+        sendbyte(pgm_read_byte_near(sprite + i), 1);
+    sendbyte(0b11111000, 0); // disable window function
+}
+
+// y and height in pixels
+void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+{
+    uint8_t offset = y % 4;
+    if (offset == 0)
+    {
+        drawsprite(x, y / 4, width, height / 4, sprite);
+    }
+    else
+    {
+        sendbyte(0b11110100, 0); // set window start column
+        sendbyte(x, 0);
+        sendbyte(0b11110110, 0); // set window end column
+        sendbyte(x + width - 1, 0);
+        sendbyte(0b11110101, 0); // set window start page
+        sendbyte(y / 4, 0);
+        sendbyte(0b11110111, 0); // set window end page
+        sendbyte(y / 4 + height / 4, 0);
+        sendbyte(0b11111001, 0); // enable window function
+        uint16_t i = 0;
+        for (; i < width; ++i)
+            sendbyte(pgm_read_byte_near(sprite + i) << offset, 1);
+        for (; i < height / 4 * width; ++i)
+            sendbyte(pgm_read_byte_near(sprite + i) << offset | pgm_read_byte_near(sprite + i - width) >> (8 - offset), 1);
+        for (; i < (height / 4 + 1) * width; ++i)
+            sendbyte(pgm_read_byte_near(sprite + i - width) >> (8 - offset), 1);
+        sendbyte(0b11111000, 0); // disable window function
+    }
+}
+
