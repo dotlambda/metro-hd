@@ -4,7 +4,7 @@
 #include "sprites.h"
 #include "level.h"
 
-void drawsplash()
+void drawsplash(uint8_t show_resume_option)
 {
     uint16_t i = 0;
     for (uint8_t y = 3; y < 3 + 19; y++)
@@ -13,6 +13,18 @@ void drawsplash()
         {
             page(x, y, pgm_read_byte_near(splash + i));
             i++;
+        }
+    }
+    if (show_resume_option)
+    {
+        i = 0;
+        for (uint8_t y = 23; y < 23 + 3; y++)
+        {
+            for (uint8_t x = 43; x < 43 + 74; x++)
+            {
+                page(x, y, pgm_read_byte_near(resume + i));
+                i++;
+            }
         }
     }
 }
