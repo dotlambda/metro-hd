@@ -329,15 +329,39 @@ int main(void)
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
             && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
         {
-            level++;
-            newlevel();
+            // im endbosslevel
+            if (monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            {
+                // falls boss tot
+                if (monsters[0]->movement == HIDDEN)
+                {
+                        level++;
+                        newlevel();
+                }
+            }
+            else 
+            {
+                level++;
+                newlevel();
+            }
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
             && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
         {
-            level--;
-            newlevel();
+            if(monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            {
+                if (monsters[0]->movement == HIDDEN)
+                {
+                    level--;
+                    newlevel();
+                }
+            }
+            else 
+            {
+                level--;
+                newlevel();
+            }
         }
         
         //PROJECTILE
