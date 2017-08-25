@@ -73,8 +73,8 @@ void initcharacter(struct Character* character)
             character->movement = FLYING_AROUND;
             break;
         case LOOK_BOSS_DRAGON:
-            character->width = 28;
-            character->height = 33;
+            character->width = 30;
+            character->height = 36;
             character->damage = 15;
             character->health = 4;
             character->movement = BOSS_DRAGON_GROUND;
@@ -283,7 +283,7 @@ void draw(struct Character* character)
             break;
 
         case LOOK_BOSS_DRAGON:
-        if(character->movement != FOLLOW_PROTAGONIST)
+        if(character->movement == BOSS_DRAGON_GROUND)
         {
             if (character->direction == DIRECTION_LEFT)
             {
@@ -300,7 +300,7 @@ void draw(struct Character* character)
             {
                 if(character->lookstate)
                 {
-                    sprite = dragon2_left;
+                    sprite = dragon_left;
                 }
                 else
                 {
@@ -310,7 +310,7 @@ void draw(struct Character* character)
             else
                 if(!character->lookstate)
                 {
-                    sprite = dragon2_right;
+                    sprite = dragon_right;
                 }
                 else
                 {

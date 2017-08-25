@@ -7,7 +7,7 @@
 void drawsplash()
 {
     uint16_t i = 0;
-    for (uint8_t y = 3; y < 3 + 20; y++)
+    for (uint8_t y = 3; y < 3 + 19; y++)
     {
         for (uint8_t x = 15; x < 15 + 126; x++)
         {
