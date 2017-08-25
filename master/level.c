@@ -8,6 +8,12 @@
 #include "sprites.h"
 #include "rand.h"
 
+EEMEM uint32_t initial_level_stored;
+EEMEM uint8_t level_stored;
+EEMEM uint8_t health_stored;
+EEMEM uint8_t num_rockets_stored;
+EEMEM uint8_t num_bombs_stored;
+
 long obstacle(uint8_t x, uint8_t y)
 {
     if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
@@ -148,7 +154,7 @@ void newlevelpos()
 {
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
 
-    if (level % 5 == 0) // boss level
+    if (level % 5 == 4) // boss level
     {
         level_pos = 0;
         srand(level_seed);
@@ -328,14 +334,8 @@ void newlevelpos()
 
 void newlevel()
 {    
-    if (protagonist->x > DISPLAY_WIDTH / 2)
-    {
-        level++;
-    }
-    else // back to the previous level
-    {
-        level--;
-    }
+    eeprom_write_byte(&level_stored, level);
+
     level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
 
     srand(level_seed);
@@ -367,11 +367,33 @@ void newlevel()
 
 void newgame()
 {
-    initial_level = getMsTimer();
-    num_rockets = 20;
-    num_bombs = 20;
+    protagonist->look = LOOK_PROTAGONIST;
+    initcharacter(protagonist);
+    
+    if (initial_level == 0)
+    {
+        initial_level = getMsTimer();
+        level = 0;
+        eeprom_write_dword(&initial_level_stored, initial_level);
+        eeprom_write_byte(&level_stored, level);
+        protagonist->health = 90;
+        num_rockets = 20;
+        eeprom_write_byte(&num_rockets_stored, num_rockets);
+        num_bombs = 20;
+        eeprom_write_byte(&num_bombs_stored, num_bombs);
+    }
+    else
+    {
+        level = eeprom_read_byte(&level_stored);
+        protagonist->health = eeprom_read_byte(&health_stored);
+        num_rockets = eeprom_read_byte(&num_rockets_stored);
+        num_bombs = eeprom_read_byte(&num_bombs_stored);
+    }
 
-    protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
+    if (level < 0)
+        protagonist->x = 0; // make the protagonist appear on the right
+    else
+        protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
 
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
