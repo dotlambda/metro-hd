@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include <stdbool.h>
+#include <avr/eeprom.h>
 #include "character.h"
 
 #define PLATFORM_WIDTH 10
@@ -15,12 +16,14 @@
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
-#define INITIAL_LEVEL 745215237l 
-#define LEVEL_BOSS_DRAGON 4 // 1 would be the first level
+#define BOSS_LEVEL_DISTANCE 5 // every 5th level is a boss level
 
 struct Character* protagonist;
+extern EEMEM uint8_t health_stored;
 uint8_t num_rockets;
+extern EEMEM uint8_t num_rockets_stored;
 uint8_t num_bombs;
+extern EEMEM uint8_t num_bombs_stored;
 
 #define NUM_MONSTERS 3
 #define NUM_FIREBALLS 6
@@ -40,6 +43,10 @@ const uint8_t* rightrotatedfloorsprite;
 const uint8_t* nofloorsprite;
 const uint8_t* ceilingsprite;
 
+uint32_t initial_level;
+extern EEMEM uint32_t initial_level_stored;
+int32_t level;
+extern EEMEM int32_t level_stored;
 long level_seed;
 long level_pos;
 uint8_t max_level_pos;

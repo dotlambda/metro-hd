@@ -3,6 +3,7 @@
 #include <avr/pgmspace.h>
 #include <stdbool.h>
 #include <util/delay.h>
+#include <avr/eeprom.h>
 #include "uart.h"
 #include "adc.h"
 #include "timer.h"
@@ -45,10 +46,13 @@ void takingdamage(uint8_t damage)
     protagonist->health = protagonist->health - damage;
     if(protagonist->health > 0)
     {
+        eeprom_write_byte(&health_stored, protagonist->health);
         drawnumber(29, 1, protagonist->health);
     }
     else
     {
+        initial_level = 0;
+        eeprom_write_dword(&initial_level_stored, initial_level);
         drawnumber(29, 1, 0);
         blink_for = 2000;
     }
@@ -134,8 +138,21 @@ int main(void)
 	init();
 
     // show splash screen until button A is pressed
-    drawsplash();
-    while (!B_A);
+    initial_level = eeprom_read_dword(&initial_level_stored);
+    drawsplash(initial_level != 0);
+    while (1)
+    {
+        if (B_A)
+        {
+            initial_level = 0; // start a new game
+            break;
+        }
+        if (initial_level != 0 && B_B)
+        {
+            break;
+        }
+    }
+            
     
     struct Character protagonist_;
     protagonist = &protagonist_;
@@ -312,12 +329,14 @@ int main(void)
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
             && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
         {
+            level++;
             newlevel();
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
             && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
         {
+            level--;
             newlevel();
         }
         
@@ -358,6 +377,7 @@ int main(void)
                 projectile->movement = PROJECTILE;
                 draw(projectile);
                 num_rockets--;
+                eeprom_write_byte(&num_rockets_stored, num_rockets);
                 drawnumber(57, 1, num_rockets);
                 nextprojectilevent = getMsTimer() + 35;
             }
@@ -408,7 +428,15 @@ int main(void)
                 if (monsters[i]->health <= 0)
                 {
                     hide(monsters[i]);
-                    newxparasite(i); 
+                    if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                    {
+                        monsters[i]->look = LOOK_BIGXPARASITE;
+                        initcharacter(monsters[i]);
+                    }
+                    else
+                    {
+                        newxparasite(i); 
+                    }
                 }
                 else
                 {
@@ -425,6 +453,13 @@ int main(void)
             if (bombstruct->movement != HIDDEN)
             {
                 jump(bombstruct);
+                for (uint8_t i = 0; i < NUM_MONSTERS; i++)
+                {
+                    if(monsters[i]->movement != HIDDEN)
+                    {
+                        draw(monsters[i]);
+                    }
+                }
                 if (bombstruct->y > FLOOR_Y - bombstruct->height)
                 {
                     hide(bombstruct);
@@ -442,6 +477,7 @@ int main(void)
                 bombstruct->y = protagonist->y + protagonist->height - bombstruct->height;
                 bombstruct->movement = BOMB;
                 num_bombs--;
+                eeprom_write_byte(&num_bombs_stored, num_bombs);
                 drawnumber(86, 1, num_bombs);
                 checkfalling(bombstruct);
                 explode = getMsTimer() + 2000;
@@ -496,7 +532,15 @@ int main(void)
                         if (monsters[i]->health <= 0)
                         {
                             hide(monsters[i]);
-                            newxparasite(i);
+                            if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                            {
+                                monsters[i]->look = LOOK_BIGXPARASITE;
+                                initcharacter(monsters[i]);
+                            }
+                            else
+                            {
+                                newxparasite(i); 
+                            }
                         }
                         else
                         {
@@ -540,7 +584,7 @@ int main(void)
             {
                 if (obstacle_hill(x))
                 {
-                    protagonist->y--;
+                    protagonist->y -= 4;
                     break;
                 }
             }
@@ -676,7 +720,7 @@ int main(void)
         }
         else if (monsters[0]->look == LOOK_BOSS_SECROB)
         {
-            if (monsters[0]->x == (DISPLAY_WIDTH - monsters[0]->width) / 2 && monsters[0]->jumpstate == ON_THE_GROUND)
+            if (really_random_below(1000) == 0 && monsters[0]->jumpstate == ON_THE_GROUND && monsters[0]->x > 6 + fireballs[0]->width && monsters[0]->x < DISPLAY_WIDTH - 6 - monsters[0]->width - fireballs[0]->width)
             {
                 if(fireballs[0]->movement == HIDDEN && fireballs[1]->movement == HIDDEN && 
                     fireballs[2]->movement == HIDDEN && fireballs[3]->movement == HIDDEN)
@@ -708,30 +752,27 @@ int main(void)
                 nextmonstermoveevent[0] = nextmonsterjumpevent[0] = getMsTimer() + 1500;
             }
         }
-        if (monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB)
+        for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
         {
-            for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+            if (fireballs[i]->movement != HIDDEN && nextfireballmoveevent[i] < getMsTimer())
             {
-                if (fireballs[i]->movement != HIDDEN && nextfireballmoveevent[i] < getMsTimer())
-                {
-                    move(fireballs[i]);
-                    nextfireballmoveevent[i] = getMsTimer() + 30;
-                }
-                if (fireballs[i]->movement != HIDDEN && nextfireballjumpevent[i] < getMsTimer())
-                {
-                    jump(fireballs[i]);
-                    nextfireballjumpevent[i] = getMsTimer() + 25;
-                }
-                if (fireballs[i]->movement != HIDDEN && collision(fireballs[i], protagonist))
-                {
-                    hide(fireballs[i]);
-                    takingdamage(fireballs[i]->damage);
-                }
-                if(fireballs[i]->movement != HIDDEN && collision(projectile, fireballs[i]))
-                {
-                    hide(projectile);
-                    hide(fireballs[i]);
-                }
+                move(fireballs[i]);
+                nextfireballmoveevent[i] = getMsTimer() + 30;
+            }
+            if (fireballs[i]->movement != HIDDEN && nextfireballjumpevent[i] < getMsTimer())
+            {
+                jump(fireballs[i]);
+                nextfireballjumpevent[i] = getMsTimer() + 25;
+            }
+            if (fireballs[i]->movement != HIDDEN && collision(fireballs[i], protagonist))
+            {
+                hide(fireballs[i]);
+                takingdamage(fireballs[i]->damage);
+            }
+            if(fireballs[i]->movement != HIDDEN && collision(projectile, fireballs[i]))
+            {
+                hide(projectile);
+                hide(fireballs[i]);
             }
         }
 

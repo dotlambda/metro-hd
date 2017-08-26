@@ -8,6 +8,12 @@
 #include "sprites.h"
 #include "rand.h"
 
+EEMEM uint32_t initial_level_stored;
+EEMEM int32_t level_stored;
+EEMEM uint8_t health_stored;
+EEMEM uint8_t num_rockets_stored;
+EEMEM uint8_t num_bombs_stored;
+
 long obstacle(uint8_t x, uint8_t y)
 {
     if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
@@ -147,13 +153,14 @@ void selectfloor()
 void newlevelpos()
 {
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
-    
-    srand(level_seed + level_pos);
-    srandom(level_seed + level_pos);
 
-    // bosslevel
-    if ((level_seed - INITIAL_LEVEL) / (2 * MAX_LEVEL_WIDTH + 1))
+    if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+        || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
     {
+        level_pos = 0;
+        srand(level_seed);
+        srandom(level_seed);
+
         platforms_13 = UINT32_MAX;
         platforms_19 = UINT32_MAX;
         platforms_24 = UINT32_MAX;
@@ -169,6 +176,8 @@ void newlevelpos()
                     fireballs[i]->look = LOOK_FIREBALL;
                     initcharacter(fireballs[i]);
                 }
+                platforms_13 = 0b00111111111111111111111111111100;
+                platforms_19 = 0b00111111111111111111111111111100;
                 break;
             case 1:
                 monsters[0]->look = LOOK_BOSS_SECROB;
@@ -196,6 +205,9 @@ void newlevelpos()
     }
     else // normal level
     {
+        srand(level_seed + level_pos);
+        srandom(level_seed + level_pos);
+
         platforms_13 = random();
         platforms_19 = random();
         platforms_24 = random();
@@ -278,12 +290,13 @@ void newlevelpos()
                 break;
             }
         }
-        
-        for (uint8_t i; i < NUM_FIREBALLS; ++i)
-        {
-            fireballs[i]->movement = HIDDEN;
-        }
     }
+    
+    for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+    {
+        fireballs[i]->movement = HIDDEN;
+    }
+    
     // no water/spikes when there is a frog/sidehopper
     // these would otherwise fall into the void
     if (monsters[0]->movement == JUMPMOVE)
@@ -323,18 +336,10 @@ void newlevelpos()
 }
 
 void newlevel()
-{
-    protagonist->look = LOOK_PROTAGONIST;
-    initcharacter(protagonist);
-    
-    if (protagonist->x > DISPLAY_WIDTH / 2)
-    {
-        level_seed += 2 * MAX_LEVEL_WIDTH + 1;
-    }
-    else // back to the previous level
-    {
-        level_seed -= 2 * MAX_LEVEL_WIDTH + 1;
-    }
+{    
+    eeprom_write_block(&level, &level_stored, sizeof level);
+
+    level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
 
     srand(level_seed);
     srandom(level_seed);
@@ -367,12 +372,37 @@ void newlevel()
 
 void newgame()
 {
-    level_seed = getMsTimer();
-    num_rockets = 20;
-    num_bombs = 20;
+    protagonist->look = LOOK_PROTAGONIST;
+    initcharacter(protagonist);
+    
+    if (initial_level == 0)
+    {
+        initial_level = getMsTimer();
+        level = 0;
+        eeprom_write_block(&initial_level, &initial_level_stored, sizeof initial_level);
+        eeprom_write_block(&level, &level_stored, sizeof level);
+        protagonist->health = 90;
+        num_rockets = 20;
+        eeprom_write_block(&num_rockets, &num_rockets_stored, sizeof num_rockets);
+        num_bombs = 20;
+        eeprom_write_block(&num_rockets, &num_bombs_stored, sizeof num_bombs);
+    }
+    else
+    {
+        eeprom_read_block(&level, &level_stored, sizeof level);
+        protagonist->health = eeprom_read_byte(&health_stored);
+        num_rockets = eeprom_read_byte(&num_rockets_stored);
+        num_bombs = eeprom_read_byte(&num_bombs_stored);
+    }
 
-    protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
+    if (level < 0)
+        protagonist->x = 0; // make the protagonist appear on the right
+    else
+        protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
 
+    protagonist->look = LOOK_PROTAGONIST;
+    initcharacter(protagonist);
+    
     projectile->look = LOOK_ROCKET;
     initcharacter(projectile);
     

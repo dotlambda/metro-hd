@@ -6,6 +6,7 @@
 #include "display.h"
 #include "sprites.h"
 #include "rand.h"
+#include "drawing.h"
 
 void initcharacter(struct Character* character)
 {
@@ -76,8 +77,8 @@ void initcharacter(struct Character* character)
             character->width = 30;
             character->height = 36;
             character->damage = 15;
-            character->health = 20;
-            character->movement = XPARASITE;
+            character->health = 4;
+            character->movement = BOSS_DRAGON_GROUND;
             break;
         case LOOK_BOMB:
             character->width = 4;
@@ -110,7 +111,8 @@ void initcharacter(struct Character* character)
             character->width = 37;
             character->height = 24;
             character->movement = SECROB;
-            character->jumpheight = 32;
+            character->jumpheight = 36;
+            character->health = 10;
             character->damage = 10;
             character->y_pace = 10;
             break;
@@ -136,9 +138,17 @@ void initcharacter(struct Character* character)
 	    character->width = 28;
 	    character->height = 33;
 	    character->damage = 15;
-	    character->health = 20;
+	    character->health = 4;
 	    character->movement = BOSS_DRAGON_GROUND;
 	    break;
+
+        case LOOK_BIGXPARASITE:
+            character->width = 15;
+            character->height = 16;
+            character->damage = 5;
+            character->health = 4;
+            character->movement = FLYING_AROUND;
+            break;
     }
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
@@ -282,7 +292,7 @@ void draw(struct Character* character)
             break;
 
         case LOOK_BOSS_DRAGON:
-        if(character->movement != FOLLOW_PROTAGONIST)
+        if(character->movement == BOSS_DRAGON_GROUND)
         {
             if (character->direction == DIRECTION_LEFT)
             {
@@ -312,7 +322,7 @@ void draw(struct Character* character)
             {
                 if(character->lookstate)
                 {
-                    sprite = dragon2_left;
+                    sprite = dragon_left;
                 }
                 else
                 {
@@ -322,14 +332,17 @@ void draw(struct Character* character)
             else
                 if(!character->lookstate)
                 {
-                    sprite = dragon2_right;
+                    sprite = dragon_right;
                 }
                 else
                 {
                     sprite = dragon2_flying_right;
                 }
-
-            character->lookstate = 1 - character->lookstate;
+            if (character->lastlookstatechg < getMsTimer())
+            {
+                character->lookstate = 1 - character->lookstate;
+                character->lastlookstatechg = getMsTimer() + 300;
+            }
         }
             break;
         case LOOK_BOMB:
@@ -409,43 +422,11 @@ void draw(struct Character* character)
         case LOOK_ARROW_UP:
             sprite = secrobmunitionup;
             break;
+        case LOOK_BIGXPARASITE:
+            sprite = bigxparasite;
     }
     
-    uint8_t offset = 2 * (character->y % 4);
-    if (offset == 0)
-    {
-        uint16_t i = 0;
-        for (uint8_t y = character->y / 4; y < character->y / 4 + character->height / 4; y++)
-        {
-            for (uint8_t x = character->x; x < character->x + character->width; x++)
-            {
-                page(x, y, pgm_read_byte_near(sprite + i));
-                i++;
-            }
-        }
-    }
-    else
-    {
-        uint16_t i = 0;
-        for (uint8_t x = character->x; x < character->x + character->width; x++)
-        {
-            page(x, character->y / 4, pgm_read_byte_near(sprite + i) << offset);
-            i++;
-        }
-        for (uint8_t y = character->y / 4 + 1; y < character->y / 4 + character->height / 4; y++)
-        {
-            for (uint8_t x = character->x; x < character->x + character->width; x++)
-            {
-                page(x, y, pgm_read_byte_near(sprite + i) << offset | pgm_read_byte_near(sprite + i - character->width) >> (8 - offset));
-                i++;
-            }
-        }
-        for (uint8_t x = character->x; x < character->x + character->width; x++)
-        {
-            page(x, character->y / 4 + character->height / 4, pgm_read_byte_near(sprite + i - character->width) >> (8 - offset));
-            i++;
-        }
-    }
+    drawsprite_px(character->x, character->y, character->width, character->height, sprite);
 }
 
 void hide(struct Character* character)
@@ -583,6 +564,8 @@ void checkfalling(struct Character* character)
 
 void jump(struct Character* character)
 {
+    if (character->look == LOOK_BOSS_DRAGON)
+        return;
     if (character->movement == ARROW)
     {
         return;
@@ -728,7 +711,7 @@ void move(struct Character* character)
             {
                 moveright(character);
             }
-            if (character->jumpstate == ON_THE_GROUND && really_random_below(50) == 0)
+            if (character->jumpstate == ON_THE_GROUND && really_random_below(20) == 0)
             {
                 character->x_pace = 5;
                 character->jumpstate = 1;
@@ -736,9 +719,9 @@ void move(struct Character* character)
             break;
 
         case BOSS_DRAGON_GROUND:
-            if(character->health > 10)
+            if(character->health > 2)
             {
-                if(character->direction == DIRECTION_LEFT)
+                if(protagonist->x <= DISPLAY_WIDTH / 2)
                 {
                     moveleft(character);
                 }
@@ -749,7 +732,7 @@ void move(struct Character* character)
             }
             else
             {
-                while(character->y != 7)
+                while(character->y != CEILING_Y + 16)
                 {
                     moveup(character);
                 }
