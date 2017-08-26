@@ -105,8 +105,8 @@ extern PROGMEM const uint8_t two[9];
 // 9x3
 extern PROGMEM const uint8_t eight[9];
 
-// 20x4
-extern PROGMEM const uint8_t doorleft_open[20];
+// 20x6
+extern PROGMEM const uint8_t doorleft_open[30];
 
 // 8x9
 extern PROGMEM const uint8_t energytank[18];
@@ -174,8 +174,8 @@ extern PROGMEM const uint8_t floor4_rotated[16];
 // 4x16
 extern PROGMEM const uint8_t spikes[16];
 
-// 20x4
-extern PROGMEM const uint8_t doorright_open[20];
+// 20x6
+extern PROGMEM const uint8_t doorright_open[30];
 
 // 4x16
 extern PROGMEM const uint8_t floor3[16];
@@ -231,8 +231,8 @@ extern PROGMEM const uint8_t fireball1[16];
 // 9x74
 extern PROGMEM const uint8_t resume[222];
 
-// 33x29
-extern PROGMEM const uint8_t dragon2_right[261];
+// 33x28
+extern PROGMEM const uint8_t dragon2_right[252];
 
 // 33x28
 extern PROGMEM const uint8_t dragon2_flying_right[252];
@@ -270,8 +270,8 @@ extern PROGMEM const uint8_t dragon_right[270];
 // 16x15
 extern PROGMEM const uint8_t bigxparasite[60];
 
-// 33x29
-extern PROGMEM const uint8_t dragon2_left[261];
+// 33x28
+extern PROGMEM const uint8_t dragon2_left[252];
 
 
 #endif
