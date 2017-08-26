@@ -255,7 +255,7 @@ void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8
 // y and height in pixels
 void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
 {
-    uint8_t offset = y % 4;
+    uint8_t offset = 2 * (y % 4);
     if (offset == 0)
     {
         drawsprite(x, y / 4, width, height / 4, sprite);
