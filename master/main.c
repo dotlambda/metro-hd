@@ -718,6 +718,51 @@ int main(void)
                 }
             }
         }
+        else if (monsters[0]->look == LOOK_NEO_RIDLEY_DRAGON)
+        {
+            for (uint8_t i = 0; i < 3; ++i)
+            {
+                if (fireballs[i]->movement == HIDDEN && monsters[0]->movement != HIDDEN && monsters[0]->movement != BOSS_DRAGON_ATTACK && nextfireevent < getMsTimer())
+                {
+                    uint8_t enough_space = 1;
+                    if (monsters[0]->direction == DIRECTION_LEFT)
+                    {
+                        if (monsters[0]->x < fireballs[i]->width + 4)
+                            enough_space = 0;
+                        else
+                            fireballs[i]->x = monsters[0]->x - fireballs[i]->width;
+                    }
+                    else
+                    {
+                        if (monsters[0]->x + monsters[0]->width + fireballs[i]->width + 4 > DISPLAY_WIDTH)
+                            enough_space = 0;
+                        else
+                            fireballs[i]->x = monsters[0]->x + monsters[0]->width;
+                    }
+                    if (enough_space)
+                    {
+                        fireballs[i]->y = monsters[0]->y + 8;
+                        for (uint8_t x = fireballs[i]->x; x < fireballs[i]->x + fireballs[i]->width; x++)
+                        {
+                            for (uint8_t y = fireballs[i]->y; y < fireballs[i]->y + fireballs[i]->height; y++)
+                            {
+                                if(obstacle(x, y))
+                                    enough_space = 0;
+                            }
+                        }
+                        if (enough_space)
+                        {
+                            fireballs[i]->movement = FIREBALL;
+                            fireballs[i]->jumpstate = 1;
+                            fireballs[i]->jumpheight = 8 + 4 * really_random_below(4);
+                            fireballs[i]->direction = monsters[0]->direction;
+                            draw(fireballs[i]);
+                            nextfireevent = getMsTimer() + (i == 2 ? 3000 : 300);
+                        }
+                    }
+                }
+            }
+        }
         else if (monsters[0]->look == LOOK_BOSS_SECROB)
         {
             if (really_random_below(1000) == 0 && monsters[0]->jumpstate == ON_THE_GROUND && monsters[0]->x > 6 + fireballs[0]->width && monsters[0]->x < DISPLAY_WIDTH - 6 - monsters[0]->width - fireballs[0]->width)
