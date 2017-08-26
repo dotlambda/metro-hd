@@ -367,45 +367,29 @@ int main(void)
         {
 	    int i = 0;
             move(projectile);
-	    if (projectile->x <= 7 && (doors & 0b00000010))
+	    if (projectile->x <= 6 && (doors & 0b00000010))
 	    {
-		/*for(int y = 20; y < 25; y++)
-		{
-			for(int x = 5; x <= 6; x++)
-			{
-				page(x, y, 0b00000000);
-			}
-		}
-		i = 0;
-		for (uint8_t f = 20; f < 25; f++)
+		for (uint8_t y = 20; y < 25; y++)
     		{
-        		for (uint8_t g = 0; g < 6; g++)
+        		for (uint8_t x = 0; x < 6; x++)
         		{
-            			page(g, f, pgm_read_byte_near(doorleft_open + i));
+            			page(x, y, pgm_read_byte_near(doorleft_open + i));
             			i++;
         		}
-    		}*/
+    		}
 		left_door_open = true;
 	    }
 	    i = 0;
 	    if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && (doors & 0b00000001))
 	    {
-		/*for(int y = 20; y < 25; y++)
-		{
-			for(int x = 154; x <= 155; x++)
-			{
-				page(x, y, 0b00000000);
-			}
-		}
-		i = 0;
-		for (uint8_t f = 20; f < 25; f++)
+		for (uint8_t y = 20; y < 25; y++)
     		{
-        		for (uint8_t g = 0; g < 6; g++)
+        		for (uint8_t x = DISPLAY_WIDTH - 6; x < DISPLAY_WIDTH; x++)
         		{
-            			page(g, f, pgm_read_byte_near(doorright_open + i));
+            			page(x, y, pgm_read_byte_near(doorright_open + i));
             			i++;
         		}
-    		}*/
+    		}
 		right_door_open = true;
 	    }
 			
