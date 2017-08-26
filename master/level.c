@@ -336,11 +336,11 @@ void newlevelpos()
 }
 
 void newlevel()
-{    
+{
     eeprom_write_block(&level, &level_stored, sizeof level);
 
     level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
-
+    
     srand(level_seed);
     srandom(level_seed);
     
@@ -364,10 +364,8 @@ void newlevel()
     protagonist->y = FLOOR_Y - protagonist->height;
     
     selectfloor();
-    //if (door_open)
-    //{
+
     newlevelpos();
-    //}
 }
 
 void newgame()
@@ -375,7 +373,7 @@ void newgame()
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
     
-    if (initial_level == 0)
+    if (initial_level == 0) // start a new game
     {
         initial_level = getMsTimer();
         level = 0;
@@ -387,7 +385,7 @@ void newgame()
         num_bombs = 20;
         eeprom_write_block(&num_rockets, &num_bombs_stored, sizeof num_bombs);
     }
-    else
+    else // resume previous game
     {
         eeprom_read_block(&level, &level_stored, sizeof level);
         protagonist->health = eeprom_read_byte(&health_stored);
