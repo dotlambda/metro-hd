@@ -9,7 +9,7 @@
 #include "rand.h"
 
 EEMEM uint32_t initial_level_stored;
-EEMEM uint8_t level_stored;
+EEMEM int32_t level_stored;
 EEMEM uint8_t health_stored;
 EEMEM uint8_t num_rockets_stored;
 EEMEM uint8_t num_bombs_stored;
@@ -154,7 +154,8 @@ void newlevelpos()
 {
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
 
-    if (level % 5 == 4) // boss level
+    if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+        || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
     {
         level_pos = 0;
         srand(level_seed);
@@ -334,7 +335,7 @@ void newlevelpos()
 
 void newlevel()
 {    
-    eeprom_write_byte(&level_stored, level);
+    eeprom_write_block(&level, &level_stored, sizeof level);
 
     level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
 
@@ -374,17 +375,17 @@ void newgame()
     {
         initial_level = getMsTimer();
         level = 0;
-        eeprom_write_dword(&initial_level_stored, initial_level);
-        eeprom_write_byte(&level_stored, level);
+        eeprom_write_block(&initial_level, &initial_level_stored, sizeof initial_level);
+        eeprom_write_block(&level, &level_stored, sizeof level);
         protagonist->health = 90;
         num_rockets = 20;
-        eeprom_write_byte(&num_rockets_stored, num_rockets);
+        eeprom_write_block(&num_rockets, &num_rockets_stored, sizeof num_rockets);
         num_bombs = 20;
-        eeprom_write_byte(&num_bombs_stored, num_bombs);
+        eeprom_write_block(&num_rockets, &num_bombs_stored, sizeof num_bombs);
     }
     else
     {
-        level = eeprom_read_byte(&level_stored);
+        eeprom_read_block(&level, &level_stored, sizeof level);
         protagonist->health = eeprom_read_byte(&health_stored);
         num_rockets = eeprom_read_byte(&num_rockets_stored);
         num_bombs = eeprom_read_byte(&num_bombs_stored);

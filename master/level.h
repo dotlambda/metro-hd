@@ -16,8 +16,7 @@
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
-#define INITIAL_LEVEL 745215237l 
-#define LEVEL_BOSS_DRAGON 4 // 1 would be the first level
+#define BOSS_LEVEL_DISTANCE 5 // every 5th level is a boss level
 
 struct Character* protagonist;
 extern EEMEM uint8_t health_stored;
@@ -46,8 +45,8 @@ const uint8_t* ceilingsprite;
 
 uint32_t initial_level;
 extern EEMEM uint32_t initial_level_stored;
-uint8_t level;
-extern EEMEM uint8_t level_stored;
+int32_t level;
+extern EEMEM int32_t level_stored;
 long level_seed;
 long level_pos;
 uint8_t max_level_pos;
