@@ -184,7 +184,9 @@ int main(void)
     
     struct Character bomb_;
     bombstruct = &bomb_;
-        
+    
+    left_door_open = true;
+    right_door_open = true;    
     newgame();
     
     while (1)
@@ -325,14 +327,14 @@ int main(void)
         // change level when protagonist touches the door
         if (doors & 0b00000001
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
-            && protagonist->y >= DOOR_Y - protagonist->height)
+            && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
         {
             level++;
             newlevel();
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
-            && protagonist->y >= DOOR_Y - protagonist->height)
+            && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
         {
             level--;
             newlevel();
@@ -384,6 +386,18 @@ int main(void)
             && nextprojectilevent < getMsTimer())
         {
             move(projectile);
+
+            if (projectile->x <= 6 && (doors & 0b00000010))
+            {
+                drawsprite(0, 20, 6, 5, doorleft_open);
+                left_door_open = true;
+            }
+            else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && (doors & 0b00000001))
+            {
+                drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+                right_door_open = true;
+            }
+
             if (projectile->movement == HIDDEN)
                 nextprojectilevent = getMsTimer() + 500;
             else
@@ -686,6 +700,51 @@ int main(void)
                     fireballs[i]->y = monsters[0]->y + 8;
                     draw(fireballs[i]);
                     nextfireevent = getMsTimer() + (really_random_below(5) == 0 ? 1000 : 400);
+                }
+            }
+        }
+        else if (monsters[0]->look == LOOK_NEO_RIDLEY_DRAGON)
+        {
+            for (uint8_t i = 0; i < 3; ++i)
+            {
+                if (fireballs[i]->movement == HIDDEN && monsters[0]->movement != HIDDEN && monsters[0]->movement != BOSS_DRAGON_ATTACK && nextfireevent < getMsTimer())
+                {
+                    uint8_t enough_space = 1;
+                    if (monsters[0]->direction == DIRECTION_LEFT)
+                    {
+                        if (monsters[0]->x < fireballs[i]->width + 4)
+                            enough_space = 0;
+                        else
+                            fireballs[i]->x = monsters[0]->x - fireballs[i]->width;
+                    }
+                    else
+                    {
+                        if (monsters[0]->x + monsters[0]->width + fireballs[i]->width + 4 > DISPLAY_WIDTH)
+                            enough_space = 0;
+                        else
+                            fireballs[i]->x = monsters[0]->x + monsters[0]->width;
+                    }
+                    if (enough_space)
+                    {
+                        fireballs[i]->y = monsters[0]->y + 8;
+                        for (uint8_t x = fireballs[i]->x; x < fireballs[i]->x + fireballs[i]->width; x++)
+                        {
+                            for (uint8_t y = fireballs[i]->y; y < fireballs[i]->y + fireballs[i]->height; y++)
+                            {
+                                if(obstacle(x, y))
+                                    enough_space = 0;
+                            }
+                        }
+                        if (enough_space)
+                        {
+                            fireballs[i]->movement = FIREBALL;
+                            fireballs[i]->jumpstate = 1;
+                            fireballs[i]->jumpheight = 8 + 4 * really_random_below(4);
+                            fireballs[i]->direction = monsters[0]->direction;
+                            draw(fireballs[i]);
+                            nextfireevent = getMsTimer() + (i == 2 ? 3000 : 300);
+                        }
+                    }
                 }
             }
         }

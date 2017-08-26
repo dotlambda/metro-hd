@@ -169,7 +169,7 @@ void newlevelpos()
         
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
 
-        switch(random_below(3))
+        switch(random_below(4))
         {
             case 0:
                 monsters[0]->look = LOOK_BOSS_DRAGON;
@@ -201,6 +201,16 @@ void newlevelpos()
             case 2: 
                 monsters[0]->look = LOOK_BOSS_ZAZABI;
                 monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
+                break;
+            case 3:
+                monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
+                for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+                {
+                    fireballs[i]->look = LOOK_FIREBALL;
+                    initcharacter(fireballs[i]);
+                }
+                platforms_13 = 0b00111111111111111111111111111100;
+                platforms_19 = 0b00111111111111111111111111111100;
                 break;
         }
     }
@@ -255,7 +265,7 @@ void newlevelpos()
         }
         initcharacter(monsters[i]);
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
-        if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI)
+        if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
         {
             if (protagonist->x <= DISPLAY_WIDTH/2)
             {
@@ -332,14 +342,16 @@ void newlevelpos()
 
         
     redraw();
+    left_door_open = false;
+    right_door_open = false; 
 }
 
 void newlevel()
-{    
+{
     eeprom_write_block(&level, &level_stored, sizeof level);
 
     level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
-
+    
     srand(level_seed);
     srandom(level_seed);
     
@@ -372,7 +384,7 @@ void newgame()
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
     
-    if (initial_level == 0)
+    if (initial_level == 0) // start a new game
     {
         initial_level = getMsTimer();
         level = 0;
@@ -384,7 +396,7 @@ void newgame()
         num_bombs = 20;
         eeprom_write_block(&num_rockets, &num_bombs_stored, sizeof num_bombs);
     }
-    else
+    else // resume previous game
     {
         eeprom_read_block(&level, &level_stored, sizeof level);
         protagonist->health = eeprom_read_byte(&health_stored);
@@ -405,6 +417,9 @@ void newgame()
     
     bombstruct->look = LOOK_BOMB;
     initcharacter(bombstruct);
+
+    left_door_open = true;
+    right_door_open = true; 
     
     newlevel();
 }
