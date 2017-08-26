@@ -167,7 +167,7 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
-        switch(random_below(3))
+        switch(random_below(2))
         {
             case 0:
                 monsters[0]->look = LOOK_BOSS_DRAGON;
@@ -179,25 +179,35 @@ void newlevelpos()
                 platforms_13 = 0b00111111111111111111111111111100;
                 platforms_19 = 0b00111111111111111111111111111100;
                 break;
+         //   case 1:
+        //        monsters[0]->look = LOOK_BOSS_SECROB;
+        //        for (uint8_t i = 0; i < 4; ++i)
+       //         {
+       //             fireballs[i]->look = LOOK_ARROW;
+      //              initcharacter(fireballs[i]);
+      //          }
+     //           for (uint8_t i = 4; i < 6; ++i)
+     //           {
+    //                fireballs[i]->look = LOOK_ARROW_UP;
+    //                initcharacter(fireballs[i]);
+    //            }
+    //            protagonist->jumpheight = 36;
+    //            ceilingsprite = climbceiling;
+   //             leftrotatedfloorsprite = climbleft;
+   //             rightrotatedfloorsprite = climbright;
+ //               break;
+           // case 2: 
+               // monsters[0]->look = LOOK_BOSS_ZAZABI;
+                //break;
             case 1:
-                monsters[0]->look = LOOK_BOSS_SECROB;
-                for (uint8_t i = 0; i < 4; ++i)
+                monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
+                for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
                 {
-                    fireballs[i]->look = LOOK_ARROW;
+                    fireballs[i]->look = LOOK_FIREBALL;
                     initcharacter(fireballs[i]);
                 }
-                for (uint8_t i = 4; i < 6; ++i)
-                {
-                    fireballs[i]->look = LOOK_ARROW_UP;
-                    initcharacter(fireballs[i]);
-                }
-                protagonist->jumpheight = 36;
-                ceilingsprite = climbceiling;
-                leftrotatedfloorsprite = climbleft;
-                rightrotatedfloorsprite = climbright;
-                break;
-            case 2: 
-                monsters[0]->look = LOOK_BOSS_ZAZABI;
+                platforms_13 = 0b00111111111111111111111111111100;
+                platforms_19 = 0b00111111111111111111111111111100;
                 break;
         }
             

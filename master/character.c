@@ -292,8 +292,6 @@ void draw(struct Character* character)
             break;
 
         case LOOK_BOSS_DRAGON:
-        if(character->movement == BOSS_DRAGON_GROUND)
-        {
             if (character->direction == DIRECTION_LEFT)
             {
                 sprite = dragon_left;
@@ -302,48 +300,49 @@ void draw(struct Character* character)
             {
                 sprite = dragon_right;
             }
-        }
 	    break;
         case LOOK_NEO_RIDLEY_DRAGON:
-        if(character->movement != FOLLOW_PROTAGONIST)
-        {
-            if (character->direction == DIRECTION_LEFT)
-            {
-                sprite = dragon2_left;
-            }
+	        if(character->movement == BOSS_DRAGON_GROUND)
+	        {
+	            if (character->direction == DIRECTION_LEFT)
+	            {
+	                sprite = dragon2_left;
+	            }
+	            else
+	            {
+	                sprite = dragon2_right;
+	            }
+	        }
             else
             {
-                sprite = dragon2_right;
-            }
-        }
-        else
-        {
-            if (character->direction == DIRECTION_LEFT)
-            {
-                if(character->lookstate)
+                if (character->direction == DIRECTION_LEFT)
                 {
-                    sprite = dragon_left;
+                    if(character->lookstate)
+                    {
+                        sprite = dragon2_left;
+                    }
+                    else
+                    {
+                        sprite = dragon2_flying_left;
+                    }
                 }
                 else
                 {
-                    sprite = dragon2_flying_left;
+                    if(!character->lookstate)
+                    {
+                        sprite = dragon2_right;
+                    }
+                    else
+                    {
+                        sprite = dragon2_flying_right;
+                    }
+                }
+                if (character->lastlookstatechg < getMsTimer())
+                {
+                    character->lookstate = 1 - character->lookstate;
+                    character->lastlookstatechg = getMsTimer() + 300;
                 }
             }
-            else
-                if(!character->lookstate)
-                {
-                    sprite = dragon_right;
-                }
-                else
-                {
-                    sprite = dragon2_flying_right;
-                }
-            if (character->lastlookstatechg < getMsTimer())
-            {
-                character->lookstate = 1 - character->lookstate;
-                character->lastlookstatechg = getMsTimer() + 300;
-            }
-        }
             break;
         case LOOK_BOMB:
             sprite = bomb;
@@ -564,8 +563,6 @@ void checkfalling(struct Character* character)
 
 void jump(struct Character* character)
 {
-    if (character->look == LOOK_BOSS_DRAGON)
-        return;
     if (character->movement == ARROW)
     {
         return;
@@ -575,7 +572,7 @@ void jump(struct Character* character)
         if (!moveup(character))
             hide(character);
     }
-    else if (character->movement == FLYING_AROUND)
+    else if (character->movement == FLYING_AROUND || character->movement == BOSS_DRAGON_AIR)
     {
         if (character->verticaldirection == DIRECTION_UP)
         {
@@ -673,6 +670,24 @@ void move(struct Character* character)
             break;
         case BOMB:
             break;
+
+        case BOSS_DRAGON_AIR:
+            if (character->y < CEILING_Y + 16
+                && (character->x < 20 || character->x > DISPLAY_WIDTH - character->width - 20)
+                && really_random_below(5) == 0) // 1/5 probability to attack
+            {
+                character->movement = BOSS_DRAGON_ATTACK;
+                if (character->x > DISPLAY_WIDTH / 2)
+                    character->direction = DIRECTION_LEFT;
+                else
+                    character->direction = DIRECTION_RIGHT;
+                // begin flying down
+                character->jumpstate = character->jumpheight = FLOOR_Y - character->y;
+                character->x_pace = 30;
+                character->y_pace = 10;
+                break;
+            }
+            // else fly around
         case FLYING_AROUND:
             if (character->direction == DIRECTION_LEFT)
             {
@@ -732,13 +747,51 @@ void move(struct Character* character)
             }
             else
             {
-                while(character->y != CEILING_Y + 16)
+                while(character->y > CEILING_Y + 16)
                 {
                     moveup(character);
                 }
-                character->movement = FLYING_AROUND;
+                character->movement = BOSS_DRAGON_AIR;
             }
             break;
+
+        case BOSS_DRAGON_ATTACK:
+            if (character->direction == DIRECTION_LEFT)
+            {
+                // if we're on the left and have reached the highest point
+                if (character->x <= DISPLAY_WIDTH / 2
+                    && character->jumpstate == character->jumpheight)
+                {
+                    character->movement = BOSS_DRAGON_AIR;
+                    character->x_pace = 100;
+                    character->y_pace = 40;
+                }
+                else
+                {
+                    moveleft(character);
+                    if (character->x < 30)
+                        character->jumpstate = 1;
+                }
+            }
+            else
+            {
+                // if we're on the right and have reached the highest point
+                if (character->x > DISPLAY_WIDTH / 2
+                    && character->jumpstate == character->jumpheight)
+                {
+                    character->movement = BOSS_DRAGON_AIR;
+                    character->x_pace = 100;
+                    character->y_pace = 40;
+                }
+                else
+                {
+                    moveright(character);
+                    if (character->x > DISPLAY_WIDTH - character->width - 30)
+                        character->jumpstate = 1;
+                }
+            }
+            break;
+
         case ARROW_UP:
             break;
     }
