@@ -288,7 +288,7 @@ void drawletters(uint8_t x, uint8_t y, char* Sentence)
     int len = strlen ( Sentence );
     for (int i = 0; i < len; i++)
     {
-        Letter = Sentence[i];
+       char Letter = Sentence[i];
         switch(Letter)
         {
             case 'A':
