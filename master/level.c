@@ -7,6 +7,7 @@
 #include "drawing.h"
 #include "sprites.h"
 #include "rand.h"
+#include "dfs.h"
 
 EEMEM uint32_t initial_level_stored;
 EEMEM int32_t level_stored;
@@ -234,6 +235,10 @@ void newlevelpos()
                 nofloor |= 1l << 2 * pos;
             }
         }
+
+        if (!is_door_reachable())
+            nofloor = UINT32_MAX;
+
         doors = 0;
     
         // draw door to previous level
