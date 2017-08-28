@@ -385,34 +385,41 @@ int main(void)
         else if (projectile->movement != HIDDEN
             && nextprojectilevent < getMsTimer())
         {
-	    int i = 0;
             move(projectile);
-	    if (projectile->x <= 6 && (doors & 0b00000010))
-	    {
-		for (uint8_t y = 20; y < 25; y++)
-    		{
-        		for (uint8_t x = 0; x < 6; x++)
-        		{
-            			page(x, y, pgm_read_byte_near(doorleft_open + i));
-            			i++;
-        		}
-    		}
-		left_door_open = true;
-	    }
-	    i = 0;
-	    if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && (doors & 0b00000001))
-	    {
-		for (uint8_t y = 20; y < 25; y++)
-    		{
-        		for (uint8_t x = DISPLAY_WIDTH - 6; x < DISPLAY_WIDTH; x++)
-        		{
-            			page(x, y, pgm_read_byte_near(doorright_open + i));
-            			i++;
-        		}
-    		}
-		right_door_open = true;
-	    }
-			
+
+            if (projectile->x <= 6 && (doors & 0b00000010)
+            {
+                if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+                    || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+                {
+                    drawsprite(0, 20, 6, 5, doorleft_open);
+                    left_door_open = true;
+                }
+                else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+                    || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+                    && monsters[0]->movement == HIDDEN)
+                {
+                    drawsprite(0, 20, 6, 5, doorleft_open);
+                    left_door_open = true;                    
+                }
+            }
+            else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && (doors & 0b00000001))
+            {
+                if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+                    || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+                {
+                    drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+                    right_door_open = true;
+                }
+                else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+                    || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+                    && monsters[0]->movement == HIDDEN)
+                {
+                    drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+                    right_door_open = true;                   
+                }
+            }
+
             if (projectile->movement == HIDDEN)
                 nextprojectilevent = getMsTimer() + 500;
             else

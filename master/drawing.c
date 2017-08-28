@@ -3,6 +3,7 @@
 #include "display.h"
 #include "sprites.h"
 #include "level.h"
+#include "stdio.h"
 
 void drawsplash(uint8_t show_resume_option)
 {
@@ -281,4 +282,146 @@ void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
         sendbyte(0b11111000, 0); // disable window function
     }
 }
+
+void drawletters(uint8_t x, uint8_t y, char* Sentence)
+{
+    int len = strlen ( Sentence );
+    for (int i = 0; i < len; i++)
+    {
+        Letter = Sentence[i];
+        switch(Letter)
+        {
+            case 'A':
+                drawsprite_px(x, y, 5, 9, A);
+                x += 1;
+                break;
+                
+            case 'B':
+                drawsprite_px(x, y, 5, 9, B);
+                x += 1;
+                break;
+                            
+            case 'C':
+                drawsprite_px(x, y, 5, 9, C);
+                x += 1;
+                break;
+                
+            case 'D':
+                drawsprite_px(x, y, 5, 9, D);
+                x += 1;
+                break;
+                
+            case 'E':
+                drawsprite_px(x, y, 5, 9, E);
+                x += 1;
+                break;
+                
+            case 'F':
+                drawsprite_px(x, y, 5, 9, F);
+                x += 1;
+                break;
+                
+            case 'G':
+                drawsprite_px(x, y, 5, 9, G);
+                x += 1;
+                break;
+                
+            case 'H':
+                drawsprite_px(x, y, 5, 9, H);
+                x += 1;
+                break;
+                
+            case 'I':
+                drawsprite_px(x, y, 5, 9, I);
+                x += 1;
+                break;
+                
+            case 'J':
+                drawsprite_px(x, y, 5, 9, J);
+                x += 1;
+                break;
+                
+            case 'K':
+                drawsprite_px(x, y, 5, 9, K);
+                x += 1;
+                break;
+                
+            case 'L':
+                drawsprite_px(x, y, 5, 9, L);
+                x += 1;
+                break;
+                
+            case 'M':
+                drawsprite_px(x, y, 5, 9, M);
+                x += 1;
+                break;
+                
+            case 'N':
+                drawsprite_px(x, y, 5, 9, N);
+                x += 1;
+                break;
+                
+            case 'O':
+                drawsprite_px(x, y, 5, 9, O);
+                x += 1;
+                break;
+                
+            case 'P':
+                drawsprite_px(x, y, 6, 9, P);
+                x += 1;
+                break;
+                
+            case 'Q':
+                drawsprite_px(x, y, 5, 9, Q);
+                x += 1;
+                break;
+                
+            case 'R':
+                drawsprite_px(x, y, 5, 9, R);
+                x += 1;
+                break;
+                
+            case 'S':
+                drawsprite_px(x, y, 4, 9, S);
+                x += 1;
+                break;
+                
+            case 'T':
+                drawsprite_px(x, y, 5, 9, T);
+                x += 1;
+                break;
+                
+            case 'U':
+                drawsprite_px(x, y, 5, 9, U);
+                x += 1;
+                break;
+                
+            case 'V':
+                drawsprite_px(x, y, 5, 9, V);
+                x += 1;
+                break;
+                
+            case 'W':
+                drawsprite_px(x, y, 5, 9, W);
+                x += 1;
+                break;
+                
+            case 'X':
+                drawsprite_px(x, y, 5, 9, X);
+                x += 1;
+                break;
+                
+            case 'Y':
+                drawsprite_px(x, y, 5, 9, Y);
+                x += 1;
+                break;
+                
+            case 'Z':
+                drawsprite_px(x, y, 5, 9, Z);
+                x += 1;
+                break;
+                
+        }
+    }
+} 
 
