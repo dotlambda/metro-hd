@@ -30,8 +30,11 @@ long obstacle(uint8_t x, uint8_t y)
         return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y >= 24 * 4 && y < 25 * 4)
         return !(platforms_24 & (3l << (x / 16 * 2)));
+    else if (rechargeroom && x >= DISPLAY_WIDTH/2 - 12 && x < DISPLAY_WIDTH/2 + 12 && (y >= 92 || y < 17*4))
+        return 1l;
     else
         return 0l;
+    
 }
 
 long obstacle_hill(uint8_t x)
@@ -99,6 +102,11 @@ void redraw()
         draw(energytankstruct);
     }
     
+    if (rechargeroom)
+    {
+        drawrechargeroom();
+    }
+    
     draw(protagonist);
 }
 
@@ -154,7 +162,19 @@ void newlevelpos()
 {
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
 
-    if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+    if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 2) // recharge level
+        || (level < 0 && (level - 1) % BOSS_LEVEL_DISTANCE == 0))
+    {
+        platforms_13 = UINT32_MAX;
+        platforms_19 = UINT32_MAX;
+        platforms_24 = UINT32_MAX;
+        nofloor = UINT32_MAX;
+        doors = 0b00000011;
+        
+        monsters[0]->look = LOOK_HIDDEN;
+        rechargeroom = true;
+    }
+    else if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
         || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
     {
         level_pos = 0;
@@ -263,7 +283,13 @@ void newlevelpos()
             // make memus appear in swarms
             monsters[i]->look = LOOK_MONSTER_MEMU;
         }
+        
         initcharacter(monsters[i]);
+        if (monsters[i]->look != LOOK_HIDDEN)
+        {
+            continue;
+        }
+        
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
         if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
         {

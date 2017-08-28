@@ -282,3 +282,20 @@ void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
     }
 }
 
+void drawrechargeroom()
+{
+    drawsprite(4, 6, 152, 4, labelrecharge);
+    drawsprite(DISPLAY_WIDTH/2 - 12, 10, 24, 7, rechargetop);
+    drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+

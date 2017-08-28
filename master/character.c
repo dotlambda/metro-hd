@@ -135,13 +135,13 @@ void initcharacter(struct Character* character)
             character->damage = 10;
             character->movement = HIDDEN;
             break;
-	case LOOK_NEO_RIDLEY_DRAGON:
-	    character->width = 28;
-	    character->height = 33;
-	    character->damage = 15;
-	    character->health = 4;
-	    character->movement = BOSS_DRAGON_GROUND;
-	    break;
+        case LOOK_NEO_RIDLEY_DRAGON:
+            character->width = 28;
+            character->height = 33;
+            character->damage = 15;
+            character->health = 4;
+            character->movement = BOSS_DRAGON_GROUND;
+            break;
 
         case LOOK_BIGXPARASITE:
             character->width = 15;
@@ -149,6 +149,9 @@ void initcharacter(struct Character* character)
             character->damage = 5;
             character->health = 4;
             character->movement = FLYING_AROUND;
+            break;
+        case LOOK_HIDDEN:
+            character->movement = HIDDEN;
             break;
     }
     character->lookstate = 0;
@@ -424,6 +427,10 @@ void draw(struct Character* character)
             break;
         case LOOK_BIGXPARASITE:
             sprite = bigxparasite;
+            break;
+        case LOOK_HIDDEN:
+            sprite = NULL;
+            break;
     }
     
     drawsprite_px(character->x, character->y, character->width, character->height, sprite);
