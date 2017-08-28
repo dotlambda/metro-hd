@@ -167,7 +167,7 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
-        switch(random_below(2))
+        switch(random_below(4))
         {
             case 0:
                 monsters[0]->look = LOOK_BOSS_DRAGON;
