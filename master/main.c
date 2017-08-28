@@ -428,7 +428,7 @@ int main(void)
                 if (monsters[i]->health <= 0)
                 {
                     hide(monsters[i]);
-                    if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                    if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
                     {
                         monsters[i]->look = LOOK_BIGXPARASITE;
                         initcharacter(monsters[i]);
@@ -532,7 +532,7 @@ int main(void)
                         if (monsters[i]->health <= 0)
                         {
                             hide(monsters[i]);
-                            if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                            if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
                             {
                                 monsters[i]->look = LOOK_BIGXPARASITE;
                                 initcharacter(monsters[i]);
