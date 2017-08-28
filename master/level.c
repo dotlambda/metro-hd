@@ -32,6 +32,8 @@ long obstacle(uint8_t x, uint8_t y)
         return !(platforms_24 & (3l << (x / 16 * 2)));
     else if (rechargeroom && x >= DISPLAY_WIDTH/2 - 12 && x < DISPLAY_WIDTH/2 + 12 && (y >= 92 || y < 17*4))
         return 1l;
+    else if (rechargeroom && recharging && (x == DISPLAY_WIDTH/2 - 12 || x == DISPLAY_WIDTH/2 + 11))
+        return 1l;
     else
         return 0l;
     
@@ -161,7 +163,7 @@ void selectfloor()
 void newlevelpos()
 {
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
-
+    rechargeroom = false;
     if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 2) // recharge level
         || (level < 0 && (level - 1) % BOSS_LEVEL_DISTANCE == 0))
     {
@@ -285,7 +287,7 @@ void newlevelpos()
         }
         
         initcharacter(monsters[i]);
-        if (monsters[i]->look != LOOK_HIDDEN)
+        if (monsters[i]->look == LOOK_HIDDEN)
         {
             continue;
         }
