@@ -236,9 +236,6 @@ void newlevelpos()
             }
         }
 
-        if (!is_door_reachable())
-            nofloor = UINT32_MAX;
-
         doors = 0;
     
         // draw door to previous level
@@ -252,7 +249,10 @@ void newlevelpos()
         {
             doors |= 0b00000001;
         }
-    
+
+        if (!is_door_reachable())
+            nofloor = UINT32_MAX;
+ 
         monsters[0]->look = random_below(NUM_MONSTER_LOOKS);
     }
 

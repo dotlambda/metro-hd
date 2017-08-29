@@ -1,11 +1,13 @@
 #include "dfs.h"
 #include "level.h"
 
-//TODO there is no space for the protagonist to go down/up if there is a door
-
 uint8_t platform_above(uint8_t x, uint8_t y)
 {
-    if (y == 0)
+    if (doors & 0b00000010 && x == 0 && y == 0) // blocked by door
+        return 1;
+    else if (doors & 0b00000001 && x == GRAPH_WIDTH - 1 && y == 0)
+        return 1;
+    else if (y == 0)
         return !(platforms_19 & (3l << (x * 2)));
     else if (y == 1)
         return !(platforms_13 & (3l << (x * 2)));
@@ -15,6 +17,10 @@ uint8_t platform_above(uint8_t x, uint8_t y)
 // whether there iss a platform/foor below
 uint8_t platform_below(uint8_t x, uint8_t y)
 {
+    if (doors & 0b00000010 && x == 0 && y == 1) // blocked by door
+        return 1;
+    else if (doors & 0b00000001 && x == GRAPH_WIDTH - 1 && y == 1)
+        return 1;
     if (y == 0)
         // return 1 if there is a floor on the left AND on the right
         return (nofloor & (3l << PLATFORM_WIDTH * x / 16 * 2)) && (nofloor & (3l << (PLATFORM_WIDTH * (x + 1) - 1) / 16 * 2));
