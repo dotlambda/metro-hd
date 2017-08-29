@@ -16,6 +16,7 @@ void drawdoorright_closed();
 void drawdoorleft_closed();
 void drawfloor();
 void drawplatform();
+void drawrechargeroom();
 
 // y and height in pages
 void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite);

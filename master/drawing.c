@@ -257,7 +257,7 @@ void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8
 // y and height in pixels
 void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
 {
-    uint8_t offset = y % 4;
+    uint8_t offset = 2 * (y % 4);
     if (offset == 0)
     {
         drawsprite(x, y / 4, width, height / 4, sprite);
@@ -282,6 +282,13 @@ void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
             sendbyte(pgm_read_byte_near(sprite + i - width) >> (8 - offset), 1);
         sendbyte(0b11111000, 0); // disable window function
     }
+}
+
+void drawrechargeroom()
+{
+    drawsprite(4, 6, 152, 4, labelrecharge);
+    drawsprite(DISPLAY_WIDTH/2 - 12, 10, 24, 7, rechargetop);
+    drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
 }
 
 void drawletters(uint8_t x, uint8_t y, char* Sentence)

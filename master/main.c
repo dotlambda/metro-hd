@@ -30,6 +30,7 @@ uint32_t nextmonsterjumpevent[NUM_MONSTERS];
 uint32_t nextfireballmoveevent[NUM_FIREBALLS];
 uint32_t nextfireballjumpevent[NUM_FIREBALLS];
 uint32_t nextfireevent = 0;
+uint32_t nextrechargeevent = 0;
 
 void init();
 
@@ -370,15 +371,39 @@ int main(void)
             && protagonist->x >= DISPLAY_WIDTH - 6 - protagonist->width 
             && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
         {
-            level++;
-            newlevel();
+            // im endbosslevel
+            if (monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            {
+                // falls boss tot
+                if (monsters[0]->movement == HIDDEN)
+                {
+                        level++;
+                        newlevel();
+                }
+            }
+            else 
+            {
+                level++;
+                newlevel();
+            }
         }
         else if (doors & 0b00000010
             && protagonist->x <= 6 
             && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
         {
-            level--;
-            newlevel();
+            if(monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            {
+                if (monsters[0]->movement == HIDDEN)
+                {
+                    level--;
+                    newlevel();
+                }
+            }
+            else 
+            {
+                level--;
+                newlevel();
+            }
         }
         
         //PROJECTILE
@@ -858,6 +883,51 @@ int main(void)
                 hide(projectile);
                 hide(fireballs[i]);
             }
+        }
+        
+        if (rechargeroom
+            && protagonist->x + protagonist->width < DISPLAY_WIDTH/2 + 12
+            && protagonist->x > DISPLAY_WIDTH/2 - 11
+            && nextrechargeevent < getMsTimer())
+        {
+            if (protagonist->health != 99 ||  num_bombs != 20 || num_rockets != 20)
+            {   
+                recharging = true;
+                for (uint8_t y = 17; y < 23; y++)
+                {
+                    page(DISPLAY_WIDTH/2 - 12, y , 0b01010101);
+                    page(DISPLAY_WIDTH/2 + 11 , y, 0b01010101);
+                }
+            }
+            else 
+            {
+                recharging = false;
+                for (uint8_t y = 17; y < 23; y++)
+                {
+                    page(DISPLAY_WIDTH/2 - 12, y , 0x00);
+                    page(DISPLAY_WIDTH/2 + 11 , y, 0x00);
+                }
+            }
+            
+            if (protagonist->health < 99)
+            {
+                protagonist->health++;
+                eeprom_write_byte(&health_stored, protagonist->health);
+                drawnumber(29, 1, protagonist->health);
+            }
+            if (num_rockets < 20)
+            {   
+                num_rockets++;
+                eeprom_write_byte(&num_rockets_stored, num_rockets);
+                drawnumber(57, 1, num_rockets);
+            }
+            if (num_bombs < 20)
+            {
+                num_bombs++;
+                eeprom_write_byte(&num_bombs_stored, num_bombs);
+                drawnumber(86, 1, num_bombs);
+            }
+            nextrechargeevent = getMsTimer() + 100;
         }
 
         //PAUSE SCREEN
