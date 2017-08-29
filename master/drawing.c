@@ -4,6 +4,7 @@
 #include "sprites.h"
 #include "level.h"
 #include "stdio.h"
+#include "string.h"
 
 void drawsplash(uint8_t show_resume_option)
 {
@@ -418,6 +419,9 @@ void drawletters(uint8_t x, uint8_t y, char* Sentence)
                 
             case 'Z':
                 drawsprite_px(x, y, 5, 9, Z);
+                x += 1;
+                break;
+            case ' ':
                 x += 1;
                 break;
                 
