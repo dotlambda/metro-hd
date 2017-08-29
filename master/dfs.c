@@ -66,96 +66,91 @@ uint8_t is_door_reachable()
         uint8_t x = xy & 0b00001111;
         uint8_t y = xy >> 4;
  
-        // check vertex above to the left
-        if (x > 0 && y < GRAPH_HEIGHT - 1 && !(visited[y+1] & (1 << (x - 1)))
-            && !platform_above(x, y) && platform_below(x-1, y+1))
+        // jump up
+        for (int8_t i = -UP_DISTANCE; i <= UP_DISTANCE; ++i)
         {
-            // push
-            stack[++top] = (x - 1) | ((y + 1) << 4);
-            visited[y+1] |= 1 << (x - 1);
-        }
-        
-        // check vertex above two to the left
-        if (x > 1 && y < GRAPH_HEIGHT - 2 && !(visited[y+1] & (1 << (x - 1)))
-            && !platform_above(x, y) && !platform_above(x-1, y) && platform_below(x-2, y+1))
-        {
-            //push
-            stack[++top] = (x - 2) | ((y + 1) << 4);
-            visited[y+1] |= 1 << (x - 2);
-        }
-
-        // check vertex above on the right
-        if (x < GRAPH_WIDTH - 1 && y < GRAPH_HEIGHT - 1 && !(visited[y+1] & (1 << (x + 1)))
-            && !platform_above(x, y) && platform_below(x+1, y+1))
-        {
-            //push
-            stack[++top] = (x + 1) | ((y + 1) << 4);
-            visited[y+1] |= 1 << (x + 1);
-        }
-
-        // check vertex above two to the right
-        if (x < GRAPH_WIDTH - 2 && y < GRAPH_HEIGHT - 2 && !(visited[y+1] & (1 << (x + 1)))
-            && !platform_above(x, y) && !platform_above(x+1, y) && platform_below(x+2, y+1))
-        {
-            //push
-            stack[++top] = (x + 2) | ((y + 1) << 4);
-            visited[y+1] |= 1 << (x + 2);
+            if (i == 0)
+                continue;
+            if (y + 1 == GRAPH_HEIGHT || x + i < 0 || x + i >= GRAPH_WIDTH)
+                continue;
+            if (visited[y + 1] & (1 << (x + i)))
+                continue;
+            if (!platform_below(x + i, y + 1)) // can't jump onto nothing
+                continue;
+            // check if there is no platform in the way
+            uint8_t platform = 0;
+            for (int8_t j = 0; j != i; j += (i < 0 ? -1 : 1))
+            {
+                if (platform_above(x + j, y))
+                {
+                    platform = 1;
+                    break;
+                }
+            }
+            if (platform)
+                continue;
+            // push onto stack
+            stack[++top] = (x + i) | ((y + 1) << 4);
+            visited[y + 1] |= 1 << (x + i);
         }
 
-        // check vertex below on the left
-        if (y > 0 && !(visited[y-1] & (1 << (x - 1)))
-            && !platform_below(x-1, y) && platform_below(x-1, y-1))
+        // jump down
+        for (int8_t i = -DOWN_DISTANCE; i <= DOWN_DISTANCE; ++i)
         {
-            // push
-            stack[++top] = (x - 1) | ((y - 1) << 4);
-            visited[y-1] |= 1 << (x - 1);
-        }
-        
-        // check vertex below two to the left
-        if (y > 0 && !(visited[y-1] & (1 << (x - 2)))
-            && !platform_below(x-1, y) && !platform_below(x-2, y) && platform_below(x-2, y-1))
-        {
-            // push
-            stack[++top] = (x - 2) | ((y - 1) << 4);
-            visited[y-1] |= 1 << (x - 2);
-        }
-
-        // check vertex below on the right
-        if (y > 0 && !(visited[y-1] & (1 << (x + 1)))
-            && !platform_below(x+1, y) && platform_below(x-1, y-1))
-        {
-            // push
-            stack[++top] = (x + 1) | ((y - 1) << 4);
-            visited[y-1] |= 1 << (x + 1);
-        }
-        
-        // check vertex below two to the right
-        if (y > 0 && !(visited[y-1] & (1 << (x + 2)))
-            && !platform_below(x+1, y) && !platform_below(x+2, y) && platform_below(x+2, y-1))
-        {
-            // push
-            stack[++top] = (x + 2) | ((y - 1) << 4);
-            visited[y-1] |= 1 << (x + 2);
+            if (i == 0)
+                continue;
+            if (y == 0 || x + i < 0 || x + i >= GRAPH_WIDTH)
+                continue;
+            if (visited[y - 1] & (1 << (x + i)))
+                continue;
+            if (!platform_below(x + i, y - 1)) // can't jump onto nothing
+                continue;
+            // check if there is no platform in the way
+            uint8_t platform = 0;
+            for (int8_t j = i; j != 0; j += (i < 0 ? 1 : -1))
+            {
+                if (platform_below(x + j, y))
+                {
+                    platform = 1;
+                    break;
+                }
+            }
+            if (platform)
+                continue;
+            // push onto stack
+            stack[++top] = (x + i) | ((y - 1) << 4);
+            visited[y - 1] |= 1 << (x + i);
         }
 
-        // check vertex on the left
-        if (x > 0 && !(visited[y] & (1 << (x - 1)))
-            && platform_below(x-1, y))
+        // jump or walk
+        for (int8_t i = -JUMP_DISTANCE; i <= JUMP_DISTANCE; ++i)
         {
-            // push
-            stack[++top] = (x - 1) | (y << 4);
-            visited[y] |= 1 << (x - 1);
-        }
-
-        // check vertex on the right
-        if (x < GRAPH_WIDTH - 1 && !(visited[y] & (1 << (x + 1)))
-            && platform_below(x+1, y))
-        {
-            // push
-            stack[++top] = (x + 1) | (y << 4);
-            visited[y] |= 1 << (x + 1);
+            if (i == 0)
+                continue;
+            if (x + i < 0 || x + i >= GRAPH_WIDTH)
+                continue;
+            if (visited[y] & (1 << (x + i)))
+                continue;
+            if (!platform_below(x + i, y)) // can't jump into water/spikes
+                continue;
+            // check if there is no platform in the way
+            // a platform above the current or the target position is okay
+            uint8_t platform = 0;
+            for (int8_t j = (i < 0 ? i + 1 : i - 1); j != 0; j += (i < 0 ? 1 : -1))
+            {
+                if (platform_above(x + j, y))
+                {
+                    platform = 1;
+                    break;
+                }
+            }
+            if (platform) // can't jump if there is a platform above
+                continue;
+            // push onto stack
+            stack[++top] = (x + i) | (y << 4);
+            visited[y] |= 1 << (x + i);
         }
     }
-
+        
     return 0; // the door can't be reached
 }
