@@ -30,14 +30,8 @@ extern PROGMEM const uint8_t little[16];
 // 16x16
 extern PROGMEM const uint8_t geega1inverted[64];
 
-// 8x9
-extern PROGMEM const uint8_t holtzdown[18];
-
 // 7x15
 extern PROGMEM const uint8_t memu0[30];
-
-// 8x9
-extern PROGMEM const uint8_t holtzup[18];
 
 // 16x16
 extern PROGMEM const uint8_t geega2inverted[64];
@@ -71,9 +65,6 @@ extern PROGMEM const uint8_t three[9];
 
 // 9x3
 extern PROGMEM const uint8_t six[9];
-
-// 28x120
-extern PROGMEM const uint8_t energy0[840];
 
 // 9x4
 extern PROGMEM const uint8_t S[12];
@@ -258,17 +249,11 @@ extern PROGMEM const uint8_t protagonistrightclimb[40];
 // 24x37
 extern PROGMEM const uint8_t securityrobdown[222];
 
-// 8x8
-extern PROGMEM const uint8_t fireball1[16];
-
 // 33x28
 extern PROGMEM const uint8_t dragon2_right[252];
 
 // 33x28
 extern PROGMEM const uint8_t dragon2_flying_right[252];
-
-// 8x8
-extern PROGMEM const uint8_t fireball0[16];
 
 // 24x37
 extern PROGMEM const uint8_t securityrobup[222];
