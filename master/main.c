@@ -105,6 +105,47 @@ void takingdamage(uint8_t damage)
     }
 }
 
+bool open_door()
+{
+    if (projectile->x <= 6 && projectile->y >= 15 && (doors & 0b00000010))
+    {
+        if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+        {
+            drawsprite(0, 20, 6, 5, doorleft_open);
+            left_door_open = true;
+            return 1;
+        }
+        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+            && monsters[0]->movement == HIDDEN)
+        {
+            drawsprite(0, 20, 6, 5, doorleft_open);
+            left_door_open = true;
+            return 1;                    
+        }
+    }
+    else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && projectile->y >= 15 && (doors & 0b00000001))
+    {
+        if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
+        {
+            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
+            right_door_open = true;
+            return 1;
+        }
+        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+            && monsters[0]->movement == HIDDEN)
+        {
+            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+            right_door_open = true;
+            return 1;                 
+        }
+    }
+    return 0;
+}
+
 bool collision(struct Character* protagonist, struct Character* monster)
 {
     return (protagonist->x < monster->x + monster->width && protagonist->x + protagonist->width > monster->x &&
@@ -366,25 +407,38 @@ int main(void)
         }
         
         //PROJECTILE
+        uint8_t enough_space = 1;
         if (projectile->movement == HIDDEN
             && num_rockets > 0
             && nextprojectilevent < getMsTimer()
             && B_A)
         {
-            uint8_t enough_space = 1;
             projectile->direction = protagonist->direction;
             projectile->y = protagonist->y + 4;
             if (protagonist->direction == DIRECTION_LEFT)
             {
                 if (protagonist->x < projectile->width)
+                {
                     enough_space = 0;
-                projectile->x = protagonist->x - projectile->width;
+                    projectile->x = 0;
+                }
+                else
+                {
+                    projectile->x = protagonist->x - projectile->width;
+                }
             }
             else
             {
                 if (protagonist->x + protagonist->width + projectile->width >= DISPLAY_WIDTH)
+                {
                     enough_space = 0;
-                projectile->x = protagonist->x + protagonist->width;
+                    projectile->x = DISPLAY_WIDTH;
+                }
+
+                else
+                {
+                    projectile->x = protagonist->x + protagonist->width;
+                }
             }
             if (enough_space)
             {
@@ -406,22 +460,22 @@ int main(void)
                 drawnumber(57, 1, num_rockets);
                 nextprojectilevent = getMsTimer() + 35;
             }
+            else
+            {
+                if(open_door())
+                {
+                    num_rockets--;
+                    eeprom_write_byte(&num_rockets_stored, num_rockets);
+                    drawnumber(57, 1, num_rockets);
+                    nextprojectilevent = getMsTimer() + 500;
+                }
+            }
         }
         else if (projectile->movement != HIDDEN
             && nextprojectilevent < getMsTimer())
         {
             move(projectile);
-
-            if (projectile->x <= 6 && (doors & 0b00000010))
-            {
-                drawsprite(0, 20, 6, 5, doorleft_open);
-                left_door_open = true;
-            }
-            else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && (doors & 0b00000001))
-            {
-                drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
-                right_door_open = true;
-            }
+            open_door();
 
             if (projectile->movement == HIDDEN)
                 nextprojectilevent = getMsTimer() + 500;
@@ -438,7 +492,7 @@ int main(void)
                 if (monsters[i]->health <= 0)
                 {
                     hide(monsters[i]);
-                    if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                    if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
                     {
                         monsters[i]->look = LOOK_BIGXPARASITE;
                         initcharacter(monsters[i]);
@@ -542,7 +596,7 @@ int main(void)
                         if (monsters[i]->health <= 0)
                         {
                             hide(monsters[i]);
-                            if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB)
+                            if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
                             {
                                 monsters[i]->look = LOOK_BIGXPARASITE;
                                 initcharacter(monsters[i]);
