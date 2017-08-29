@@ -141,12 +141,6 @@ extern PROGMEM const uint8_t dragon_left[270];
 // 8x8
 extern PROGMEM const uint8_t fireball2[16];
 
-// 8x8
-extern PROGMEM const uint8_t fireball0[16];
-
-// 8x8
-extern PROGMEM const uint8_t fireball1[16];
-
 // 3x6
 extern PROGMEM const uint8_t secrobmunitionright[6];
 
@@ -179,9 +173,6 @@ extern PROGMEM const uint8_t pause[156];
 
 // 11x2
 extern PROGMEM const uint8_t comma[6];
-
-// 28x120
-extern PROGMEM const uint8_t energy0[840];
 
 // 9x5
 extern PROGMEM const uint8_t F[15];
@@ -227,6 +218,9 @@ extern PROGMEM const uint8_t three[9];
 
 // 9x5
 extern PROGMEM const uint8_t R[15];
+
+// 9x96
+extern PROGMEM const uint8_t Buchstaben[288];
 
 // 9x5
 extern PROGMEM const uint8_t Q[15];
@@ -348,9 +342,6 @@ extern PROGMEM const uint8_t memu0[30];
 // 11x14
 extern PROGMEM const uint8_t hornoadleft[42];
 
-// 8x9
-extern PROGMEM const uint8_t holtzdown[18];
-
 // 16x16
 extern PROGMEM const uint8_t geega2[64];
 
@@ -359,9 +350,6 @@ extern PROGMEM const uint8_t geega1[64];
 
 // 12x16
 extern PROGMEM const uint8_t sidehopper[48];
-
-// 8x9
-extern PROGMEM const uint8_t holtzup[18];
 
 
 #endif
