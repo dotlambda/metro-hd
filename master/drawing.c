@@ -422,7 +422,7 @@ void drawletters(uint8_t x, uint8_t y, char* Sentence)
                 x += 1;
                 break;
             case ' ':
-                x += 1;
+                x += 4;
                 break;
                 
         }
