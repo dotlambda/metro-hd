@@ -16,7 +16,7 @@
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
-#define BOSS_LEVEL_DISTANCE 5 // every 5th level is a boss level
+#define BOSS_LEVEL_DISTANCE 2 // every 5th level is a boss level
 
 struct Character* protagonist;
 extern EEMEM uint8_t health_stored;
@@ -60,6 +60,7 @@ bool left_door_open;
 bool right_door_open;
 bool rechargeroom;
 bool recharging; 
+bool bosslevel;
 
 long obstacle(uint8_t x, uint8_t y);
 

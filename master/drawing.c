@@ -291,147 +291,173 @@ void drawrechargeroom()
     drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
 }
 
-void drawletters(uint8_t x, uint8_t y, char* Sentence)
+void drawletters(uint8_t x, uint8_t y, char* string)
 {
-    int len = strlen ( Sentence );
+    int len = strlen (string);
     for (int i = 0; i < len; i++)
     {
-       char Letter = Sentence[i];
-        switch(Letter)
+        const uint8_t* sprite;
+        uint8_t width;
+        switch(string[i])
         {
             case 'A':
-                drawsprite_px(x, y, 5, 9, A);
-                x += 1;
+                sprite = A;
+                width = 5;
+
                 break;
                 
             case 'B':
-                drawsprite_px(x, y, 5, 9, B);
-                x += 1;
+                sprite = B;
+                width = 4;
+
                 break;
                             
             case 'C':
-                drawsprite_px(x, y, 5, 9, C);
-                x += 1;
+                sprite = C;
+                width = 4;
+
                 break;
                 
             case 'D':
-                drawsprite_px(x, y, 5, 9, D);
-                x += 1;
+                sprite = D;
+                width = 5;
+
                 break;
                 
             case 'E':
-                drawsprite_px(x, y, 5, 9, E);
-                x += 1;
+                sprite = E;
+                width = 5;
+
                 break;
                 
             case 'F':
-                drawsprite_px(x, y, 5, 9, F);
-                x += 1;
+                sprite = F;
+                width = 5;
+
                 break;
                 
             case 'G':
-                drawsprite_px(x, y, 5, 9, G);
-                x += 1;
+                sprite = G;
+                width = 5;
+
                 break;
                 
             case 'H':
-                drawsprite_px(x, y, 5, 9, H);
-                x += 1;
+                sprite = H;
+                width = 5;
+
                 break;
                 
             case 'I':
-                drawsprite_px(x, y, 5, 9, I);
-                x += 1;
+                sprite = I;
+                width = 3;
+
                 break;
                 
             case 'J':
-                drawsprite_px(x, y, 5, 9, J);
-                x += 1;
+                sprite = J;
+                width = 4;
+
                 break;
                 
             case 'K':
-                drawsprite_px(x, y, 5, 9, K);
-                x += 1;
+                sprite = K;
+                width = 5;
+
                 break;
                 
             case 'L':
-                drawsprite_px(x, y, 5, 9, L);
-                x += 1;
+                sprite = L;
+                width = 5;
+
                 break;
                 
             case 'M':
-                drawsprite_px(x, y, 5, 9, M);
-                x += 1;
+                sprite = M;
+                width = 7;
+
                 break;
                 
             case 'N':
-                drawsprite_px(x, y, 5, 9, N);
-                x += 1;
+                sprite = N;
+                width = 6;
+
                 break;
                 
             case 'O':
-                drawsprite_px(x, y, 5, 9, O);
-                x += 1;
+                sprite = O;
+                width = 5;
+
                 break;
                 
             case 'P':
-                drawsprite_px(x, y, 6, 9, P);
-                x += 1;
+                sprite = P;
+                width = 6;
+
                 break;
                 
             case 'Q':
-                drawsprite_px(x, y, 5, 9, Q);
-                x += 1;
+                sprite = Q;
+                width = 5;
+
                 break;
                 
             case 'R':
-                drawsprite_px(x, y, 5, 9, R);
-                x += 1;
+                sprite = R;
+                width = 5;
+
                 break;
                 
             case 'S':
-                drawsprite_px(x, y, 4, 9, S);
-                x += 1;
+                sprite = S;
+                width = 4;
+
                 break;
                 
             case 'T':
-                drawsprite_px(x, y, 5, 9, T);
-                x += 1;
+                sprite = T;
+                width = 5;
+
                 break;
                 
             case 'U':
-                drawsprite_px(x, y, 5, 9, U);
-                x += 1;
+                sprite = U;
+                width = 5;
                 break;
-                
             case 'V':
-                drawsprite_px(x, y, 5, 9, V);
-                x += 1;
+                sprite = V;
+                width = 6;
                 break;
-                
             case 'W':
-                drawsprite_px(x, y, 5, 9, W);
-                x += 1;
+                sprite = W;
+                width = 7;
                 break;
-                
             case 'X':
-                drawsprite_px(x, y, 5, 9, X);
-                x += 1;
+                sprite = X;
+                width = 6;
                 break;
-                
             case 'Y':
-                drawsprite_px(x, y, 5, 9, Y);
-                x += 1;
+                sprite = Y;
+                width = 5;
                 break;
                 
             case 'Z':
-                drawsprite_px(x, y, 5, 9, Z);
-                x += 1;
+                sprite = Z;
+                width = 6;
                 break;
-            case ' ':
-                x += 1;
+            case ',':
+                sprite = comma;
+                width = 2;
                 break;
-                
+        }
+        if (string[i] == ' ')
+        {
+            x = x + 2;
+        }
+        else
+        {
+            drawsprite(x, y, width, 3, sprite); 
+            x += width + 1;
         }
     }
 } 

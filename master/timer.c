@@ -39,3 +39,10 @@ uint32_t getMsTimer() {
 	sei(); // interrupts wieder an
 	return ret;
 }
+
+// delay without interrupts
+void delay(uint32_t ms)
+{
+    uint32_t time = getMsTimer();
+    while (getMsTimer() < time + ms);
+}

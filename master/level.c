@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <inttypes.h>
+#include <string.h>
 #include "timer.h"
 #include "level.h"
 #include "display.h"
@@ -164,6 +165,7 @@ void newlevelpos()
 {
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
     rechargeroom = false;
+    bosslevel = false;
     if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 2) // recharge level
         || (level < 0 && (level - 1) % BOSS_LEVEL_DISTANCE == 0))
     {
@@ -188,6 +190,8 @@ void newlevelpos()
         platforms_24 = UINT32_MAX;
         nofloor = UINT32_MAX;
         doors = 0b00000011;
+        
+        bosslevel = true;
         
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
 
@@ -367,8 +371,54 @@ void newlevelpos()
     {
         xparasites[i]->movement = HIDDEN;
     }
-
+    
+    if (bosslevel)
+    {
+        redraw();
         
+        #define MAX_STRING_LEN 30
+        char line1[MAX_STRING_LEN];
+        char line2[MAX_STRING_LEN];
+        switch (monsters[0]->look)
+        {
+            case LOOK_BOSS_SECROB:
+                strncpy(line1, "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
+                strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
+                break;
+            case LOOK_BOSS_DRAGON:
+                strncpy(line1, "SAMUS ", MAX_STRING_LEN);
+                strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
+                break;
+            case LOOK_BOSS_ZAZABI:
+                strncpy(line1, "SAMUS, FIGHT AGAINST ZAZABI", MAX_STRING_LEN);
+                strncpy(line2, "TRY NOT TO GET EATEN", MAX_STRING_LEN);
+                break;
+            case LOOK_NEO_RIDLEY_DRAGON:
+                strncpy(line1, "SAMUS THIS IS THE SECROB", MAX_STRING_LEN);
+                strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
+                break;
+        }
+        // print text
+        char buffer[MAX_STRING_LEN];
+        uint8_t len = strlen(line1);
+        for (int i = 0; i < len; i++)
+        {
+            buffer[i] = line1[i];
+            buffer[i + 1] = '\0';
+            drawletters(6, CEILING_Y / 4 + 3, buffer);
+            delay(100);
+        }
+        len = strlen(line2);
+        for (int i = 0; i < len; i++)
+        {
+            buffer[i] = line2[i];
+            buffer[i + 1] = '\0';
+            drawletters(6, CEILING_Y / 4 + 7, buffer);
+            delay(100);
+        }
+        delay(1000);
+    }
+    
     redraw();
     left_door_open = false;
     right_door_open = false; 

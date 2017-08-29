@@ -34,13 +34,6 @@ uint32_t nextrechargeevent = 0;
 
 void init();
 
-// delay without interrupts
-void delay(uint32_t ms)
-{
-    uint32_t time = getMsTimer();
-    while (getMsTimer() < time + ms);
-}
-
 void takingdamage(uint8_t damage)
 {
     uint32_t blink_for = 650;

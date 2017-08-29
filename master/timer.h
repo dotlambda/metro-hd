@@ -14,5 +14,6 @@
 
 void timerInit(void);
 uint32_t getMsTimer();
+void delay(uint32_t ms);
 
 #endif
