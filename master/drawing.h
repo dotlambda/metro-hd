@@ -24,6 +24,10 @@ void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8
 // y and height in pixels
 void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite);
 
+// y and height in pages
+// color is actually the byte that will be used for each page
+void drawcolor(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color);
+
 void drawletters(uint8_t x, uint8_t y, char* Sentence);
 
 #endif 
