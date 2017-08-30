@@ -57,13 +57,7 @@ void takingdamage(uint8_t damage)
         hide(protagonist);
         if (protagonist->health <= 0)
         {
-            for (uint8_t y = 1; y < 4; y++)
-            {
-                for (uint8_t x = 29; x < 36; x++)
-                {
-                    page(x, y, 0);
-                }
-            }
+            drawcolor(29, 1, 7, 3, 0x00);
         }
         delay(50);
         draw(protagonist);
@@ -886,20 +880,14 @@ int main(void)
             if (protagonist->health != 99 ||  num_bombs != 20 || num_rockets != 20)
             {   
                 recharging = true;
-                for (uint8_t y = 17; y < 23; y++)
-                {
-                    page(DISPLAY_WIDTH/2 - 12, y , 0b01010101);
-                    page(DISPLAY_WIDTH/2 + 11 , y, 0b01010101);
-                }
+                drawcolor(DISPLAY_WIDTH/2 - 12, 17, 1, 6, 0b01010101);
+                drawcolor(DISPLAY_WIDTH/2 + 11, 17, 1, 6, 0b01010101);
             }
             else 
             {
                 recharging = false;
-                for (uint8_t y = 17; y < 23; y++)
-                {
-                    page(DISPLAY_WIDTH/2 - 12, y , 0x00);
-                    page(DISPLAY_WIDTH/2 + 11 , y, 0x00);
-                }
+                drawcolor(DISPLAY_WIDTH/2 - 12, 17, 1, 6, 0x00);
+                drawcolor(DISPLAY_WIDTH/2 + 11, 17, 1, 6, 0x00);
             }
             
             if (protagonist->health < 99)
@@ -928,15 +916,7 @@ int main(void)
         {
             while (B_PAUSE); // wait until button is released
             clear();
-            uint16_t i = 0;
-            for (uint8_t y = 12; y < 16 ; y++)
-            {
-                for (uint8_t x = 60; x < 99; x++)
-                {
-                    page(x, y, pgm_read_byte_near(pause + i));
-                    i++;
-                }
-            }
+            drawsprite(60, 12, 93, 4, pause);
             while (!B_PAUSE);
             while (B_PAUSE); // wait until button is released
             redraw();

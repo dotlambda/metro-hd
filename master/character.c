@@ -530,8 +530,7 @@ uint8_t moveup(struct Character* character)
             return 0;
     }
 
-    for (uint8_t x = character->x; x < character->x + character->width; ++x)
-        page(x, (character->y + character->height - 1) / 4, 0x00);
+    drawcolor(character->x, (character->y + character->height - 1) / 4, character->width, 1, 0x00);
     --character->y;
     draw(character);
     character->verticaldirection = DIRECTION_UP;
@@ -548,8 +547,7 @@ uint8_t movedown(struct Character* character)
             return 0;
     }
 
-    for (uint8_t x = character->x; x < character->x + character->width; ++x)
-        page(x, character->y / 4, 0x00);
+    drawcolor(character->x, character->y / 4, character->width, 1, 0x00);
     ++character->y;
     draw(character);
     character->verticaldirection = DIRECTION_DOWN;

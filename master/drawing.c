@@ -284,6 +284,24 @@ void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
     }
 }
 
+// y and height in pages
+// color is actually the byte that will be used for each page
+void drawcolor(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color)
+{
+    sendbyte(0b11110100, 0); // set window start column
+    sendbyte(x, 0);
+    sendbyte(0b11110110, 0); // set window end column
+    sendbyte(x + width - 1, 0);
+    sendbyte(0b11110101, 0); // set window start page
+    sendbyte(y, 0);
+    sendbyte(0b11110111, 0); // set window end page
+    sendbyte(y + height - 1, 0);
+    sendbyte(0b11111001, 0); // enable window function
+    for (uint16_t i = 0; i < width * height; ++i)
+        sendbyte(color, 1);
+    sendbyte(0b11111000, 0); // disable window function
+}
+
 void drawrechargeroom()
 {
     drawsprite(4, 6, 152, 4, labelrecharge);
