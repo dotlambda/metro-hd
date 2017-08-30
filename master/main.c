@@ -916,7 +916,7 @@ int main(void)
         {
             while (B_PAUSE); // wait until button is released
             clear();
-            drawsprite(60, 12, 93, 4, pause);
+            drawsprite(60, 12, 39, 4, pause);
             while (!B_PAUSE);
             while (B_PAUSE); // wait until button is released
             redraw();
