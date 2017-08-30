@@ -810,22 +810,21 @@ void move(struct Character* character)
                     // begin jumping in the opposite direction
                     character->direction = 1 - character->direction;
                     character->jumpstate = 1;
-                    character->y_pace = 40;
+                    character->y_pace = 20;
                     character->jumpheight = 30 + really_random_below(20);
                     character->x_pace = 15 + really_random_below(15);
                 }
             }
             else
             {
-                if (character->y_pace == 100) // Zazabi is moving down in a straight line
+                if (character->y_pace == 50) // Zazabi is moving down in a straight line
                 {
                     break;
                 }
-                else if (character->x + character->width / 2 == protagonist->x + protagonist->width / 2 // if Zazabi is right above the protagonist
-                    && really_random_below(3) == 0) // 1/3 chance of slowly moving down on the protagonist
+                else if (character->x + character->width / 2 == protagonist->x + protagonist->width / 2) // if Zazabi is right above the protagonist
                 {
                     // fall down slowly
-                    character->y_pace = 100;
+                    character->y_pace = 50;
                     character->jumpstate = character->jumpheight;
                 }
                 else

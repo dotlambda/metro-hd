@@ -381,7 +381,7 @@ void newlevelpos()
     {
         redraw();
         
-        #define MAX_STRING_LEN 30
+        #define MAX_STRING_LEN 40
         char line1[MAX_STRING_LEN];
         char line2[MAX_STRING_LEN];
         switch (monsters[0]->look)
@@ -391,16 +391,16 @@ void newlevelpos()
                 strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_DRAGON:
-                strncpy(line1, "SAMUS ", MAX_STRING_LEN);
-                strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
+                strncpy(line1, "SAMUS WATCH OUT. THE DRAGON", MAX_STRING_LEN);
+                strncpy(line2, "IS TRYING TO KILL YOU", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_ZAZABI:
                 strncpy(line1, "SAMUS, FIGHT AGAINST ZAZABI", MAX_STRING_LEN);
                 strncpy(line2, "TRY NOT TO GET EATEN", MAX_STRING_LEN);
                 break;
             case LOOK_NEO_RIDLEY_DRAGON:
-                strncpy(line1, "SAMUS THIS IS THE SECROB", MAX_STRING_LEN);
-                strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
+                strncpy(line1, "SAMUS, BE WARY OF NEO RIDLEY.", MAX_STRING_LEN);
+                strncpy(line2, "WATCH OUT WHEN HE IS FLYING IN A CORNER.", MAX_STRING_LEN);
                 break;
         }
         // print text
@@ -410,7 +410,7 @@ void newlevelpos()
         {
             buffer[i] = line1[i];
             buffer[i + 1] = '\0';
-            drawletters(6, CEILING_Y / 4 + 3, buffer);
+            drawletters(10, CEILING_Y / 4 + 3, buffer);
             delay(100);
         }
         len = strlen(line2);
@@ -418,7 +418,7 @@ void newlevelpos()
         {
             buffer[i] = line2[i];
             buffer[i + 1] = '\0';
-            drawletters(6, CEILING_Y / 4 + 7, buffer);
+            drawletters(10, CEILING_Y / 4 + 6, buffer);
             delay(100);
         }
         delay(1000);

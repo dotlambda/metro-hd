@@ -302,127 +302,87 @@ void drawletters(uint8_t x, uint8_t y, char* string)
         {
             case 'A':
                 sprite = A;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'B':
                 sprite = B;
-                width = 4;
-
+                width = 3;
                 break;
-                            
             case 'C':
                 sprite = C;
-                width = 4;
-
+                width = 3;
                 break;
-                
             case 'D':
                 sprite = D;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'E':
                 sprite = E;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'F':
                 sprite = F;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'G':
                 sprite = G;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'H':
                 sprite = H;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'I':
                 sprite = I;
-                width = 3;
-
+                width = 1;
                 break;
-                
             case 'J':
                 sprite = J;
-                width = 4;
-
+                width = 3;
                 break;
-                
             case 'K':
                 sprite = K;
                 width = 5;
-
                 break;
-                
             case 'L':
                 sprite = L;
-                width = 5;
-
+                width = 3;
                 break;
-                
             case 'M':
                 sprite = M;
-                width = 7;
-
+                width = 5;
                 break;
-                
             case 'N':
                 sprite = N;
-                width = 6;
-
+                width = 5;
                 break;
-                
             case 'O':
                 sprite = O;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'P':
                 sprite = P;
-                width = 6;
-
+                width = 4;
                 break;
-                
             case 'Q':
                 sprite = Q;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'R':
                 sprite = R;
-                width = 5;
-
+                width = 4;
                 break;
-                
             case 'S':
                 sprite = S;
-                width = 4;
-
+                width = 3;
                 break;
-                
             case 'T':
                 sprite = T;
                 width = 5;
-
                 break;
-                
             case 'U':
                 sprite = U;
-                width = 5;
+                width = 4;
                 break;
             case 'V':
                 sprite = V;
@@ -440,14 +400,17 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                 sprite = Y;
                 width = 5;
                 break;
-                
             case 'Z':
                 sprite = Z;
-                width = 6;
+                width = 4;
                 break;
             case ',':
                 sprite = comma;
                 width = 2;
+                break;
+            case '.':
+                sprite = dot;
+                width = 1;
                 break;
         }
         if (string[i] == ' ')
@@ -456,7 +419,7 @@ void drawletters(uint8_t x, uint8_t y, char* string)
         }
         else
         {
-            drawsprite(x, y, width, 3, sprite); 
+            drawsprite(x, y, width, 2, sprite); 
             x += width + 1;
         }
     }
