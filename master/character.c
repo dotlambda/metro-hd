@@ -154,6 +154,7 @@ void initcharacter(struct Character* character)
             character->movement = HIDDEN;
             break;
     }
+    character->initial_health = character->health;
     character->lookstate = 0;
     character->lastlookstatechg = getMsTimer();
     character->jumpstate = ON_THE_GROUND;

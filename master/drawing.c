@@ -3,7 +3,6 @@
 #include "display.h"
 #include "sprites.h"
 #include "level.h"
-#include "stdio.h"
 #include "string.h"
 
 void drawsplash(uint8_t show_resume_option)
@@ -74,6 +73,16 @@ void drawlabels()
     drawnumber(29, 1, protagonist->health);
     drawnumber(57, 1, num_rockets);
     drawnumber(86, 1, num_bombs);
+}
+
+void drawmonsterhealth(struct Character* monster)
+{
+    uint8_t bar_len = monster->health <= 0 ? 0 : ((uint16_t) monster->health * BAR_LEN) / monster->initial_health;
+    page(BAR_X, BAR_Y, 0b00111100);
+    drawcolor(BAR_X + 1, BAR_Y, bar_len, 1, 0b11101011);
+    drawcolor(BAR_X + 1 + bar_len, BAR_Y, BAR_LEN - bar_len, 1, 0b11000011);
+    page(BAR_X + 1 + BAR_LEN, BAR_Y, 0b00111100);
+
 }
 
 void drawdoor(int x)
