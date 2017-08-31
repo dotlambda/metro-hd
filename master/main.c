@@ -592,6 +592,19 @@ int main(void)
                 {
                     takingdamage(bombstruct->damage);
                 }
+                if(blast_x1 <= 6 &&
+                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000010))
+                {
+                    drawsprite(0, 20, 6, 5, doorleft_open);
+                    left_door_open = true;
+                }
+
+                if(blast_x2 >= DISPLAY_WIDTH - 6 &&
+                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000001))
+                {
+                    drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+                    right_door_open = true;
+                }
             }
             else
             {
