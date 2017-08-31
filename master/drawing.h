@@ -2,11 +2,17 @@
 #define DRAWING_H
 
 #include <inttypes.h>
+#include "character.h"
+
+#define BAR_LEN 20
+#define BAR_X 100
+#define BAR_Y 2
 
 void drawsplash(uint8_t show_resume_option);
 void drawdigit(uint8_t x, uint8_t y, uint8_t digit);
 void drawnumber(uint8_t x, uint8_t y, uint8_t number);
 void drawlabels();
+void drawmonsterhealth(struct Character* monster);
 void drawenergytank(uint8_t x, uint8_t y);
 void drawdoor(int x);
 void black();

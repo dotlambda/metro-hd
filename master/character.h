@@ -20,6 +20,7 @@ struct Character
     enum {DIRECTION_LEFT, DIRECTION_RIGHT} direction;
     enum {DIRECTION_UP, DIRECTION_DOWN} verticaldirection;
     int8_t jumpstate;
+    uint8_t initial_health;
     int8_t health;
     uint8_t damage;
     uint8_t jumpheight;
