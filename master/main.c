@@ -808,7 +808,7 @@ int main(void)
                             fireballs[i]->jumpheight = 8 + 4 * really_random_below(4);
                             fireballs[i]->direction = monsters[0]->direction;
                             draw(fireballs[i]);
-                            nextfireevent = getMsTimer() + (i == 2 ? 3000 : 300);
+                            nextfireevent = getMsTimer() + (i == 2 ? 5000 : 300);
                         }
                     }
                 }

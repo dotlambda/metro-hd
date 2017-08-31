@@ -47,6 +47,7 @@ void initcharacter(struct Character* character)
             character->width = 17;
             character->height = 32;
             character->damage = 30;
+            character->health = 20;
             character->movement = ZAZABI;
             break;
         case LOOK_MONSTER_METROID:
@@ -78,7 +79,7 @@ void initcharacter(struct Character* character)
             character->width = 30;
             character->height = 36;
             character->damage = 15;
-            character->health = 4;
+            character->health = 16;
             character->movement = BOSS_DRAGON_GROUND;
             break;
         case LOOK_BOMB:
@@ -116,6 +117,7 @@ void initcharacter(struct Character* character)
             character->health = 10;
             character->damage = 10;
             character->y_pace = 10;
+            character->health = 16;
             break;
         case LOOK_FIREBALL:
             character->width = 8;
@@ -139,7 +141,7 @@ void initcharacter(struct Character* character)
             character->width = 28;
             character->height = 33;
             character->damage = 15;
-            character->health = 4;
+            character->health = 16;
             character->movement = BOSS_DRAGON_GROUND;
             break;
 
@@ -147,7 +149,7 @@ void initcharacter(struct Character* character)
             character->width = 15;
             character->height = 16;
             character->damage = 5;
-            character->health = 4;
+            character->health = 8;
             character->movement = FLYING_AROUND;
             break;
         case LOOK_HIDDEN:
@@ -732,15 +734,15 @@ void move(struct Character* character)
             {
                 moveright(character);
             }
-            if (character->jumpstate == ON_THE_GROUND && really_random_below(20) == 0)
+            if (character->jumpstate == ON_THE_GROUND && really_random_below(40) == 0)
             {
-                character->x_pace = 5;
+                character->x_pace = 10;
                 character->jumpstate = 1;
             }
             break;
 
         case BOSS_DRAGON_GROUND:
-            if(character->health > 2)
+            if(character->health > 10)
             {
                 if(protagonist->x <= DISPLAY_WIDTH / 2)
                 {
@@ -810,19 +812,26 @@ void move(struct Character* character)
                     character->jumpstate = 1;
                     character->y_pace = 20;
                     character->jumpheight = 30 + really_random_below(20);
-                    character->x_pace = 15 + really_random_below(15);
+                    if (character->health > 10)
+                    {
+                        character->x_pace = 10 + really_random_below(15);
+                    }
+                    else
+                    {
+                        character->x_pace = 30 + really_random_below(15);
+                    }
                 }
             }
             else
             {
-                if (character->y_pace == 50) // Zazabi is moving down in a straight line
+                if (character->y_pace == 40) // Zazabi is moving down in a straight line
                 {
                     break;
                 }
                 else if (character->x + character->width / 2 == protagonist->x + protagonist->width / 2) // if Zazabi is right above the protagonist
                 {
                     // fall down slowly
-                    character->y_pace = 50;
+                    character->y_pace = 40;
                     character->jumpstate = character->jumpheight;
                 }
                 else
