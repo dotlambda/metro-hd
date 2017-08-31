@@ -28,6 +28,8 @@ long obstacle(uint8_t x, uint8_t y)
         return 1l;
     else if (rechargeroom && recharging && (x == DISPLAY_WIDTH/2 - 12 || x == DISPLAY_WIDTH/2 + 11))
         return 1l;
+    else if (rechargeroom && y <= CEILING_Y + 4*5)
+        return 1l;
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (3l << x / 16 * 2);
     else if (y >= HILL_Y && y < HILL_Y + 4)

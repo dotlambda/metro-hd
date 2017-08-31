@@ -147,8 +147,8 @@ extern PROGMEM const uint8_t xparasite2[12];
 // 8x4
 extern PROGMEM const uint8_t A[8];
 
-// 8x3
-extern PROGMEM const uint8_t B[6];
+// 8x4
+extern PROGMEM const uint8_t B[8];
 
 // 9x96
 extern PROGMEM const uint8_t Buchstaben[288];
@@ -210,8 +210,8 @@ extern PROGMEM const uint8_t T[10];
 // 8x4
 extern PROGMEM const uint8_t U[8];
 
-// 8x6
-extern PROGMEM const uint8_t V[12];
+// 8x5
+extern PROGMEM const uint8_t V[10];
 
 // 8x7
 extern PROGMEM const uint8_t W[14];

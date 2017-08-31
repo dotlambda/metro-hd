@@ -333,7 +333,7 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                 break;
             case 'B':
                 sprite = B;
-                width = 3;
+                width = 4;
                 break;
             case 'C':
                 sprite = C;
@@ -413,7 +413,7 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                 break;
             case 'V':
                 sprite = V;
-                width = 6;
+                width = 5;
                 break;
             case 'W':
                 sprite = W;
