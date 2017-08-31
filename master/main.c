@@ -162,6 +162,29 @@ void newxparasite(uint8_t i) // i is the index of the dead monster
     }
 }
 
+void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monster taking damage
+{
+    monsters[i]->health -= bombstruct->damage;
+    drawmonsterhealth(monsters[i]);
+    if (monsters[i]->health <= 0)
+    {
+        hide(monsters[i]);
+        if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
+        {
+            monsters[i]->look = LOOK_BIGXPARASITE;
+            initcharacter(monsters[i]);
+        }
+        else
+        {
+            newxparasite(i); 
+        }
+    }
+    else
+    {
+        draw(monsters[i]);
+    }
+}
+
 int main(void)
 {
 	init();
@@ -475,26 +498,8 @@ int main(void)
             if (projectile->movement != HIDDEN && monsters[i]->movement != HIDDEN && collision(projectile, monsters[i]))
             {
                 hide(projectile);
-                monsters[i]->health -= projectile->damage;
-                if (monsters[i]->health <= 0)
-                {
-                    hide(monsters[i]);
-                    if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
-                    {
-                        monsters[i]->look = LOOK_BIGXPARASITE;
-                        initcharacter(monsters[i]);
-                    }
-                    else
-                    {
-                        newxparasite(i); 
-                    }
-                }
-                else
-                {
-                    draw(monsters[i]);
-                }
-                nextprojectilevent = getMsTimer() + 500;
-            }
+                monstertakedamage(i, projectile->damage);
+           }
         }
         //PROJECTILE END
 
@@ -579,24 +584,7 @@ int main(void)
                         blast_x1 < monsters[i]->x + monsters[i]->width && blast_x2 > monsters[i]->x &&
                         blast_y1 < monsters[i]->y + monsters[i]->height && blast_y2 > monsters[i]->y)
                     {
-                        monsters[i]->health -= bombstruct->damage;
-                        if (monsters[i]->health <= 0)
-                        {
-                            hide(monsters[i]);
-                            if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
-                            {
-                                monsters[i]->look = LOOK_BIGXPARASITE;
-                                initcharacter(monsters[i]);
-                            }
-                            else
-                            {
-                                newxparasite(i); 
-                            }
-                        }
-                        else
-                        {
-                            draw(monsters[i]);
-                        }
+                        monstertakedamage(i, bombstruct->damage);
                     }
                 }
                 if (blast_x1 < protagonist->x + protagonist->width && blast_x2 > protagonist->x &&
@@ -916,7 +904,7 @@ int main(void)
         {
             while (B_PAUSE); // wait until button is released
             clear();
-            drawsprite(60, 12, 93, 4, pause);
+            drawsprite(60, 12, 39, 4, pause);
             while (!B_PAUSE);
             while (B_PAUSE); // wait until button is released
             redraw();
