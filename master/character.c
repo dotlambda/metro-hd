@@ -26,6 +26,7 @@ void initcharacter(struct Character* character)
             character->width = 8;
             character->height = 8;
             character->damage = 10;
+            character->movement = BACK_AND_FORTH;
             break;
         case LOOK_EYEMONSTER:
             character->width = 12;
@@ -46,13 +47,15 @@ void initcharacter(struct Character* character)
         case LOOK_BOSS_ZAZABI:
             character->width = 17;
             character->height = 32;
-            character->damage = 30;
+            character->damage = 10;
+            character->health = 20;
             character->movement = ZAZABI;
             break;
         case LOOK_MONSTER_METROID:
             character->width = 14;
             character->height = 12;
             character->damage = 15;
+            character->movement = BACK_AND_FORTH;
             break;
         case LOOK_MONSTER_HORNOAD:
             character->width = 14;
@@ -78,7 +81,7 @@ void initcharacter(struct Character* character)
             character->width = 30;
             character->height = 36;
             character->damage = 15;
-            character->health = 4;
+            character->health = 10;
             character->movement = BOSS_DRAGON_GROUND;
             break;
         case LOOK_BOMB:
@@ -112,7 +115,7 @@ void initcharacter(struct Character* character)
             character->width = 37;
             character->height = 24;
             character->movement = SECROB;
-            character->jumpheight = 36;
+            character->jumpheight = 32;
             character->health = 10;
             character->damage = 10;
             character->y_pace = 10;
@@ -120,7 +123,7 @@ void initcharacter(struct Character* character)
         case LOOK_FIREBALL:
             character->width = 8;
             character->height = 8;
-            character->damage = 20;
+            character->damage = 10;
             character->movement = HIDDEN;
             break;
         case LOOK_ARROW:
@@ -138,8 +141,8 @@ void initcharacter(struct Character* character)
         case LOOK_NEO_RIDLEY_DRAGON:
             character->width = 28;
             character->height = 33;
-            character->damage = 15;
-            character->health = 4;
+            character->damage = 10;
+            character->health = 10;
             character->movement = BOSS_DRAGON_GROUND;
             break;
 
@@ -631,9 +634,9 @@ void move(struct Character* character)
                 draw(character);
             break;
         case BACK_AND_FORTH:
-            if (character->x <= 0)
+            if (character->x <= 6)
                 character->direction = DIRECTION_RIGHT;
-            else if (character->x + character->width >= DISPLAY_WIDTH)
+            else if (character->x + character->width >= DISPLAY_WIDTH-6)
                 character->direction = DIRECTION_LEFT;
             if (character->direction == DIRECTION_LEFT)
                 moveleft(character);
