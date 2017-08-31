@@ -164,7 +164,7 @@ void newxparasite(uint8_t i) // i is the index of the dead monster
 
 void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monster taking damage
 {
-    monsters[i]->health -= bombstruct->damage;
+    monsters[i]->health -= damage;
     drawmonsterhealth(monsters[i]);
     if (monsters[i]->health <= 0)
     {
@@ -902,12 +902,14 @@ int main(void)
         //PAUSE SCREEN
         if(B_PAUSE)
         {
+            pauseTimer = 1;
             while (B_PAUSE); // wait until button is released
             clear();
             drawsprite(60, 12, 39, 4, pause);
             while (!B_PAUSE);
             while (B_PAUSE); // wait until button is released
             redraw();
+            pauseTimer = 0;
         }
     }
 }
