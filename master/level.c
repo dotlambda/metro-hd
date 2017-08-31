@@ -10,6 +10,8 @@
 #include "rand.h"
 #include "dfs.h"
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 EEMEM uint32_t initial_level_stored;
 EEMEM int32_t level_stored;
 EEMEM uint8_t health_stored;
@@ -172,6 +174,10 @@ void newlevelpos()
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
     rechargeroom = false;
     bosslevel = false;
+
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
+        monsters[i]->look = LOOK_HIDDEN;
+    
     if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 2) // recharge level
         || (level < 0 && (level - 1) % BOSS_LEVEL_DISTANCE == 0))
     {
@@ -181,7 +187,6 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
-        monsters[0]->look = LOOK_HIDDEN;
         rechargeroom = true;
     }
     else if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
@@ -285,26 +290,34 @@ void newlevelpos()
             nofloor = UINT32_MAX;
  
         monsters[0]->look = random_below(NUM_MONSTER_LOOKS);
+        if (monsters[0]->look == LOOK_MONSTER_MEMU) // make memus appear in swarms
+        {
+            for (uint8_t i = 1; i < NUM_MONSTERS; ++i)
+                monsters[i]->look = LOOK_MONSTER_MEMU;
+        }
+        else
+        {
+            uint8_t bosses_killed;
+            if (level >= 0)
+                bosses_killed = level / BOSS_LEVEL_DISTANCE;
+            else
+                bosses_killed = (-level + 1) / BOSS_LEVEL_DISTANCE;
+            // the number of monsters that can possibly appear increases for every 2 bosses killed
+            uint8_t num_monsters = random_below(MIN(bosses_killed / 2 + 1, NUM_MONSTERS)) + 1;
+            for (uint8_t i = 1; i < num_monsters; ++i)
+            {
+                monsters[i]->look = random_below(NUM_MONSTER_LOOKS);
+                if (monsters[i]->look == LOOK_MONSTER_MEMU)
+                    monsters[i]->look = LOOK_HIDDEN;
+            }
+        }
     }
 
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
-        if (i > 0 && monsters[0]->look != LOOK_MONSTER_MEMU)
-        {
-            monsters[i]->movement = HIDDEN;
-            continue;
-        }
-        else if (i > 0)
-        {
-            // make memus appear in swarms
-            monsters[i]->look = LOOK_MONSTER_MEMU;
-        }
-        
         initcharacter(monsters[i]);
         if (monsters[i]->look == LOOK_HIDDEN)
-        {
             continue;
-        }
         
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
         if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
@@ -317,7 +330,6 @@ void newlevelpos()
             {
                 monsters[i]->x = 8;
             }
-            
         }
         // move monster to the right if there is water/spikes below
         uint8_t nofloor = 1;
