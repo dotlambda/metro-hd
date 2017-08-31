@@ -902,12 +902,14 @@ int main(void)
         //PAUSE SCREEN
         if(B_PAUSE)
         {
+            pauseTimer = 1;
             while (B_PAUSE); // wait until button is released
             clear();
             drawsprite(60, 12, 39, 4, pause);
             while (!B_PAUSE);
             while (B_PAUSE); // wait until button is released
             redraw();
+            pauseTimer = 0;
         }
     }
 }
