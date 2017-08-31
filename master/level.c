@@ -24,6 +24,10 @@ long obstacle(uint8_t x, uint8_t y)
         return 1l;
     else if (doors & 0b00000001 && (x >= DISPLAY_WIDTH - 4 || (y >= DOOR_Y && x >= DISPLAY_WIDTH - 6)))
         return 1l;
+    else if (rechargeroom && x >= DISPLAY_WIDTH/2 - 12 && x < DISPLAY_WIDTH/2 + 12 && (y >= 23*4 || y < 17*4))
+        return 1l;
+    else if (rechargeroom && recharging && (x == DISPLAY_WIDTH/2 - 12 || x == DISPLAY_WIDTH/2 + 11))
+        return 1l;
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (3l << x / 16 * 2);
     else if (y >= HILL_Y && y < HILL_Y + 4)
@@ -32,10 +36,6 @@ long obstacle(uint8_t x, uint8_t y)
         return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y >= 24 * 4 && y < 25 * 4)
         return !(platforms_24 & (3l << (x / 16 * 2)));
-    else if (rechargeroom && x >= DISPLAY_WIDTH/2 - 12 && x < DISPLAY_WIDTH/2 + 12 && (y >= 92 || y < 17*4))
-        return 1l;
-    else if (rechargeroom && recharging && (x == DISPLAY_WIDTH/2 - 12 || x == DISPLAY_WIDTH/2 + 11))
-        return 1l;
     else
         return 0l;
     
