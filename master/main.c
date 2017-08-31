@@ -94,7 +94,7 @@ void takingdamage(uint8_t damage)
 
 bool open_door()
 {
-    if (projectile->x <= 6 && projectile->y >= 15 && (doors & 0b00000010))
+    if (projectile->x <= 6 && projectile->y >= 80 && (doors & 0b00000010))
     {
         if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
             || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
@@ -112,7 +112,7 @@ bool open_door()
             return 1;                    
         }
     }
-    else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && projectile->y >= 15 && (doors & 0b00000001))
+    else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && projectile->y >= 80 && (doors & 0b00000001))
     {
         if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
             || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
@@ -701,7 +701,7 @@ int main(void)
                 }
                 else
                 {
-                    num_bombs += 2;
+                    num_bombs += 1;
                     if (num_bombs > 20)
                         num_bombs = 20;
                     drawnumber(86, 1, num_bombs);
@@ -753,7 +753,7 @@ int main(void)
                     }
                     fireballs[i]->y = monsters[0]->y + 8;
                     draw(fireballs[i]);
-                    nextfireevent = getMsTimer() + (really_random_below(5) == 0 ? 1000 : 400);
+                    nextfireevent = getMsTimer() + (really_random_below(2) == 0 ? 1000 : 400);
                 }
             }
         }
@@ -796,7 +796,7 @@ int main(void)
                             fireballs[i]->jumpheight = 8 + 4 * really_random_below(4);
                             fireballs[i]->direction = monsters[0]->direction;
                             draw(fireballs[i]);
-                            nextfireevent = getMsTimer() + (i == 2 ? 5000 : 300);
+                            nextfireevent = getMsTimer() + (i == 2 ? 3000 : 300);
                         }
                     }
                 }
@@ -865,7 +865,7 @@ int main(void)
             && protagonist->x > DISPLAY_WIDTH/2 - 11
             && nextrechargeevent < getMsTimer())
         {
-            if (protagonist->health != 99 ||  num_bombs != 20 || num_rockets != 20)
+            if (protagonist->health != 99 ||  num_bombs != 10 || num_rockets != 30)
             {   
                 recharging = true;
                 drawcolor(DISPLAY_WIDTH/2 - 12, 17, 1, 6, 0b01010101);
@@ -884,13 +884,13 @@ int main(void)
                 eeprom_write_byte(&health_stored, protagonist->health);
                 drawnumber(29, 1, protagonist->health);
             }
-            if (num_rockets < 20)
+            if (num_rockets < 30)
             {   
                 num_rockets++;
                 eeprom_write_byte(&num_rockets_stored, num_rockets);
                 drawnumber(57, 1, num_rockets);
             }
-            if (num_bombs < 20)
+            if (num_bombs < 10)
             {
                 num_bombs++;
                 eeprom_write_byte(&num_bombs_stored, num_bombs);
