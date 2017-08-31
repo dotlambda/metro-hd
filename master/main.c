@@ -22,7 +22,8 @@
 
 uint32_t nextmoveevent = 0;
 uint32_t nextjumpevent = 0;
-uint32_t nextprojectilevent = 0;
+uint32_t nextprojectilevent[NUM_ROCKETS];
+uint32_t nextshootevent = 0;
 uint32_t nextbombevent = 0;
 uint32_t explode = 0;
 uint32_t nextmonstermoveevent[NUM_MONSTERS];
@@ -92,7 +93,7 @@ void takingdamage(uint8_t damage)
     }
 }
 
-bool open_door()
+bool open_door(struct Character* projectile)
 {
     if (projectile->x <= 6 && projectile->y >= 80 && (doors & 0b00000010))
     {
@@ -215,9 +216,12 @@ int main(void)
         nextmonsterjumpevent[i] = 0;
         monsters[i] = &monsters_[i];
     }
-
-    struct Character projectile_;
-    projectile = &projectile_;
+    
+    for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
+    {
+        nextprojectilevent[i]=0;
+        projectiles[i] = &projectiles_[i];
+    }
 
     struct Character energytank_;
     energytankstruct = &energytank_;
@@ -417,89 +421,86 @@ int main(void)
         }
         
         //PROJECTILE
-        uint8_t enough_space = 1;
-        if (projectile->movement == HIDDEN
-            && num_rockets > 0
-            && nextprojectilevent < getMsTimer()
-            && B_A)
-        {
-            projectile->direction = protagonist->direction;
-            projectile->y = protagonist->y + 4;
-            if (protagonist->direction == DIRECTION_LEFT)
+        for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
+        {    
+            if (projectiles[i]->movement == HIDDEN
+                && num_rockets > 0
+                && nextshootevent < getMsTimer()
+                && B_A)
             {
-                if (protagonist->x < projectile->width)
+                uint8_t enough_space = 1;
+                projectiles[i]->direction = protagonist->direction;
+                projectiles[i]->y = protagonist->y + 4;
+                if (protagonist->direction == DIRECTION_LEFT)
                 {
-                    enough_space = 0;
-                    projectile->x = 0;
-                }
-                else
-                {
-                    projectile->x = protagonist->x - projectile->width;
-                }
-            }
-            else
-            {
-                if (protagonist->x + protagonist->width + projectile->width >= DISPLAY_WIDTH)
-                {
-                    enough_space = 0;
-                    projectile->x = DISPLAY_WIDTH;
-                }
-
-                else
-                {
-                    projectile->x = protagonist->x + protagonist->width;
-                }
-            }
-            if (enough_space)
-            {
-                for (uint8_t x = projectile->x; x < projectile->x + projectile->width; ++x)
-                {
-                    for (uint8_t y = projectile->y; y < projectile->y + projectile->height; ++y)
+                    if (protagonist->x < projectiles[i]->width)
                     {
-                        if (obstacle(x, y))
-                            enough_space = 0;
+                        enough_space = 0;
+                        projectiles[i]->x = 0;
+                    }
+                    else
+                    {
+                        projectiles[i]->x = protagonist->x - projectiles[i]->width;
                     }
                 }
-            }
-            if (enough_space)
-            {
-                projectile->movement = PROJECTILE;
-                draw(projectile);
-                num_rockets--;
-                eeprom_write_byte(&num_rockets_stored, num_rockets);
-                drawnumber(57, 1, num_rockets);
-                nextprojectilevent = getMsTimer() + 35;
-            }
-            else
-            {
-                if(open_door())
+                else
+                {
+                    if (protagonist->x + protagonist->width + projectiles[i]->width >= DISPLAY_WIDTH)
+                    {
+                        enough_space = 0;
+                        projectiles[i]->x = DISPLAY_WIDTH;
+                    }
+
+                    else
+                    {
+                        projectiles[i]->x = protagonist->x + protagonist->width;
+                    }
+                }
+                if (enough_space)
+                {
+                    for (uint8_t x = projectiles[i]->x; x < projectiles[i]->x + projectiles[i]->width; ++x)
+                    {
+                        for (uint8_t y = projectiles[i]->y; y < projectiles[i]->y + projectiles[i]->height; ++y)
+                        {
+                            if (obstacle(x, y))
+                                enough_space = 0;
+                        }
+                    }
+                }
+                if (enough_space)
+                {
+                    projectiles[i]->movement = PROJECTILE;
+                    draw(projectiles[i]);
+                    num_rockets--;
+                    eeprom_write_byte(&num_rockets_stored, num_rockets);
+                    drawnumber(57, 1, num_rockets);
+                    nextprojectilevent[i] = getMsTimer() + 35;
+                    nextshootevent = getMsTimer() + 500;
+                }
+                else if(open_door(projectiles[i]))
                 {
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
                     drawnumber(57, 1, num_rockets);
-                    nextprojectilevent = getMsTimer() + 500;
+                    nextshootevent = getMsTimer() + 500;
                 }
             }
-        }
-        else if (projectile->movement != HIDDEN
-            && nextprojectilevent < getMsTimer())
-        {
-            move(projectile);
-            open_door();
-
-            if (projectile->movement == HIDDEN)
-                nextprojectilevent = getMsTimer() + 500;
-            else
-                nextprojectilevent = getMsTimer() + 35;
-        }
-
-        for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
-        {
-            if (projectile->movement != HIDDEN && monsters[i]->movement != HIDDEN && collision(projectile, monsters[i]))
+            else if (projectiles[i]->movement != HIDDEN
+                && nextprojectilevent[i] < getMsTimer())
             {
-                hide(projectile);
-                monstertakedamage(i, projectile->damage);
-           }
+                move(projectiles[i]);
+                open_door(projectiles[i]);
+                nextprojectilevent[i] = getMsTimer() + 35;
+            }
+
+            for (uint8_t j = 0; j < NUM_MONSTERS; ++j)
+            {
+                if (projectiles[i]->movement != HIDDEN && monsters[j]->movement != HIDDEN && collision(projectiles[i], monsters[j]))
+                {
+                    hide(projectiles[i]);
+                    monstertakedamage(j, projectiles[i]->damage);
+                }
+            }
         }
         //PROJECTILE END
 
@@ -866,10 +867,13 @@ int main(void)
                 hide(fireballs[i]);
                 takingdamage(fireballs[i]->damage);
             }
-            if(fireballs[i]->movement != HIDDEN && collision(projectile, fireballs[i]))
+            for (uint8_t j = 0; j < NUM_ROCKETS; ++j)
             {
-                hide(projectile);
-                hide(fireballs[i]);
+                if(fireballs[i]->movement != HIDDEN && collision(projectiles[j], fireballs[i]))
+                {
+                    hide(projectiles[j]);
+                    hide(fireballs[i]);
+                }
             }
         }
         
