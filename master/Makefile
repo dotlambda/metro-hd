@@ -6,7 +6,7 @@
 PROJECT = metroid
 
 # Sourcefiles
-SOURCE = sprites.c main.c character.c level.c rand.c drawing.c dfs.c
+SOURCE = character.c level.c rand.c drawing.c dfs.c
 # Files from basis
 SOURCE += adc.c timer.c uart.c display.c
 # Libraries

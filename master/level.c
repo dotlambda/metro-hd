@@ -284,33 +284,21 @@ void newlevelpos()
 
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
-        if (i > 0 && monsters[0]->look != LOOK_MONSTER_MEMU)
+        if(bosslevel && i == 0)
         {
-            monsters[i]->movement = HIDDEN;
-            continue;
+            initcharacter(monsters[i]);
         }
-        else if (i > 0)
-        {
-            // make memus appear in swarms
-            monsters[i]->look = LOOK_MONSTER_MEMU;
-        }
-        
-        initcharacter(monsters[i]);
-        if (monsters[i]->look == LOOK_HIDDEN)
-        {
-            continue;
-        }
-        
+
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
         if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
         {
             if (protagonist->x <= DISPLAY_WIDTH/2)
             {
-                monsters[i]->x = DISPLAY_WIDTH - 8 - monsters[i]->width;
+                monsters[i]->x = DISPLAY_WIDTH - 12 - monsters[i]->width;
             }
             else
             {
-                monsters[i]->x = 8;
+                monsters[i]->x = 12;
             }
             
         }
@@ -400,7 +388,7 @@ void newlevelpos()
                 break;
             case LOOK_NEO_RIDLEY_DRAGON:
                 strncpy(line1, "SAMUS, BE WARY OF NEO RIDLEY.", MAX_STRING_LEN);
-                strncpy(line2, "WATCH OUT WHEN HE IS FLYING IN A CORNER.", MAX_STRING_LEN);
+                strncpy(line2, "WATCH OUT WHEN HE IS FLYING.", MAX_STRING_LEN);
                 break;
         }
         // print text
