@@ -27,9 +27,11 @@ extern EEMEM uint8_t num_bombs_stored;
 
 #define NUM_MONSTERS 3
 #define NUM_FIREBALLS 6
+#define NUM_ROCKETS 3
 struct Character monsters_[NUM_MONSTERS];
 struct Character* monsters[NUM_MONSTERS];
-struct Character* projectile;
+struct Character projectiles_[NUM_ROCKETS];
+struct Character* projectiles[NUM_ROCKETS];
 struct Character* bombstruct;
 struct Character* energytankstruct;
 struct Character xparasites_[NUM_MONSTERS];

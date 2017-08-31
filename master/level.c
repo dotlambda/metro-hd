@@ -96,8 +96,11 @@ void redraw()
         if (monsters[i]->movement != HIDDEN)
             draw(monsters[i]);
     }
-    if (projectile->movement != HIDDEN)
-        draw(projectile);
+    for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
+    {
+        if (projectiles[i]->movement != HIDDEN)
+            draw(projectiles[i]);
+    }
     if (bombstruct->movement != HIDDEN)
         draw(bombstruct);
 
@@ -350,7 +353,8 @@ void newlevelpos()
     if (monsters[0]->movement == JUMPMOVE)
         nofloor = UINT32_MAX;
 
-    projectile->movement = HIDDEN;
+    for (uint8_t i = 0; i < NUM_ROCKETS; ++i)    
+        projectiles[i]->movement = HIDDEN;
     bombstruct->movement = HIDDEN;
 
     energytankstruct->look = LOOK_ENERGYTANK;
@@ -495,8 +499,11 @@ void newgame()
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
     
-    projectile->look = LOOK_ROCKET;
-    initcharacter(projectile);
+    for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
+    {
+        projectiles[i]->look = LOOK_ROCKET;
+        initcharacter(projectiles[i]);
+    }
     
     bombstruct->look = LOOK_BOMB;
     initcharacter(bombstruct);
