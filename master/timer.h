@@ -11,6 +11,7 @@
 #endif
 #define OCR2A_VAL (F_CPU/(128000UL)) // 1 Millisekunde bei 128-Prescaler
 
+uint8_t pauseTimer;
 
 void timerInit(void);
 uint32_t getMsTimer();

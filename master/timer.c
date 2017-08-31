@@ -19,15 +19,15 @@ void timerInit(void)
 	sei();				// enable interrupts
 
 	
-	
+	pauseTimer = 0;
 }
 
 SIGNAL (TIMER2_COMPA_vect)
 {
 
 //	hier koennen weitere Befehle ergaenzt werden, die jede Millisekunde ausgefuehrt werden sollen
-
-	ms_timer++;  // Die "Systemzeit" inkrementieren
+    if (!pauseTimer)
+	    ms_timer++;  // Die "Systemzeit" inkrementieren
 
 
 }
