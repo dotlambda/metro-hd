@@ -394,10 +394,10 @@ void newlevelpos()
         {
             case LOOK_BOSS_SECROB:
                 strncpy(line1, "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
-                strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
+                strncpy(line2, "CLIMB THE WALL TO SURVIVE!", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_DRAGON:
-                strncpy(line1, "SAMUS WATCH OUT. THE DRAGON", MAX_STRING_LEN);
+                strncpy(line1, "SAMUS WATCH OUT! THE DRAGON", MAX_STRING_LEN);
                 strncpy(line2, "IS TRYING TO KILL YOU", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_ZAZABI:
@@ -405,8 +405,8 @@ void newlevelpos()
                 strncpy(line2, "TRY NOT TO GET EATEN", MAX_STRING_LEN);
                 break;
             case LOOK_NEO_RIDLEY_DRAGON:
-                strncpy(line1, "SAMUS, BE WARY OF NEO RIDLEY.", MAX_STRING_LEN);
-                strncpy(line2, "WATCH OUT WHEN HE IS FLYING IN A CORNER.", MAX_STRING_LEN);
+                strncpy(line1, "SAMUS, BEWARE OF NEO RIDLEY.", MAX_STRING_LEN);
+                strncpy(line2, "WATCH OUT WHEN HE FLYS IN A CORNER.", MAX_STRING_LEN);
                 break;
         }
         // print text

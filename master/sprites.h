@@ -234,6 +234,9 @@ extern PROGMEM const uint8_t dot[2];
 // 9x3
 extern PROGMEM const uint8_t eight[9];
 
+// 8x1
+extern PROGMEM const uint8_t ex[2];
+
 // 9x3
 extern PROGMEM const uint8_t five[9];
 

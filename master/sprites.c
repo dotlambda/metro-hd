@@ -472,6 +472,11 @@ const PROGMEM uint8_t eight[9] = {
     0b00000011, 0b00000011, 0b00000011
 };
 
+const PROGMEM uint8_t ex[2] = {
+    0b11111111, 
+    0b11000011
+};
+
 const PROGMEM uint8_t five[9] = {
     0b11110000, 0b00110000, 0b00110000, 
     0b00001111, 0b00001100, 0b11111100, 

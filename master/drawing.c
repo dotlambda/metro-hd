@@ -439,6 +439,10 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                 sprite = dot;
                 width = 1;
                 break;
+            case '!':
+                sprite = ex;
+                width = 1;
+                break;
         }
         if (string[i] == ' ')
         {
