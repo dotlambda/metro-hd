@@ -12,13 +12,15 @@ with open('sprites.h', 'w') as hfile:
         hfile.write('#include <avr/pgmspace.h>')
         cfile.write('#include "sprites.h"\n\n')
 
-        for dirname, _, filenames in os.walk('../sprites'):
+        for dirpath, dirnames, filenames in os.walk('../sprites'):
+            dirnames.sort()
+            filenames.sort()
             for filename in filenames:
                 base, extension = os.path.splitext(filename)
                 if extension != '.png':
                     continue
 
-                img = io.imread(dirname + '/' + filename, as_grey=True)
+                img = io.imread(dirpath + '/' + filename, as_grey=True)
                 images = [img]
                 names = [base]
                 
