@@ -41,7 +41,7 @@ void initcharacter(struct Character* character)
         case LOOK_ROCKET:
             character->width = 14;
             character->height = 8;
-            character->damage = 2;
+            character->damage = 1;
             character->movement = HIDDEN;
             break;
         case LOOK_BOSS_ZAZABI:
@@ -116,7 +116,7 @@ void initcharacter(struct Character* character)
             character->height = 24;
             character->movement = SECROB;
             character->jumpheight = 32;
-            character->health = 10;
+            character->health = 20;
             character->damage = 10;
             character->y_pace = 10;
             character->health = 16;
@@ -143,7 +143,7 @@ void initcharacter(struct Character* character)
             character->width = 28;
             character->height = 33;
             character->damage = 15;
-            character->health = 16;
+            character->health = 20;
             character->movement = BOSS_DRAGON_GROUND;
             break;
 
@@ -685,7 +685,7 @@ void move(struct Character* character)
         case BOSS_DRAGON_AIR:
             if (character->y < CEILING_Y + 16
                 && (character->x < 20 || character->x > DISPLAY_WIDTH - character->width - 20)
-                && really_random_below(5) == 0) // 1/5 probability to attack
+                && really_random_below(3) == 0) // 1/5 probability to attack
             {
                 character->movement = BOSS_DRAGON_ATTACK;
                 if (character->x > DISPLAY_WIDTH / 2)
@@ -737,9 +737,9 @@ void move(struct Character* character)
             {
                 moveright(character);
             }
-            if (character->jumpstate == ON_THE_GROUND && really_random_below(40) == 0)
+            if (character->jumpstate == ON_THE_GROUND && really_random_below(10) == 0)
             {
-                character->x_pace = 10;
+                character->x_pace =10;
                 character->jumpstate = 1;
             }
             break;
@@ -815,13 +815,13 @@ void move(struct Character* character)
                     character->jumpstate = 1;
                     character->y_pace = 20;
                     character->jumpheight = 30 + really_random_below(20);
-                    if (character->health > 10)
+                    if (character->health < 10)
                     {
                         character->x_pace = 10 + really_random_below(15);
                     }
                     else
                     {
-                        character->x_pace = 30 + really_random_below(15);
+                        character->x_pace = 20 + really_random_below(15);
                     }
                 }
             }
