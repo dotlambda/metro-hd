@@ -491,6 +491,10 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                     sprite = ex;
                     width = 1;
                     break;
+                case '.':
+                    sprite = dot;
+                    width = 1;
+                    break;
             }
             drawsprite(x, y, width, 2, sprite); 
             x += width + 1;
