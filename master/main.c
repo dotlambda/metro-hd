@@ -211,7 +211,7 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
     if (monsters[i]->health <= 0)
     {
         hide(monsters[i]);
-        if (monsters[i]->look == LOOK_BOSS_MEGACOREX || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
+        if (bosslevel)
         {
             monsters[i]->look = LOOK_BIGXPARASITE;
             initcharacter(monsters[i]);
@@ -427,7 +427,7 @@ int main(void)
             && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
         {
             // im endbosslevel
-            if (monsters[0]->look == LOOK_BOSS_MEGACOREX || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            if (bosslevel)
             {
                 // falls boss tot
                 if (monsters[0]->movement == HIDDEN)
@@ -446,7 +446,7 @@ int main(void)
             && protagonist->x <= 6 
             && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
         {
-            if(monsters[0]->look == LOOK_BOSS_MEGACOREX || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            if(bosslevel)
             {
                 if (monsters[0]->movement == HIDDEN)
                 {
