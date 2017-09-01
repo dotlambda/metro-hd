@@ -492,9 +492,9 @@ void newgame()
         eeprom_write_block(&initial_level, &initial_level_stored, sizeof initial_level);
         eeprom_write_block(&level, &level_stored, sizeof level);
         protagonist->health = 90;
-        num_rockets = 20;
+        num_rockets = 30;
         eeprom_write_block(&num_rockets, &num_rockets_stored, sizeof num_rockets);
-        num_bombs = 20;
+        num_bombs = 10;
         eeprom_write_block(&num_rockets, &num_bombs_stored, sizeof num_bombs);
     }
     else // resume previous game

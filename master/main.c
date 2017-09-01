@@ -884,7 +884,7 @@ int main(void)
             && protagonist->x > DISPLAY_WIDTH/2 - 11
             && nextrechargeevent < getMsTimer())
         {
-            if (protagonist->health != 99 ||  num_bombs != 10 || num_rockets != 30)
+            if (protagonist->health < 99 ||  num_bombs < 10 || num_rockets < 30)
             {   
                 recharging = true;
                 drawcolor(DISPLAY_WIDTH/2 - 12, 17, 1, 6, 0b01010101);
