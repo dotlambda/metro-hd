@@ -594,14 +594,16 @@ int main(void)
                     takingdamage(bombstruct->damage);
                 }
                 if(blast_x1 <= 6 &&
-                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000010))
+                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000010) && (!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
                 {
                     drawsprite(0, 20, 6, 5, doorleft_open);
                     left_door_open = true;
                 }
 
                 if(blast_x2 >= DISPLAY_WIDTH - 6 &&
-                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000001))
+                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000001) && (!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
                 {
                     drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
                     right_door_open = true;
