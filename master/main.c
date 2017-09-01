@@ -136,7 +136,7 @@ bool open_door_projectile(struct Character* projectile)
 void open_door_bomb(struct Character* bombstruct)
 {
     if (bombstruct->x <= 12 &&
-        bombstruct->y <= FLOOR_Y - 19
+        bombstruct->y >= FLOOR_Y - 19
         && (doors & 0b00000010))
     {
         if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
@@ -154,8 +154,8 @@ void open_door_bomb(struct Character* bombstruct)
         }
     }
 
-    else if ((bombstruct->x >= DISPLAY_WIDTH - 12) &&
-             (bombstruct->y <= FLOOR_Y - 19) &&
+    else if ((bombstruct->x <= DISPLAY_WIDTH - 12) &&
+             (bombstruct->y >= FLOOR_Y - 19) &&
              (doors & 0b00000001))
     {
         if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
