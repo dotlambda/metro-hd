@@ -105,6 +105,7 @@ void getAchievement()
         || (level >= 3 * BOSS_LEVEL_DISTANCE || level < 3 * BOSS_LEVEL_DISTANCE)
         || (level >= 4 * BOSS_LEVEL_DISTANCE || level < 4 * BOSS_LEVEL_DISTANCE))
     {
+        srand(level_seed);
         switch(random_below(3))
         {
             case 0:
@@ -123,7 +124,7 @@ void getAchievement()
                 strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
                 strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
                 break;
-
+        }
 
             char buffer[MAX_STRING_LEN];
             uint8_t len = strlen(line1);
@@ -143,7 +144,7 @@ void getAchievement()
                 delay(100);
             }
             delay(1000);
-        }
+        
     }
 }
 
@@ -425,7 +426,14 @@ int main(void)
                 {
                     moveleft(protagonist);
                 }
-                nextmoveevent = getMsTimer() + 50;
+                if (Run_And_Jump_Faster_Upgrade)
+                {
+                    nextmoveevent = getMsTimer() + 40;
+                }
+                else
+                {
+                    nextmoveevent = getMsTimer() + 50;
+                }
             }
         }
         if (protagonist->jumpstate == CLIMBING)
@@ -457,14 +465,7 @@ int main(void)
                     protagonist->jumpstate = protagonist->jumpheight;
                     jump(protagonist);
                 }
-                if (Run_And_Jump_Faster_Upgrade)
-                {
-                    nextmoveevent = getMsTimer() + 40;
-                }
-                else
-                {
-                    nextmoveevent = getMsTimer() + 50;
-                }
+                nextjumpevent = getMsTimer() + 50;
             }
         }
         else if (protagonist->jumpstate != ON_THE_GROUND)
