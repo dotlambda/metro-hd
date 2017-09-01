@@ -13,6 +13,8 @@
 #define HILL_Y 76
 #define CEILING_Y 20
 
+#define MAX_STRING_LEN 40
+
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 

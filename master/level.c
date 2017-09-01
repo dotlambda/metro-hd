@@ -392,7 +392,6 @@ void newlevelpos()
     {
         redraw();
         
-        #define MAX_STRING_LEN 40
         char line1[MAX_STRING_LEN];
         char line2[MAX_STRING_LEN];
         switch (monsters[0]->look)
