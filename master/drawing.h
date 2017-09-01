@@ -27,8 +27,14 @@ void drawrechargeroom();
 // y and height in pages
 void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite);
 
+// y axis inverted
+void drawsprite_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite);
+
 // y and height in pixels
 void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite);
+
+// y axis inverted
+void drawsprite_px_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite);
 
 // y and height in pages
 // color is actually the byte that will be used for each page

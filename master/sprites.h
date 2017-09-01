@@ -10,13 +10,7 @@ extern PROGMEM const uint8_t bigxparasite[60];
 extern PROGMEM const uint8_t dragon2_flying_left[252];
 
 // 33x28
-extern PROGMEM const uint8_t dragon2_flying_right[252];
-
-// 33x28
 extern PROGMEM const uint8_t dragon2_left[252];
-
-// 33x28
-extern PROGMEM const uint8_t dragon2_right[252];
 
 // 8x8
 extern PROGMEM const uint8_t fireball2[16];
@@ -128,9 +122,6 @@ extern PROGMEM const uint8_t rechargetop[168];
 
 // 6x14
 extern PROGMEM const uint8_t rocket[28];
-
-// 6x14
-extern PROGMEM const uint8_t rocketinverted[28];
 
 // 4x16
 extern PROGMEM const uint8_t spikes[16];
@@ -291,26 +282,14 @@ extern PROGMEM const uint8_t zero[9];
 // 14x12
 extern PROGMEM const uint8_t eyemonster_left[48];
 
-// 14x12
-extern PROGMEM const uint8_t eyemonster_right[48];
-
 // 16x16
 extern PROGMEM const uint8_t geega1[64];
 
 // 16x16
-extern PROGMEM const uint8_t geega1inverted[64];
-
-// 16x16
 extern PROGMEM const uint8_t geega2[64];
-
-// 16x16
-extern PROGMEM const uint8_t geega2inverted[64];
 
 // 11x14
 extern PROGMEM const uint8_t hornoadleft[42];
-
-// 11x14
-extern PROGMEM const uint8_t hornoadright[42];
 
 // 8x8
 extern PROGMEM const uint8_t little[16];
@@ -329,18 +308,6 @@ extern PROGMEM const uint8_t sidehopper[48];
 
 // 12x15
 extern PROGMEM const uint8_t zoomer[45];
-
-// 16x8
-extern PROGMEM const uint8_t protagleftwalk[32];
-
-// 16x8
-extern PROGMEM const uint8_t protagonistleft[32];
-
-// 20x8
-extern PROGMEM const uint8_t protagonistleftclimb[40];
-
-// 20x8
-extern PROGMEM const uint8_t protagonistleftclimbtwo[40];
 
 // 16x8
 extern PROGMEM const uint8_t protagonistright[32];

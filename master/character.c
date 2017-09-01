@@ -166,6 +166,7 @@ void initcharacter(struct Character* character)
 void draw(struct Character* character)
 {
     const uint8_t* sprite = NULL;
+    uint8_t inverted = 0;
     switch (character->look)
     {
         case LOOK_PROTAGONIST:
@@ -177,57 +178,30 @@ void draw(struct Character* character)
             
             character->height = 16;
             if (character->direction == DIRECTION_LEFT)
+                inverted = 1;
+            
+            if (character->lookstate)
             {
-                if (character->lookstate)
+                if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
                 {
-                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
-                    {
-                        character->height = 20;
-                        sprite = protagonistleftclimb;
-                    }
-                    else
-                    {    
-                        sprite = protagonistleft;
-                    }
+                    character->height = 20;
+                    sprite = protagonistrightclimb;
                 }
-                else 
+                else
                 {
-                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
-                    {
-                        character->height = 20;
-                        sprite = protagonistleftclimbtwo;
-                    }
-                    else
-                    {
-                        sprite = protagleftwalk;
-                    }
+                    sprite = protagonistright;
                 }
-            }
-            else
+            }   
+            else 
             {
-                if (character->lookstate)
+                if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
                 {
-                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
-                    {
-                        character->height = 20;
-                        sprite = protagonistrightclimb;
-                    }
-                    else
-                    {
-                        sprite = protagonistright;
-                    }
-                }   
-                else 
+                    character->height = 20;
+                    sprite = protagonistrightclimbtwo;
+                }
+                else
                 {
-                    if (character->jumpstate == CLIMBING && character->y == CEILING_Y + 4)
-                    {
-                        character->height = 20;
-                        sprite = protagonistrightclimbtwo;
-                    }
-                    else
-                    {
-                        sprite = protagrightwalk;
-                    }
+                    sprite = protagrightwalk;
                 }
             }
             break;
@@ -237,14 +211,9 @@ void draw(struct Character* character)
             break;
             
         case LOOK_EYEMONSTER:
-            if(character->direction == DIRECTION_LEFT)
-            {
-                sprite = eyemonster_left;
-            }
-            else
-            {
-                sprite = eyemonster_right;
-            }
+            if(character->direction == DIRECTION_RIGHT)
+                inverted = 1;
+            sprite = eyemonster_left;
             break;
         
         case LOOK_MONSTER_ZOOMER:
@@ -252,14 +221,9 @@ void draw(struct Character* character)
             break;
             
         case LOOK_ROCKET:
-            if(character->direction == DIRECTION_LEFT)
-            {
-                sprite = rocket;
-            }
-            else
-            {
-                sprite = rocketinverted;
-            }
+            if(character->direction == DIRECTION_RIGHT)
+                inverted = 1;
+            sprite = rocket;
             break;
             
         case LOOK_BOSS_ZAZABI:
@@ -269,17 +233,11 @@ void draw(struct Character* character)
         case LOOK_MONSTER_METROID:
             sprite = metroid;
             break;
-        
 
         case LOOK_MONSTER_HORNOAD:
-            if (character->direction == DIRECTION_LEFT)
-            {
-                sprite = hornoadleft;
-            }
-            else
-            {
-                sprite = hornoadright;
-            }
+            if (character->direction == DIRECTION_RIGHT)
+                inverted = 1;
+            sprite = hornoadleft;
             break;
 
         case LOOK_MONSTER_SIDEHOPPER:
@@ -299,40 +257,22 @@ void draw(struct Character* character)
             character->lookstate = 1 - character->lookstate;
             break;
         case LOOK_NEO_RIDLEY_DRAGON:
+            if (character->direction == DIRECTION_RIGHT)
+	            inverted = 1;
+
 	        if(character->movement == BOSS_DRAGON_GROUND)
 	        {
-	            if (character->direction == DIRECTION_LEFT)
-	            {
-	                sprite = dragon2_left;
-	            }
-	            else
-	            {
-	                sprite = dragon2_right;
-	            }
+	            sprite = dragon2_left;
 	        }
             else
             {
-                if (character->direction == DIRECTION_LEFT)
+                if(character->lookstate)
                 {
-                    if(character->lookstate)
-                    {
-                        sprite = dragon2_left;
-                    }
-                    else
-                    {
-                        sprite = dragon2_flying_left;
-                    }
+                    sprite = dragon2_left;
                 }
                 else
                 {
-                    if(!character->lookstate)
-                    {
-                        sprite = dragon2_right;
-                    }
-                    else
-                    {
-                        sprite = dragon2_flying_right;
-                    }
+                    sprite = dragon2_flying_left;
                 }
                 if (character->lastlookstatechg < getMsTimer())
                 {
@@ -345,27 +285,16 @@ void draw(struct Character* character)
             sprite = bomb;
             break;
         case LOOK_MONSTER_GEEGA:
-            if(character->direction == DIRECTION_RIGHT)
+            if(character->direction == DIRECTION_LEFT)
+                inverted = 1;
+
+            if (character->lookstate) // wings up and moving left
             {
-                if (character->lookstate) // wings up and moving left
-                {
-                    sprite = geega1;
-                }
-                else// wings down
-                {
-                    sprite = geega2;
-                }
+                sprite = geega1;
             }
-            else
+            else// wings down
             {
-                if (character->lookstate) // wings up and moving right
-                {
-                    sprite = geega1inverted;
-                }
-                else// wings down
-                {
-                    sprite = geega2inverted;
-                }
+                sprite = geega2;
             }
 
             // toggle wing state
@@ -441,7 +370,10 @@ void draw(struct Character* character)
             break;
     }
     
-    drawsprite_px(character->x, character->y, character->width, character->height, sprite);
+    if (inverted)
+        drawsprite_px_inverted(character->x, character->y, character->width, character->height, sprite);
+    else
+        drawsprite_px(character->x, character->y, character->width, character->height, sprite);
 }
 
 void hide(struct Character* character)

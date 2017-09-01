@@ -82,7 +82,6 @@ void drawmonsterhealth(struct Character* monster)
     drawcolor(BAR_X + 1, BAR_Y, bar_len, 1, 0b11101011);
     drawcolor(BAR_X + 1 + bar_len, BAR_Y, BAR_LEN - bar_len, 1, 0b11000011);
     page(BAR_X + 1 + BAR_LEN, BAR_Y, 0b00111100);
-
 }
 
 void drawdoor(int x)
@@ -246,8 +245,7 @@ void drawplatform()
     }
 }
 
-// y and height in pages
-void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+void enable_window(uint8_t x, uint8_t y, uint8_t width, uint8_t height)
 {
     sendbyte(0b11110100, 0); // set window start column
     sendbyte(x, 0);
@@ -258,9 +256,34 @@ void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8
     sendbyte(0b11110111, 0); // set window end page
     sendbyte(y + height - 1, 0);
     sendbyte(0b11111001, 0); // enable window function
+}
+
+void disable_window()
+{
+    sendbyte(0b11111000, 0); // disable window function
+}
+
+// y and height in pages
+void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+{
+    enable_window(x, y, width, height);
     for (uint16_t i = 0; i < width * height; ++i)
         sendbyte(pgm_read_byte_near(sprite + i), 1);
-    sendbyte(0b11111000, 0); // disable window function
+    disable_window();
+}
+
+// y axis inverted
+void drawsprite_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+{
+    enable_window(x, y, width, height);
+    for (uint16_t i = 0; i < width * height; i += width)
+    {
+        for (int16_t j = width - 1; j >= 0; --j)
+        {
+            sendbyte(pgm_read_byte_near(sprite + i + j), 1);
+        }
+    }
+    disable_window();
 }
 
 // y and height in pixels
@@ -273,15 +296,7 @@ void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
     }
     else
     {
-        sendbyte(0b11110100, 0); // set window start column
-        sendbyte(x, 0);
-        sendbyte(0b11110110, 0); // set window end column
-        sendbyte(x + width - 1, 0);
-        sendbyte(0b11110101, 0); // set window start page
-        sendbyte(y / 4, 0);
-        sendbyte(0b11110111, 0); // set window end page
-        sendbyte(y / 4 + height / 4, 0);
-        sendbyte(0b11111001, 0); // enable window function
+        enable_window(x, y / 4, width, height / 4 + 1);
         uint16_t i = 0;
         for (; i < width; ++i)
             sendbyte(pgm_read_byte_near(sprite + i) << offset, 1);
@@ -289,7 +304,33 @@ void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
             sendbyte(pgm_read_byte_near(sprite + i) << offset | pgm_read_byte_near(sprite + i - width) >> (8 - offset), 1);
         for (; i < (height / 4 + 1) * width; ++i)
             sendbyte(pgm_read_byte_near(sprite + i - width) >> (8 - offset), 1);
-        sendbyte(0b11111000, 0); // disable window function
+        disable_window();
+    }
+}
+
+// y axis inverted
+void drawsprite_px_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+{
+    uint8_t offset = 2 * (y % 4);
+    if (offset == 0)
+    {
+        drawsprite_inverted(x, y / 4, width, height / 4, sprite);
+    }
+    else
+    {
+        enable_window(x, y / 4, width, height / 4 + 1);
+        for (int16_t j = width - 1; j >= 0; --j)
+            sendbyte(pgm_read_byte_near(sprite + j) << offset, 1);
+        for (uint16_t i = width; i < height / 4 * width; i += width)
+        {
+            for (int16_t j = width - 1; j >= 0; --j)
+            {
+                sendbyte(pgm_read_byte_near(sprite + i + j) << offset | pgm_read_byte_near(sprite + i - width + j) >> (8 - offset), 1);
+            }
+        }
+        for (int16_t j = (height / 4 + 1) * width - 1; j >= height / 4 * width; --j)
+            sendbyte(pgm_read_byte_near(sprite + j) >> (8 - offset), 1);
+        disable_window();
     }
 }
 
