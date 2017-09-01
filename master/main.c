@@ -106,20 +106,15 @@ void getAchievement()
         || (level >= 4 * BOSS_LEVEL_DISTANCE || level < 4 * BOSS_LEVEL_DISTANCE))
     {
         srand(level_seed);
-        switch(random_below(3))
+        switch(random_below(2))
         {
             case 0:
                 Rocket_Upgrade = true;
                 strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
                 strncpy(line2, "CAN NOW SHOOT FASTER.", MAX_STRING_LEN);
                 break;
-            case 1:
-                protagonist->jumpheight = 34;
-                strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
-                strncpy(line2, "CAN NOW JUMP HIGHER.", MAX_STRING_LEN);
-                break;
 
-            case 2:
+            case 1:
                 Run_And_Jump_Faster_Upgrade = true;
                 strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
                 strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
