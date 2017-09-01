@@ -5,7 +5,6 @@
 #include <util/delay.h>
 #include <avr/eeprom.h>
 #include "uart.h"
-#include "adc.h"
 #include "timer.h"
 #include "buttons.h"
 #include "display.h"
@@ -938,7 +937,6 @@ int main(void)
 void init()
 {
 	uartInit();   // serielle Ausgabe an PC
-	ADCInit(0);   // Analoge Werte einlesen
 	timerInit();  // "Systemzeit" initialisieren
 	buttonsInit();
 	displayInit();
