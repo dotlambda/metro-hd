@@ -455,10 +455,9 @@ const PROGMEM uint8_t Z[8] = {
     0b11111100, 0b11000011, 0b11000000, 0b11000000
 };
 
-const PROGMEM uint8_t comma[6] = {
-    0b00000000, 0b00000000, 
-    0b00000000, 0b00000000, 
-    0b00110000, 0b00001111
+const PROGMEM uint8_t comma[4] = {
+    0b00000000, 0b11000000, 
+    0b00001100, 0b00000011
 };
 
 const PROGMEM uint8_t dot[2] = {
