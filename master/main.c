@@ -14,6 +14,7 @@
 #include "sprites.h"
 #include "rand.h"
 #include "drawing.h"
+#include "string.h"
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
@@ -32,6 +33,8 @@ uint32_t nextfireballmoveevent[NUM_FIREBALLS];
 uint32_t nextfireballjumpevent[NUM_FIREBALLS];
 uint32_t nextfireevent = 0;
 uint32_t nextrechargeevent = 0;
+bool Rocket_Upgrade = false;
+bool Run_And_Jump_Faster_Upgrade = false;
 
 void init();
 
@@ -90,6 +93,57 @@ void takingdamage(uint8_t damage)
         }
         while (!B_A);
         newgame();
+    }
+}
+
+void getAchievement()
+{ 
+    char line1[MAX_STRING_LEN];
+    char line2[MAX_STRING_LEN];
+    if ((level >= BOSS_LEVEL_DISTANCE || level < BOSS_LEVEL_DISTANCE)
+        || (level >= 2 * BOSS_LEVEL_DISTANCE || level < 2 * BOSS_LEVEL_DISTANCE)
+        || (level >= 3 * BOSS_LEVEL_DISTANCE || level < 3 * BOSS_LEVEL_DISTANCE)
+        || (level >= 4 * BOSS_LEVEL_DISTANCE || level < 4 * BOSS_LEVEL_DISTANCE))
+    {
+        switch(random_below(3))
+        {
+            case 0:
+                Rocket_Upgrade = true;
+                strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
+                strncpy(line2, "CAN NOW SHOOT FASTER.", MAX_STRING_LEN);
+                break;
+            case 1:
+                protagonist->jumpheight = 34;
+                strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
+                strncpy(line2, "CAN NOW JUMP HIGHER.", MAX_STRING_LEN);
+                break;
+
+            case 2:
+                Run_And_Jump_Faster_Upgrade = true;
+                strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
+                strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
+                break;
+
+
+            char buffer[MAX_STRING_LEN];
+            uint8_t len = strlen(line1);
+            for (int i = 0; i < len; i++)
+            {
+                buffer[i] = line1[i];
+                buffer[i + 1] = '\0';
+                drawletters(10, CEILING_Y / 4 + 3, buffer);
+                delay(100);
+            }
+            len = strlen(line2);
+            for (int i = 0; i < len; i++)
+            {
+                buffer[i] = line2[i];
+                buffer[i + 1] = '\0';
+                drawletters(10, CEILING_Y / 4 + 6, buffer);
+                delay(100);
+            }
+            delay(1000);
+        }
     }
 }
 
@@ -213,8 +267,16 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
         hide(monsters[i]);
         if (bosslevel)
         {
-            monsters[i]->look = LOOK_BIGXPARASITE;
-            initcharacter(monsters[i]);
+            if (monsters[i]->look == LOOK_BIGXPARASITE)
+            {
+                getAchievement();
+            }
+            else
+            {
+                monsters[i]->look = LOOK_BIGXPARASITE;
+                initcharacter(monsters[i]);
+                draw(monsters[i]);
+            }
         }
         else
         {
@@ -330,7 +392,14 @@ int main(void)
                 {
                     moveright(protagonist);
                 }
-                nextmoveevent = getMsTimer() + 50;
+                if (Run_And_Jump_Faster_Upgrade)
+                {
+                    nextmoveevent = getMsTimer() + 40;
+                }
+                else
+                {
+                    nextmoveevent = getMsTimer() + 50;
+                }
             }
             if (B_LEFT)
             {
@@ -388,7 +457,14 @@ int main(void)
                     protagonist->jumpstate = protagonist->jumpheight;
                     jump(protagonist);
                 }
-                nextjumpevent = getMsTimer() + 50;
+                if (Run_And_Jump_Faster_Upgrade)
+                {
+                    nextmoveevent = getMsTimer() + 40;
+                }
+                else
+                {
+                    nextmoveevent = getMsTimer() + 50;
+                }
             }
         }
         else if (protagonist->jumpstate != ON_THE_GROUND)
@@ -516,14 +592,28 @@ int main(void)
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
                     drawnumber(57, 1, num_rockets);
                     nextprojectilevent[i] = getMsTimer() + 35;
-                    nextshootevent = getMsTimer() + 500;
+                    if (Rocket_Upgrade)
+                    {
+                        nextshootevent = getMsTimer() + 500;
+                    }
+                    else
+                    {
+                        nextshootevent = getMsTimer() + 1000;
+                    }
                 }
                 else if(open_door_projectile(projectiles[i]))
                 {
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
                     drawnumber(57, 1, num_rockets);
-                    nextshootevent = getMsTimer() + 500;
+                    if (Rocket_Upgrade)
+                    {
+                        nextshootevent = getMsTimer() + 500;
+                    }
+                    else
+                    {
+                        nextshootevent = getMsTimer() + 1000;
+                    }
                 }
             }
             else if (projectiles[i]->movement != HIDDEN
