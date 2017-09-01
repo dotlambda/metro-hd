@@ -328,7 +328,7 @@ void drawsprite_px_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height,
                 sendbyte(pgm_read_byte_near(sprite + i + j) << offset | pgm_read_byte_near(sprite + i - width + j) >> (8 - offset), 1);
             }
         }
-        for (int16_t j = (height / 4) * width - 1; j >= height / 4 * width; --j)
+        for (int16_t j = (height / 4) * width - 1; j >= (height / 4 - 1) * width; --j)
             sendbyte(pgm_read_byte_near(sprite + j) >> (8 - offset), 1);
         disable_window();
     }
