@@ -206,42 +206,42 @@ void newlevelpos()
         
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
 
-        switch(random_below(1))
+        switch(random_below(4))
         {
             case 0:
                 monsters[0]->look = LOOK_BOSS_MEGACOREX;
                 break;
-//             case 1:
-//                 monsters[0]->look = LOOK_BOSS_SECROB;
-//                 for (uint8_t i = 0; i < 4; ++i)
-//                 {
-//                     fireballs[i]->look = LOOK_ARROW;
-//                     initcharacter(fireballs[i]);
-//                 }
-//                 for (uint8_t i = 4; i < 6; ++i)
-//                 {
-//                     fireballs[i]->look = LOOK_ARROW_UP;
-//                     initcharacter(fireballs[i]);
-//                 }
-//                 protagonist->jumpheight = 36;
-//                 ceilingsprite = climbceiling;
-//                 leftrotatedfloorsprite = climbleft;
-//                 rightrotatedfloorsprite = climbright;
-//                 break;
-//             case 2: 
-//                 monsters[0]->look = LOOK_BOSS_ZAZABI;
-//                 monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
-//                 break;
-//             case 3:
-//                 monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
-//                 for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
-//                 {
-//                     fireballs[i]->look = LOOK_FIREBALL;
-//                     initcharacter(fireballs[i]);
-//                 }
-//                 platforms_13 = 0b00111111111111111111111111111100;
-//                 platforms_19 = 0b00111111111111111111111111111100;
-//                 break;
+            case 1:
+                monsters[0]->look = LOOK_BOSS_SECROB;
+                for (uint8_t i = 0; i < 4; ++i)
+                {
+                    fireballs[i]->look = LOOK_ARROW;
+                    initcharacter(fireballs[i]);
+                }
+                for (uint8_t i = 4; i < 6; ++i)
+                {
+                    fireballs[i]->look = LOOK_ARROW_UP;
+                    initcharacter(fireballs[i]);
+                }
+                protagonist->jumpheight = 36;
+                ceilingsprite = climbceiling;
+                leftrotatedfloorsprite = climbleft;
+                rightrotatedfloorsprite = climbright;
+                break;
+            case 2: 
+                monsters[0]->look = LOOK_BOSS_ZAZABI;
+                monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
+                break;
+            case 3:
+                monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
+                for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+                {
+                    fireballs[i]->look = LOOK_FIREBALL;
+                    initcharacter(fireballs[i]);
+                }
+                platforms_13 = 0b00111111111111111111111111111100;
+                platforms_19 = 0b00111111111111111111111111111100;
+                break;
         }
     }
     else // normal level
