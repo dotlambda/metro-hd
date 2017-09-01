@@ -627,22 +627,32 @@ void move(struct Character* character)
     switch (character->movement)
     {
         case FOLLOW_PROTAGONIST:
-            if (protagonist->x < character->x && obstacle(character->x - 1, FLOOR_Y))
+            if (protagonist->x < character->x
+                && obstacle(character->x - 1, FLOOR_Y)) // if it wouldn't fall into water
+            {
                 moveleft(character);
-            else if (protagonist->x > character->x && obstacle(character->x + character->width, FLOOR_Y))
+            }
+            else if (protagonist->x > character->x
+                && obstacle(character->x + character->width, FLOOR_Y)) // if it wouldn't fall into water
+            {
                 moveright(character);
+            }
             else
+            {
                 draw(character);
+            }
             break;
         case BACK_AND_FORTH:
-            if (character->x <= 6)
-                character->direction = DIRECTION_RIGHT;
-            else if (character->x + character->width >= DISPLAY_WIDTH-6)
-                character->direction = DIRECTION_LEFT;
             if (character->direction == DIRECTION_LEFT)
-                moveleft(character);
+            {
+                if (!obstacle(character->x - 1, FLOOR_Y) || !moveleft(character))
+                    character->direction = DIRECTION_RIGHT;
+            }
             else
-                moveright(character);
+            {
+                if (!obstacle(character->x + character->width, FLOOR_Y) || !moveright(character))
+                    character->direction = DIRECTION_LEFT;
+            }
             break;
         case PROJECTILE:
         case FIREBALL:
