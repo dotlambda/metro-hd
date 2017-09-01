@@ -323,129 +323,134 @@ void drawletters(uint8_t x, uint8_t y, char* string)
     int len = strlen (string);
     for (int i = 0; i < len; i++)
     {
-        const uint8_t* sprite;
-        uint8_t width;
-        switch(string[i])
-        {
-            case 'A':
-                sprite = A;
-                width = 4;
-                break;
-            case 'B':
-                sprite = B;
-                width = 3;
-                break;
-            case 'C':
-                sprite = C;
-                width = 3;
-                break;
-            case 'D':
-                sprite = D;
-                width = 4;
-                break;
-            case 'E':
-                sprite = E;
-                width = 4;
-                break;
-            case 'F':
-                sprite = F;
-                width = 4;
-                break;
-            case 'G':
-                sprite = G;
-                width = 4;
-                break;
-            case 'H':
-                sprite = H;
-                width = 4;
-                break;
-            case 'I':
-                sprite = I;
-                width = 1;
-                break;
-            case 'J':
-                sprite = J;
-                width = 3;
-                break;
-            case 'K':
-                sprite = K;
-                width = 5;
-                break;
-            case 'L':
-                sprite = L;
-                width = 3;
-                break;
-            case 'M':
-                sprite = M;
-                width = 5;
-                break;
-            case 'N':
-                sprite = N;
-                width = 5;
-                break;
-            case 'O':
-                sprite = O;
-                width = 4;
-                break;
-            case 'P':
-                sprite = P;
-                width = 4;
-                break;
-            case 'Q':
-                sprite = Q;
-                width = 4;
-                break;
-            case 'R':
-                sprite = R;
-                width = 4;
-                break;
-            case 'S':
-                sprite = S;
-                width = 3;
-                break;
-            case 'T':
-                sprite = T;
-                width = 5;
-                break;
-            case 'U':
-                sprite = U;
-                width = 4;
-                break;
-            case 'V':
-                sprite = V;
-                width = 6;
-                break;
-            case 'W':
-                sprite = W;
-                width = 7;
-                break;
-            case 'X':
-                sprite = X;
-                width = 6;
-                break;
-            case 'Y':
-                sprite = Y;
-                width = 5;
-                break;
-            case 'Z':
-                sprite = Z;
-                width = 4;
-                break;
-            case ',':
-                sprite = comma;
-                width = 2;
-                break;
-            case '.':
-                sprite = dot;
-                width = 1;
-                break;
-        }
         if (string[i] == ' ')
         {
-            x = x + 2;
+            x += 2;
+        }
+        else if (string[i] == ',')
+        {
+            drawsprite(x, y + 1, 2, 2, comma);
+            x += 4;
         }
         else
         {
+            const uint8_t* sprite;
+            uint8_t width;
+            switch(string[i])
+            {
+                case 'A':
+                    sprite = A;
+                    width = 4;
+                    break;
+                case 'B':
+                    sprite = B;
+                    width = 4;
+                    break;
+                case 'C':
+                    sprite = C;
+                    width = 3;
+                    break;
+                case 'D':
+                    sprite = D;
+                    width = 4;
+                    break;
+                case 'E':
+                    sprite = E;
+                    width = 4;
+                    break;
+                case 'F':
+                    sprite = F;
+                    width = 4;
+                    break;
+                case 'G':
+                    sprite = G;
+                    width = 4;
+                    break;
+                case 'H':
+                    sprite = H;
+                    width = 4;
+                    break;
+                case 'I':
+                    sprite = I;
+                    width = 1;
+                    break;
+                case 'J':
+                    sprite = J;
+                    width = 3;
+                    break;
+                case 'K':
+                    sprite = K;
+                    width = 5;
+                    break;
+                case 'L':
+                    sprite = L;
+                    width = 3;
+                    break;
+                case 'M':
+                    sprite = M;
+                    width = 5;
+                    break;
+                case 'N':
+                    sprite = N;
+                    width = 5;
+                    break;
+                case 'O':
+                    sprite = O;
+                    width = 4;
+                    break;
+                case 'P':
+                    sprite = P;
+                    width = 4;
+                    break;
+                case 'Q':
+                    sprite = Q;
+                    width = 4;
+                    break;
+                case 'R':
+                    sprite = R;
+                    width = 4;
+                    break;
+                case 'S':
+                    sprite = S;
+                    width = 3;
+                    break;
+                case 'T':
+                    sprite = T;
+                    width = 5;
+                    break;
+                case 'U':
+                    sprite = U;
+                    width = 4;
+                    break;
+                case 'V':
+                    sprite = V;
+                    width = 5;
+                    break;
+                case 'W':
+                    sprite = W;
+                    width = 7;
+                    break;
+                case 'X':
+                    sprite = X;
+                    width = 6;
+                    break;
+                case 'Y':
+                    sprite = Y;
+                    width = 5;
+                    break;
+                case 'Z':
+                    sprite = Z;
+                    width = 4;
+                    break;
+                case ',':
+                    sprite = comma;
+                    width = 2;
+                    break;
+                case '!':
+                    sprite = ex;
+                    width = 1;
+                    break;
+            }
             drawsprite(x, y, width, 2, sprite); 
             x += width + 1;
         }

@@ -10,6 +10,8 @@
 #include "rand.h"
 #include "dfs.h"
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 EEMEM uint32_t initial_level_stored;
 EEMEM int32_t level_stored;
 EEMEM uint8_t health_stored;
@@ -20,13 +22,15 @@ long obstacle(uint8_t x, uint8_t y)
 {
     if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
         return 1l;
-    if (doors & 0b00000010 && (x < 4 || (y >= DOOR_Y && x < 6)))
+    else if (doors & 0b00000010 && (x < 4 || (y >= DOOR_Y && x < 6)))
         return 1l;
     else if (doors & 0b00000001 && (x >= DISPLAY_WIDTH - 4 || (y >= DOOR_Y && x >= DISPLAY_WIDTH - 6)))
         return 1l;
     else if (rechargeroom && x >= DISPLAY_WIDTH/2 - 12 && x < DISPLAY_WIDTH/2 + 12 && (y >= 23*4 || y < 17*4))
         return 1l;
     else if (rechargeroom && recharging && (x == DISPLAY_WIDTH/2 - 12 || x == DISPLAY_WIDTH/2 + 11))
+        return 1l;
+    else if (rechargeroom && y <= CEILING_Y + 4*5)
         return 1l;
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (3l << x / 16 * 2);
@@ -170,6 +174,10 @@ void newlevelpos()
     protagonist->jumpheight = 28; // reset jumpheight because protagonist can jump higher in secrob level
     rechargeroom = false;
     bosslevel = false;
+
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
+        monsters[i]->look = LOOK_HIDDEN;
+    
     if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 2) // recharge level
         || (level < 0 && (level - 1) % BOSS_LEVEL_DISTANCE == 0))
     {
@@ -179,7 +187,6 @@ void newlevelpos()
         nofloor = UINT32_MAX;
         doors = 0b00000011;
         
-        monsters[0]->look = LOOK_HIDDEN;
         rechargeroom = true;
     }
     else if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
@@ -283,15 +290,35 @@ void newlevelpos()
             nofloor = UINT32_MAX;
  
         monsters[0]->look = random_below(NUM_MONSTER_LOOKS);
+        if (monsters[0]->look == LOOK_MONSTER_MEMU) // make memus appear in swarms
+        {
+            for (uint8_t i = 1; i < NUM_MONSTERS; ++i)
+                monsters[i]->look = LOOK_MONSTER_MEMU;
+        }
+        else
+        {
+            uint8_t bosses_killed;
+            if (level >= 0)
+                bosses_killed = level / BOSS_LEVEL_DISTANCE;
+            else
+                bosses_killed = (-level + 1) / BOSS_LEVEL_DISTANCE;
+            // the number of monsters that can possibly appear increases for every 2 bosses killed
+            uint8_t num_monsters = random_below(MIN(bosses_killed / 2 + 1, NUM_MONSTERS)) + 1;
+            for (uint8_t i = 1; i < num_monsters; ++i)
+            {
+                monsters[i]->look = random_below(NUM_MONSTER_LOOKS);
+                if (monsters[i]->look == LOOK_MONSTER_MEMU)
+                    monsters[i]->look = LOOK_HIDDEN;
+            }
+        }
     }
 
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
-        if(bosslevel && i == 0)
-        {
-            initcharacter(monsters[i]);
-        }
-
+        initcharacter(monsters[i]);
+        if (monsters[i]->look == LOOK_HIDDEN)
+            continue;
+        
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
         if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
         {
@@ -303,7 +330,6 @@ void newlevelpos()
             {
                 monsters[i]->x = 12;
             }
-            
         }
         // move monster to the right if there is water/spikes below
         uint8_t nofloor = 1;
@@ -380,10 +406,10 @@ void newlevelpos()
         {
             case LOOK_BOSS_SECROB:
                 strncpy(line1, "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
-                strncpy(line2, "CLIMB THE WALL TO SURVIVE", MAX_STRING_LEN);
+                strncpy(line2, "CLIMB THE WALL TO SURVIVE!", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_DRAGON:
-                strncpy(line1, "SAMUS WATCH OUT. THE DRAGON", MAX_STRING_LEN);
+                strncpy(line1, "SAMUS WATCH OUT! THE DRAGON", MAX_STRING_LEN);
                 strncpy(line2, "IS TRYING TO KILL YOU", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_ZAZABI:
@@ -391,7 +417,7 @@ void newlevelpos()
                 strncpy(line2, "TRY NOT TO GET EATEN", MAX_STRING_LEN);
                 break;
             case LOOK_NEO_RIDLEY_DRAGON:
-                strncpy(line1, "SAMUS, BE WARY OF NEO RIDLEY.", MAX_STRING_LEN);
+                strncpy(line1, "SAMUS, BEWARE OF NEO RIDLEY.", MAX_STRING_LEN);
                 strncpy(line2, "WATCH OUT WHEN HE IS FLYING.", MAX_STRING_LEN);
                 break;
         }

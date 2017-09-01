@@ -115,7 +115,6 @@ void initcharacter(struct Character* character)
             character->width = 37;
             character->height = 24;
             character->movement = SECROB;
-            character->jumpheight = 32;
             character->health = 20;
             character->damage = 10;
             character->y_pace = 10;
@@ -717,10 +716,6 @@ void move(struct Character* character)
             break;
 
         case SECROB:
-//             if (character->x == (DISPLAY_WIDTH - character->width) / 2)
-//             {
-//                 character->direction = 1 - character->direction;
-//             }
             if (character->x >= DISPLAY_WIDTH - character->width - 8)
             {
                 character->direction = DIRECTION_LEFT;
@@ -739,7 +734,8 @@ void move(struct Character* character)
             }
             if (character->jumpstate == ON_THE_GROUND && really_random_below(10) == 0)
             {
-                character->x_pace =10;
+                character->jumpheight = 30 + really_random_below(10);
+                character->x_pace = 10;
                 character->jumpstate = 1;
             }
             break;

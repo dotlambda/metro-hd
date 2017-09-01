@@ -6,7 +6,7 @@
 PROJECT = metroid
 
 # Sourcefiles
-SOURCE = character.c level.c rand.c drawing.c dfs.c
+SOURCE = sprites.c main.c character.c level.c rand.c drawing.c dfs.c
 # Files from basis
 SOURCE += adc.c timer.c uart.c display.c
 # Libraries
@@ -99,8 +99,6 @@ all: $(OBJDIR) $(TARGET).elf $(TARGET).hex $(TARGET).eep
 #size
 
 ## Generate sprites
-sprites.c sprites.h: generatesprites.py ../sprites/*/*.png
-	./generatesprites.py
 
 ## Compile
 $(OBJDIR):

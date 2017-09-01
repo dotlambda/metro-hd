@@ -147,11 +147,8 @@ extern PROGMEM const uint8_t xparasite2[12];
 // 8x4
 extern PROGMEM const uint8_t A[8];
 
-// 8x3
-extern PROGMEM const uint8_t B[6];
-
-// 9x96
-extern PROGMEM const uint8_t Buchstaben[288];
+// 8x4
+extern PROGMEM const uint8_t B[8];
 
 // 8x3
 extern PROGMEM const uint8_t C[6];
@@ -210,8 +207,8 @@ extern PROGMEM const uint8_t T[10];
 // 8x4
 extern PROGMEM const uint8_t U[8];
 
-// 8x6
-extern PROGMEM const uint8_t V[12];
+// 8x5
+extern PROGMEM const uint8_t V[10];
 
 // 8x7
 extern PROGMEM const uint8_t W[14];
@@ -225,14 +222,17 @@ extern PROGMEM const uint8_t Y[10];
 // 8x4
 extern PROGMEM const uint8_t Z[8];
 
-// 11x2
-extern PROGMEM const uint8_t comma[6];
+// 6x2
+extern PROGMEM const uint8_t comma[4];
 
 // 8x1
 extern PROGMEM const uint8_t dot[2];
 
 // 9x3
 extern PROGMEM const uint8_t eight[9];
+
+// 8x1
+extern PROGMEM const uint8_t ex[2];
 
 // 9x3
 extern PROGMEM const uint8_t five[9];
