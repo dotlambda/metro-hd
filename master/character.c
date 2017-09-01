@@ -77,13 +77,6 @@ void initcharacter(struct Character* character)
             character->damage = 10;
             character->movement = FLYING_AROUND;
             break;
-        case LOOK_BOSS_DRAGON:
-            character->width = 30;
-            character->height = 36;
-            character->damage = 15;
-            character->health = 16;
-            character->movement = BOSS_DRAGON_GROUND;
-            break;
         case LOOK_BOMB:
             character->width = 4;
             character->height = 4;
@@ -155,6 +148,13 @@ void initcharacter(struct Character* character)
             break;
         case LOOK_HIDDEN:
             character->movement = HIDDEN;
+            break;
+        case LOOK_BOSS_MEGACOREX:
+            character->width = 33;
+            character->height = 36;
+            character->damage = 5;
+            character->health = 10;
+            character->movement = FLYING_AROUND;
             break;
     }
     character->initial_health = character->health;
@@ -298,17 +298,6 @@ void draw(struct Character* character)
             // toggle wing state
             character->lookstate = 1 - character->lookstate;
             break;
-
-        case LOOK_BOSS_DRAGON:
-            if (character->direction == DIRECTION_LEFT)
-            {
-                sprite = dragon_left;
-            }
-            else
-            {
-                sprite = dragon_right;
-            }
-	    break;
         case LOOK_NEO_RIDLEY_DRAGON:
 	        if(character->movement == BOSS_DRAGON_GROUND)
 	        {
@@ -434,6 +423,21 @@ void draw(struct Character* character)
             break;
         case LOOK_HIDDEN:
             sprite = NULL;
+            break;
+        case LOOK_BOSS_MEGACOREX:
+            if (character->lookstate)  
+                {
+                    sprite = megacorex1;
+                }
+                else
+                {
+                    sprite = megacorex2;
+                }
+            if (character->lastlookstatechg < getMsTimer())
+            {
+                character->lookstate = 1 - character->lookstate;
+                character->lastlookstatechg = getMsTimer() + 300;
+            }
             break;
     }
     

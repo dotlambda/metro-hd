@@ -170,7 +170,7 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
     if (monsters[i]->health <= 0)
     {
         hide(monsters[i]);
-        if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
+        if (monsters[i]->look == LOOK_BOSS_MEGACOREX || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
         {
             monsters[i]->look = LOOK_BIGXPARASITE;
             initcharacter(monsters[i]);
@@ -386,7 +386,7 @@ int main(void)
             && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
         {
             // im endbosslevel
-            if (monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            if (monsters[0]->look == LOOK_BOSS_MEGACOREX || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
             {
                 // falls boss tot
                 if (monsters[0]->movement == HIDDEN)
@@ -405,7 +405,7 @@ int main(void)
             && protagonist->x <= 6 
             && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
         {
-            if(monsters[0]->look == LOOK_BOSS_DRAGON || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            if(monsters[0]->look == LOOK_BOSS_MEGACOREX || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
             {
                 if (monsters[0]->movement == HIDDEN)
                 {
@@ -745,32 +745,6 @@ int main(void)
             {
                 protagonist->health += 30;
                 drawnumber(29, 1, protagonist->health);
-            }
-        }
-        
-        if (monsters[0]->look == LOOK_BOSS_DRAGON)
-        {
-            for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
-            {
-                if (fireballs[i]->movement == HIDDEN && monsters[0]->movement != HIDDEN && nextfireevent < getMsTimer())
-                {
-                    fireballs[i]->movement = FIREBALL;
-                    fireballs[i]->jumpstate = 1;
-                    fireballs[i]->jumpheight = 8 + 4 * really_random_below(4);
-                    if (protagonist->x < monsters[0]->x)
-                    {
-                        fireballs[i]->x = monsters[0]->x - fireballs[i]->width;
-                        fireballs[i]->direction = DIRECTION_LEFT;
-                    }
-                    else
-                    {
-                        fireballs[i]->x = monsters[0]->x + monsters[0]->width;
-                        fireballs[i]->direction = DIRECTION_RIGHT;
-                    }
-                    fireballs[i]->y = monsters[0]->y + 8;
-                    draw(fireballs[i]);
-                    nextfireevent = getMsTimer() + (really_random_below(2) == 0 ? 1000 : 400);
-                }
             }
         }
         else if (monsters[0]->look == LOOK_NEO_RIDLEY_DRAGON)

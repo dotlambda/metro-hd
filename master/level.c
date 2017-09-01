@@ -206,49 +206,42 @@ void newlevelpos()
         
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
 
-        switch(random_below(4))
+        switch(random_below(1))
         {
             case 0:
-                monsters[0]->look = LOOK_BOSS_DRAGON;
-                for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
-                {
-                    fireballs[i]->look = LOOK_FIREBALL;
-                    initcharacter(fireballs[i]);
-                }
-                platforms_13 = 0b00111111111111111111111111111100;
-                platforms_19 = 0b00111111111111111111111111111100;
+                monsters[0]->look = LOOK_BOSS_MEGACOREX;
                 break;
-            case 1:
-                monsters[0]->look = LOOK_BOSS_SECROB;
-                for (uint8_t i = 0; i < 4; ++i)
-                {
-                    fireballs[i]->look = LOOK_ARROW;
-                    initcharacter(fireballs[i]);
-                }
-                for (uint8_t i = 4; i < 6; ++i)
-                {
-                    fireballs[i]->look = LOOK_ARROW_UP;
-                    initcharacter(fireballs[i]);
-                }
-                protagonist->jumpheight = 36;
-                ceilingsprite = climbceiling;
-                leftrotatedfloorsprite = climbleft;
-                rightrotatedfloorsprite = climbright;
-                break;
-            case 2: 
-                monsters[0]->look = LOOK_BOSS_ZAZABI;
-                monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
-                break;
-            case 3:
-                monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
-                for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
-                {
-                    fireballs[i]->look = LOOK_FIREBALL;
-                    initcharacter(fireballs[i]);
-                }
-                platforms_13 = 0b00111111111111111111111111111100;
-                platforms_19 = 0b00111111111111111111111111111100;
-                break;
+//             case 1:
+//                 monsters[0]->look = LOOK_BOSS_SECROB;
+//                 for (uint8_t i = 0; i < 4; ++i)
+//                 {
+//                     fireballs[i]->look = LOOK_ARROW;
+//                     initcharacter(fireballs[i]);
+//                 }
+//                 for (uint8_t i = 4; i < 6; ++i)
+//                 {
+//                     fireballs[i]->look = LOOK_ARROW_UP;
+//                     initcharacter(fireballs[i]);
+//                 }
+//                 protagonist->jumpheight = 36;
+//                 ceilingsprite = climbceiling;
+//                 leftrotatedfloorsprite = climbleft;
+//                 rightrotatedfloorsprite = climbright;
+//                 break;
+//             case 2: 
+//                 monsters[0]->look = LOOK_BOSS_ZAZABI;
+//                 monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
+//                 break;
+//             case 3:
+//                 monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
+//                 for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+//                 {
+//                     fireballs[i]->look = LOOK_FIREBALL;
+//                     initcharacter(fireballs[i]);
+//                 }
+//                 platforms_13 = 0b00111111111111111111111111111100;
+//                 platforms_19 = 0b00111111111111111111111111111100;
+//                 break;
         }
     }
     else // normal level
@@ -320,7 +313,7 @@ void newlevelpos()
             continue;
         
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
-        if (monsters[i]->look == LOOK_BOSS_DRAGON || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
+        if (monsters[i]->look == LOOK_BOSS_MEGACOREX || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
         {
             if (protagonist->x <= DISPLAY_WIDTH/2)
             {
@@ -408,8 +401,8 @@ void newlevelpos()
                 strncpy(line1, "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
                 strncpy(line2, "CLIMB THE WALL TO SURVIVE!", MAX_STRING_LEN);
                 break;
-            case LOOK_BOSS_DRAGON:
-                strncpy(line1, "SAMUS WATCH OUT! THE DRAGON", MAX_STRING_LEN);
+            case LOOK_BOSS_MEGACOREX:
+                strncpy(line1, "SAMUS WATCH OUT! MEGACOREX", MAX_STRING_LEN);
                 strncpy(line2, "IS TRYING TO KILL YOU", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_ZAZABI:
