@@ -110,12 +110,14 @@ void getAchievement()
         {
             case 0:
                 Rocket_Upgrade = true;
+                eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
                 strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
                 strncpy(line2, "CAN NOW SHOOT FASTER.", MAX_STRING_LEN);
                 break;
 
             case 1:
                 Run_And_Jump_Faster_Upgrade = true;
+                eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
                 strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
                 strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
                 break;

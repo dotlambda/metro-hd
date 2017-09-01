@@ -476,11 +476,15 @@ void newgame()
 {
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
+    Run_And_Jump_Faster_Upgrade = false;
+    Rocket_Upgrade = false;
     
     if (initial_level == 0) // start a new game
     {
         initial_level = getMsTimer();
         level = 0;
+        eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
+        eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
         eeprom_write_block(&initial_level, &initial_level_stored, sizeof initial_level);
         eeprom_write_block(&level, &level_stored, sizeof level);
         eeprom_write_block(&protagonist->health, &health_stored, sizeof protagonist->health);
