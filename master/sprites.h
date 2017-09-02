@@ -237,9 +237,6 @@ extern PROGMEM const uint8_t five[9];
 // 9x3
 extern PROGMEM const uint8_t four[9];
 
-// 52x123
-extern PROGMEM const uint8_t gameover[1599];
-
 // 36x123
 extern PROGMEM const uint8_t gameover_top[1107];
 
