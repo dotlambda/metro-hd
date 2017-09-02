@@ -18,7 +18,7 @@
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
-#define BOSS_LEVEL_DISTANCE 5 // every 5th level is a boss level
+#define BOSS_LEVEL_DISTANCE 1 // every 5th level is a boss level
 
 struct Character* protagonist;
 extern EEMEM uint8_t health_stored;
@@ -26,6 +26,12 @@ uint8_t num_rockets;
 extern EEMEM uint8_t num_rockets_stored;
 uint8_t num_bombs;
 extern EEMEM uint8_t num_bombs_stored;
+extern EEMEM bool Rocket_Upgrade_stored;
+bool Rocket_Upgrade;
+extern EEMEM bool Run_And_Jump_Faster_Upgrade_stored;
+bool Run_And_Jump_Faster_Upgrade;
+extern EEMEM bool Bigger_Bomb_Explosion_stored;
+bool Bigger_Bomb_Explosion;
 
 #define NUM_MONSTERS 3
 #define NUM_FIREBALLS 6

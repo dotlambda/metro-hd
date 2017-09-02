@@ -33,8 +33,10 @@ uint32_t nextfireballmoveevent[NUM_FIREBALLS];
 uint32_t nextfireballjumpevent[NUM_FIREBALLS];
 uint32_t nextfireevent = 0;
 uint32_t nextrechargeevent = 0;
-bool Rocket_Upgrade = false;
-bool Run_And_Jump_Faster_Upgrade = false;
+uint8_t blast_x1 = 0;
+uint8_t blast_x2 = 0;
+uint8_t blast_y1 = 0;
+uint8_t blast_y2 = 0;
 
 void init();
 
@@ -106,7 +108,7 @@ void getAchievement()
         || (level >= 4 * BOSS_LEVEL_DISTANCE || level < 4 * BOSS_LEVEL_DISTANCE))
     {
         srand(level_seed);
-        switch(random_below(2))
+        switch(random_below(3))
         {
             case 0:
                 Rocket_Upgrade = true;
@@ -121,6 +123,11 @@ void getAchievement()
                 strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
                 strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
                 break;
+            case 2:
+                Bigger_Bomb_Explosion = true;
+                eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
+                strncpy(line1, "WELL DONE! THE RADIUS OF YOUR", MAX_STRING_LEN);
+                strncpy(line2, "BOMB EXPLOSION IS NOW BIGGER", MAX_STRING_LEN);
         }
 
             char buffer[MAX_STRING_LEN];
@@ -188,8 +195,8 @@ bool open_door_projectile(struct Character* projectile)
 
 void open_door_bomb(struct Character* bombstruct)
 {
-    if (bombstruct->x <= 12 &&
-        bombstruct->y >= FLOOR_Y - 19
+    if (blast_x1 <= 6 &&
+        blast_y1 >= FLOOR_Y - 19
         && (doors & 0b00000010))
     {
         if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
@@ -207,8 +214,8 @@ void open_door_bomb(struct Character* bombstruct)
         }
     }
 
-    else if ((bombstruct->x <= DISPLAY_WIDTH - 12) &&
-             (bombstruct->y >= FLOOR_Y - 19) &&
+    else if ((blast_x2 >= DISPLAY_WIDTH - 6) &&
+             (blast_y1 >= FLOOR_Y - 19) &&
              (doors & 0b00000001))
     {
         if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
@@ -675,22 +682,46 @@ int main(void)
             if (explode < getMsTimer())
             {
                 hide(bombstruct);
-                uint8_t blast_x1 = MAX(0, bombstruct->x - 6);
-                uint8_t blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
-                uint8_t blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 4);
-                uint8_t blast_y2 = MIN(bombstruct->y + bombstruct->height + 8, FLOOR_Y);
                 uint16_t i = 0;
-                for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
+                if (Bigger_Bomb_Explosion)
                 {
-                    for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
+                    blast_x1 = MAX(0, bombstruct->x - 8);
+                    blast_x2 = MIN(bombstruct->x + bombstruct->width + 8, DISPLAY_WIDTH);
+                    blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 6);
+                    blast_y2 = MIN(bombstruct->y + bombstruct->height + 10, FLOOR_Y);
+                    for (int16_t y = bombstruct->y / 4 - 2; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
                     {
-                        if (x >= 0 && x < DISPLAY_WIDTH
-                            && y > CEILING_Y / 4 && y < FLOOR_Y / 4
-                            && !obstacle(x, 4 * y))
+                        for (int16_t x = bombstruct->x - 8; x < bombstruct->x + 12; x++)
                         {
-                            page(x, y, pgm_read_byte_near(explosion + i));
+                            if (x >= 0 && x < DISPLAY_WIDTH
+                                && y > CEILING_Y / 4 && y < FLOOR_Y / 4
+                                && !obstacle(x, 4 * y))
+                            {
+                                page(x, y, pgm_read_byte_near(Upgraded_Explosion + i));
+                            }
+                            i++;
                         }
-                        i++;
+                    }
+                }
+                else
+                {
+                    i = 0;
+                    blast_x1 = MAX(0, bombstruct->x - 6);
+                    blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
+                    blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 4);
+                    blast_y2 = MIN(bombstruct->y + bombstruct->height + 8, FLOOR_Y);
+                    for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
+                    {
+                        for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
+                        {
+                            if (x >= 0 && x < DISPLAY_WIDTH
+                                && y > CEILING_Y / 4 && y < FLOOR_Y / 4
+                                && !obstacle(x, 4 * y))
+                            {
+                                page(x, y, pgm_read_byte_near(explosion + i));
+                            }
+                            i++;
+                        }
                     }
                 }
                 delay(600);

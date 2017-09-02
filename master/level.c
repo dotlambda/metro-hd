@@ -17,6 +17,9 @@ EEMEM int32_t level_stored;
 EEMEM uint8_t health_stored;
 EEMEM uint8_t num_rockets_stored;
 EEMEM uint8_t num_bombs_stored;
+EEMEM bool Rocket_Upgrade_stored;
+EEMEM bool Run_And_Jump_Faster_Upgrade_stored;
+EEMEM bool Bigger_Bomb_Explosion_stored;
 
 long obstacle(uint8_t x, uint8_t y)
 {
@@ -476,13 +479,15 @@ void newgame()
 {
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
-    Run_And_Jump_Faster_Upgrade = false;
-    Rocket_Upgrade = false;
     
     if (initial_level == 0) // start a new game
     {
         initial_level = getMsTimer();
         level = 0;
+        Run_And_Jump_Faster_Upgrade = false;
+        Rocket_Upgrade = false;
+        Bigger_Bomb_Explosion = false;
+        eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
         eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
         eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
         eeprom_write_block(&initial_level, &initial_level_stored, sizeof initial_level);
@@ -495,6 +500,8 @@ void newgame()
     }
     else // resume previous game
     {
+        eeprom_read_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
+        eeprom_read_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
         eeprom_read_block(&level, &level_stored, sizeof level);
         protagonist->health = eeprom_read_byte(&health_stored);
         num_rockets = eeprom_read_byte(&num_rockets_stored);
