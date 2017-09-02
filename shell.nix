@@ -9,6 +9,10 @@ let
   pkgs     = import pinned {};
 in pkgs.stdenv.mkDerivation {
   name = "metroid";
-  buildInputs = with pkgs; [avrdude avrgcclibc python3 python3Packages.scikitimage python3Packages.numpy];
+  buildInputs = with pkgs; [
+    avrdude avrgcclibc
+    python3 python3Packages.scikitimage python3Packages.numpy
+    python2
+  ];
 }
 

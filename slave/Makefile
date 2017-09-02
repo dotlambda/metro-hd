@@ -6,9 +6,9 @@
 PROJECT = basis
 
 # Sourcefiles
-SOURCE =main.c
+SOURCE = main.c
 # Files from basis
-SOURCE += adc.c timer.c pwm.c uart.c servo.c
+SOURCE += uart.c
 # Libraries
 LIBS = -lm 
 
