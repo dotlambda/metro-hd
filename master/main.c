@@ -73,27 +73,32 @@ void takingdamage(uint8_t damage)
     {
         // game over
         uint16_t i = 0;
-        for (uint8_t y = 0; y < 36; y++)
+        for (uint8_t y = 0; y < 26; y++)
         {
             for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
             {
-                if (y > 7 && y < 21 && x > 17 && x < 141)
+                if (y >= 8 && y < 17 && x >= 18 && x < 141)
                 {
                     page(x, y, pgm_read_byte_near(gameover_top + i));
                     i++;
+                }
+                else if ((x == 28 || x == 131) && (y >= 17 && y < 21))
+                {
+                    page (x, y, 0xFF);
                 }
                 else
                 {
                     page(x, y, 0);
                 }
+                if (y == 21)
+                {
+                    drawcolor(28, 21, 104, 1, 0b00000011);
+                }
+                
             }
             delay(30);
         }
-        char* line = "PRESS A TO RESTART";
-        drawletters(15, 40, line);
-        drawcolor(11, 36, 1, 4, 0xFF);
-        drawcolor(11, 51, 113, 1, 0x11000000);
-        drawcolor(114, 36, 1, 4, 0xFF);
+        drawletters(40, 18, "PRESS A TO RESTART");
         while (!B_A);
         newgame();
     }
