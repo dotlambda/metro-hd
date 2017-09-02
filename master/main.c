@@ -5,7 +5,6 @@
 #include <util/delay.h>
 #include <avr/eeprom.h>
 #include "uart.h"
-#include "adc.h"
 #include "timer.h"
 #include "buttons.h"
 #include "display.h"
@@ -93,7 +92,7 @@ void takingdamage(uint8_t damage)
     }
 }
 
-bool open_door(struct Character* projectile)
+bool open_door_projectile(struct Character* projectile)
 {
     if (projectile->x <= 6 && projectile->y >= 80 && (doors & 0b00000010))
     {
@@ -132,6 +131,47 @@ bool open_door(struct Character* projectile)
         }
     }
     return 0;
+}
+
+void open_door_bomb(struct Character* bombstruct)
+{
+    if (bombstruct->x <= 12 &&
+        bombstruct->y >= FLOOR_Y - 19
+        && (doors & 0b00000010))
+    {
+        if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+        {
+            drawsprite(0, 20, 6, 5, doorleft_open);
+            left_door_open = true;
+        }
+        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+            && monsters[0]->movement == HIDDEN)
+        {
+            drawsprite(0, 20, 6, 5, doorleft_open);
+            left_door_open = true;                  
+        }
+    }
+
+    else if ((bombstruct->x <= DISPLAY_WIDTH - 12) &&
+             (bombstruct->y >= FLOOR_Y - 19) &&
+             (doors & 0b00000001))
+    {
+        if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
+        {
+            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
+            right_door_open = true;
+        }
+        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
+            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
+            && monsters[0]->movement == HIDDEN)
+        {
+            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+            right_door_open = true;                 
+        }
+    }
 }
 
 bool collision(struct Character* protagonist, struct Character* monster)
@@ -477,7 +517,7 @@ int main(void)
                     nextprojectilevent[i] = getMsTimer() + 35;
                     nextshootevent = getMsTimer() + 500;
                 }
-                else if(open_door(projectiles[i]))
+                else if(open_door_projectile(projectiles[i]))
                 {
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
@@ -489,7 +529,7 @@ int main(void)
                 && nextprojectilevent[i] < getMsTimer())
             {
                 move(projectiles[i]);
-                open_door(projectiles[i]);
+                open_door_projectile(projectiles[i]);
                 nextprojectilevent[i] = getMsTimer() + 35;
             }
 
@@ -593,21 +633,7 @@ int main(void)
                 {
                     takingdamage(bombstruct->damage);
                 }
-                if(blast_x1 <= 6 &&
-                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000010) && (!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
-                {
-                    drawsprite(0, 20, 6, 5, doorleft_open);
-                    left_door_open = true;
-                }
-
-                if(blast_x2 >= DISPLAY_WIDTH - 6 &&
-                   blast_y1 <= FLOOR_Y - 8 && (doors & 0b00000001) && (!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
-                {
-                    drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
-                    right_door_open = true;
-                }
+                open_door_bomb(bombstruct);
             }
             else
             {
@@ -911,7 +937,6 @@ int main(void)
 void init()
 {
 	uartInit();   // serielle Ausgabe an PC
-	ADCInit(0);   // Analoge Werte einlesen
 	timerInit();  // "Systemzeit" initialisieren
 	buttonsInit();
 	displayInit();

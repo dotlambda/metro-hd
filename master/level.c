@@ -206,42 +206,42 @@ void newlevelpos()
         
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
 
-        switch(random_below(1))
+        switch(random_below(4))
         {
             case 0:
                 monsters[0]->look = LOOK_BOSS_MEGACOREX;
                 break;
-//             case 1:
-//                 monsters[0]->look = LOOK_BOSS_SECROB;
-//                 for (uint8_t i = 0; i < 4; ++i)
-//                 {
-//                     fireballs[i]->look = LOOK_ARROW;
-//                     initcharacter(fireballs[i]);
-//                 }
-//                 for (uint8_t i = 4; i < 6; ++i)
-//                 {
-//                     fireballs[i]->look = LOOK_ARROW_UP;
-//                     initcharacter(fireballs[i]);
-//                 }
-//                 protagonist->jumpheight = 36;
-//                 ceilingsprite = climbceiling;
-//                 leftrotatedfloorsprite = climbleft;
-//                 rightrotatedfloorsprite = climbright;
-//                 break;
-//             case 2: 
-//                 monsters[0]->look = LOOK_BOSS_ZAZABI;
-//                 monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
-//                 break;
-//             case 3:
-//                 monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
-//                 for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
-//                 {
-//                     fireballs[i]->look = LOOK_FIREBALL;
-//                     initcharacter(fireballs[i]);
-//                 }
-//                 platforms_13 = 0b00111111111111111111111111111100;
-//                 platforms_19 = 0b00111111111111111111111111111100;
-//                 break;
+            case 1:
+                monsters[0]->look = LOOK_BOSS_SECROB;
+                for (uint8_t i = 0; i < 4; ++i)
+                {
+                    fireballs[i]->look = LOOK_ARROW;
+                    initcharacter(fireballs[i]);
+                }
+                for (uint8_t i = 4; i < 6; ++i)
+                {
+                    fireballs[i]->look = LOOK_ARROW_UP;
+                    initcharacter(fireballs[i]);
+                }
+                protagonist->jumpheight = 36;
+                ceilingsprite = climbceiling;
+                leftrotatedfloorsprite = climbleft;
+                rightrotatedfloorsprite = climbright;
+                break;
+            case 2: 
+                monsters[0]->look = LOOK_BOSS_ZAZABI;
+                monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
+                break;
+            case 3:
+                monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
+                for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
+                {
+                    fireballs[i]->look = LOOK_FIREBALL;
+                    initcharacter(fireballs[i]);
+                }
+                platforms_13 = 0b00111111111111111111111111111100;
+                platforms_19 = 0b00111111111111111111111111111100;
+                break;
         }
     }
     else // normal level
@@ -484,11 +484,11 @@ void newgame()
         level = 0;
         eeprom_write_block(&initial_level, &initial_level_stored, sizeof initial_level);
         eeprom_write_block(&level, &level_stored, sizeof level);
-        protagonist->health = 90;
+        eeprom_write_block(&protagonist->health, &health_stored, sizeof protagonist->health);
         num_rockets = 30;
         eeprom_write_block(&num_rockets, &num_rockets_stored, sizeof num_rockets);
         num_bombs = 10;
-        eeprom_write_block(&num_rockets, &num_bombs_stored, sizeof num_bombs);
+        eeprom_write_block(&num_bombs, &num_bombs_stored, sizeof num_bombs);
     }
     else // resume previous game
     {
@@ -502,9 +502,6 @@ void newgame()
         protagonist->x = 0; // make the protagonist appear on the right
     else
         protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
-
-    protagonist->look = LOOK_PROTAGONIST;
-    initcharacter(protagonist);
     
     for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
     {
