@@ -32,10 +32,7 @@ uint32_t nextfireballmoveevent[NUM_FIREBALLS];
 uint32_t nextfireballjumpevent[NUM_FIREBALLS];
 uint32_t nextfireevent = 0;
 uint32_t nextrechargeevent = 0;
-uint8_t blast_x1 = 0;
-uint8_t blast_x2 = 0;
-uint8_t blast_y1 = 0;
-uint8_t blast_y2 = 0;
+
 
 void init();
 
@@ -192,10 +189,10 @@ bool open_door_projectile(struct Character* projectile)
     return 0;
 }
 
-void open_door_bomb(struct Character* bombstruct)
+void open_door_bomb(uint8_t x1, uint8_t x2, uint8_t y1, uint8_t y2)
 {
-    if (blast_x1 <= 6 &&
-        blast_y1 >= FLOOR_Y - 19
+    if (x1 <= 6 &&
+        y1 >= FLOOR_Y - 19
         && (doors & 0b00000010))
     {
         if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
@@ -213,8 +210,8 @@ void open_door_bomb(struct Character* bombstruct)
         }
     }
 
-    else if ((blast_x2 >= DISPLAY_WIDTH - 6) &&
-             (blast_y1 >= FLOOR_Y - 19) &&
+    else if ((x2 >= DISPLAY_WIDTH - 6) &&
+             (y1 >= FLOOR_Y - 19) &&
              (doors & 0b00000001))
     {
         if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
@@ -680,49 +677,55 @@ int main(void)
         {
             if (explode < getMsTimer())
             {
-                hide(bombstruct);
-                uint16_t i = 0;
+                uint8_t blast_x1;
+                uint8_t blast_x2;
+                uint8_t blast_y1;
+                uint8_t blast_y2;
+                int16_t x;
+                int16_t y;
+                int16_t x2;
+                int16_t y2;
+                const uint8_t* sprite;
                 if (Bigger_Bomb_Explosion)
                 {
+                    x = bombstruct->x - 8;
+                    x2 = bombstruct->x + 12;
+                    y = bombstruct->y / 4 - 2;
+                    y2 = bombstruct->y / 4 + bombstruct->height / 4 + 2;
                     blast_x1 = MAX(0, bombstruct->x - 8);
                     blast_x2 = MIN(bombstruct->x + bombstruct->width + 8, DISPLAY_WIDTH);
                     blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 6);
                     blast_y2 = MIN(bombstruct->y + bombstruct->height + 10, FLOOR_Y);
-                    for (int16_t y = bombstruct->y / 4 - 2; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
-                    {
-                        for (int16_t x = bombstruct->x - 8; x < bombstruct->x + 12; x++)
-                        {
-                            if (x >= 0 && x < DISPLAY_WIDTH
-                                && y > CEILING_Y / 4 && y < FLOOR_Y / 4
-                                && !obstacle(x, 4 * y))
-                            {
-                                page(x, y, pgm_read_byte_near(Upgraded_Explosion + i));
-                            }
-                            i++;
-                        }
-                    }
+                    sprite = Upgraded_Explosion;
                 }
                 else
                 {
-                    i = 0;
+                    x = bombstruct->x - 6;
+                    x2 = bombstruct->x + 10;
+                    y = bombstruct->y / 4 - 1;
+                    y2 = bombstruct->y / 4 + bombstruct->height / 4 + 2;
                     blast_x1 = MAX(0, bombstruct->x - 6);
                     blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
                     blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 4);
                     blast_y2 = MIN(bombstruct->y + bombstruct->height + 8, FLOOR_Y);
-                    for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
+                    sprite = explosion;
+                }
+                hide(bombstruct);
+                uint16_t i = 0;
+                for (; y < y2; y++)
+                {
+                    for (; x < x2; x++)
                     {
-                        for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
+                        if (x >= 0 && x < DISPLAY_WIDTH
+                           && y > CEILING_Y / 4 && y < FLOOR_Y / 4
+                           && !obstacle(x, 4 * y))
                         {
-                            if (x >= 0 && x < DISPLAY_WIDTH
-                                && y > CEILING_Y / 4 && y < FLOOR_Y / 4
-                                && !obstacle(x, 4 * y))
-                            {
-                                page(x, y, pgm_read_byte_near(explosion + i));
-                            }
-                            i++;
+                           page(x, y, pgm_read_byte_near(sprite + i));
                         }
+                        i++;
                     }
                 }
+
                 delay(600);
                 i = 0;
                 for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
@@ -752,7 +755,7 @@ int main(void)
                 {
                     takingdamage(bombstruct->damage);
                 }
-                open_door_bomb(bombstruct);
+                open_door_bomb(blast_x1, blast_x2, blast_y1, blast_y2);
             }
             else
             {
