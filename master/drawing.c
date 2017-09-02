@@ -366,11 +366,17 @@ void drawletters(uint8_t x, uint8_t y, char* string)
     {
         if (string[i] == ' ')
         {
+            //page(x, y, 0);
+            //page(x, y + 1, 0);
+            //page(x + 1, y, 0);
+            //page(x + 1, y + 1, 0);
             x += 2;
         }
         else if (string[i] == ',')
         {
             drawsprite(x, y + 1, 2, 2, comma);
+            //page(x + 2, y, 0);
+            //page(x + 2, y + 1, 0);
             x += 3; // 2 pixels for the comma, 1 for the space between letters
         }
         else
@@ -483,10 +489,6 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                     sprite = Z;
                     width = 4;
                     break;
-                case ',':
-                    sprite = comma;
-                    width = 2;
-                    break;
                 case '!':
                     sprite = ex;
                     width = 1;
@@ -496,7 +498,9 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                     width = 1;
                     break;
             }
-            drawsprite(x, y, width, 2, sprite); 
+            drawsprite(x, y, width, 2, sprite);
+            //page(x + width, y, 0);
+            //page(x + width, y + 1, 0); 
             x += width + 1;
         }
     }
