@@ -11,7 +11,7 @@ in pkgs.stdenv.mkDerivation {
   name = "metroid";
   buildInputs = with pkgs; [
     avrdude avrgcclibc
-    python3 python3Packages.scikitimage python3Packages.numpy
+    (python3.withPackages (ps: with ps; [numpy scikitimage]))
     python2
   ];
 }
