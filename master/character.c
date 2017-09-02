@@ -150,11 +150,13 @@ void initcharacter(struct Character* character)
             character->movement = HIDDEN;
             break;
         case LOOK_BOSS_MEGACOREX:
-            character->width = 33;
-            character->height = 36;
+            character->width = 44;
+            character->height = 44;
             character->damage = 5;
             character->health = 1;
             character->movement = FLYING_AROUND;
+            character->x_pace = 70;
+            character->y_pace = 35;
             break;
     }
     character->initial_health = character->health;
@@ -354,18 +356,24 @@ void draw(struct Character* character)
             sprite = NULL;
             break;
         case LOOK_BOSS_MEGACOREX:
-            if (character->lookstate)  
-                {
+            switch (character->lookstate)
+            {
+                case 0:
                     sprite = megacorex1;
-                }
-                else
-                {
+                    break;
+                case 1:
                     sprite = megacorex2;
-                }
+                    break;
+                case 2:
+                    sprite = megacorex3;
+                    break;
+            }
             if (character->lastlookstatechg < getMsTimer())
             {
-                character->lookstate = 1 - character->lookstate;
-                character->lastlookstatechg = getMsTimer() + 300;
+                character->lookstate++;
+                if (character->lookstate == 3)
+                    character->lookstate = 0;
+                character->lastlookstatechg = getMsTimer() + 100;
             }
             break;
     }

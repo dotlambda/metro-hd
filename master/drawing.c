@@ -7,7 +7,10 @@
 
 void drawsplash(uint8_t show_resume_option)
 {
-    drawsprite(15, 3, 126, 19, splash);
+    drawsprite(15, 6, 40, 7, splashleft);
+    drawsprite(55, 3, 52, 15, splashcenter);
+    drawsprite(107, 6, 34, 7, splashright);
+    drawsprite(39, 19, 84, 3, splashtext);
     if (show_resume_option)
         drawsprite(43, 23, 74, 3, resume);
 }
@@ -338,23 +341,19 @@ void drawsprite_px_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height,
 // color is actually the byte that will be used for each page
 void drawcolor(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color)
 {
-    sendbyte(0b11110100, 0); // set window start column
-    sendbyte(x, 0);
-    sendbyte(0b11110110, 0); // set window end column
-    sendbyte(x + width - 1, 0);
-    sendbyte(0b11110101, 0); // set window start page
-    sendbyte(y, 0);
-    sendbyte(0b11110111, 0); // set window end page
-    sendbyte(y + height - 1, 0);
-    sendbyte(0b11111001, 0); // enable window function
+    enable_window(x, y, width, height);
     for (uint16_t i = 0; i < width * height; ++i)
         sendbyte(color, 1);
-    sendbyte(0b11111000, 0); // disable window function
+    disable_window();
 }
 
 void drawrechargeroom()
 {
-    drawsprite(4, 6, 152, 4, labelrecharge);
+    drawcolor(4, 6, 19, 4, 0xFF);
+    drawsprite(23, 6, 68, 4, rechargeleft);
+    drawcolor(91, 6, 12, 4, 0xFF);
+    drawsprite(103, 6, 37, 4, rechargeright);
+    drawcolor(138, 6, 18, 4, 0xFF);
     drawsprite(DISPLAY_WIDTH/2 - 12, 10, 24, 7, rechargetop);
     drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
 }
