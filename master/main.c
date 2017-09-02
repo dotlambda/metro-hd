@@ -150,83 +150,47 @@ void getAchievement()
 
 bool open_door_projectile(struct Character* projectile)
 {
+    // in a boss level, we can only open the door once the boss is dead
+    if (bosslevel && monsters[0]->movement == HIDDEN)
+    {
+        return 0;
+    }
     if (projectile->x <= 6 && projectile->y >= 80 && (doors & 0b00000010))
     {
-        if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;
-            return 1;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;
-            return 1;                    
-        }
+        drawsprite(0, 20, 6, 5, doorleft_open);
+        left_door_open = true;
+        return 1;
     }
     else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && projectile->y >= 80 && (doors & 0b00000001))
     {
-        if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
-            right_door_open = true;
-            return 1;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
-            right_door_open = true;
-            return 1;                 
-        }
+        drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+        right_door_open = true;
+        return 1;                 
     }
     return 0;
 }
 
 void open_door_bomb(uint8_t x1, uint8_t x2, uint8_t y1, uint8_t y2)
 {
+    // in a boss level, we can only open the door once the boss is dead
+    if (bosslevel && monsters[0]->movement == HIDDEN)
+    {
+        return;
+    }
     if (x1 <= 6 &&
         y1 >= FLOOR_Y - 19
         && (doors & 0b00000010))
     {
-        if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;                  
-        }
+        drawsprite(0, 20, 6, 5, doorleft_open);
+        left_door_open = true;
     }
 
     else if ((x2 >= DISPLAY_WIDTH - 6) &&
              (y1 >= FLOOR_Y - 19) &&
              (doors & 0b00000001))
     {
-        if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
-            right_door_open = true;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
-            right_door_open = true;                 
-        }
+        drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
+        right_door_open = true;
     }
 }
 
