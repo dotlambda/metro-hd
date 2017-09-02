@@ -243,9 +243,6 @@ extern PROGMEM const uint8_t labelbomb[42];
 // 9x23
 extern PROGMEM const uint8_t labelenergy[69];
 
-// 16x152
-extern PROGMEM const uint8_t labelrecharge[608];
-
 // 12x15
 extern PROGMEM const uint8_t labelrocket[45];
 
@@ -257,6 +254,12 @@ extern PROGMEM const uint8_t one[9];
 
 // 14x39
 extern PROGMEM const uint8_t pause[156];
+
+// 16x68
+extern PROGMEM const uint8_t rechargeleft[272];
+
+// 16x37
+extern PROGMEM const uint8_t rechargeright[148];
 
 // 9x96
 extern PROGMEM const uint8_t restart[288];

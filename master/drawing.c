@@ -341,7 +341,7 @@ void drawsprite_px_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height,
 // color is actually the byte that will be used for each page
 void drawcolor(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color)
 {
-    enable_window(x, y, width, height)
+    enable_window(x, y, width, height);
     for (uint16_t i = 0; i < width * height; ++i)
         sendbyte(color, 1);
     disable_window();
@@ -350,8 +350,10 @@ void drawcolor(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t colo
 void drawrechargeroom()
 {
     drawcolor(4, 6, 19, 4, 0xFF);
-    drawcolor(134, 6, 18, 4, 0xFF);
-    drawsprite(23, 6, 115, 4, labelrecharge);
+    drawsprite(23, 6, 68, 4, rechargeleft);
+    drawcolor(91, 6, 12, 4, 0xFF);
+    drawsprite(103, 6, 37, 4, rechargeright);
+    drawcolor(138, 6, 18, 4, 0xFF);
     drawsprite(DISPLAY_WIDTH/2 - 12, 10, 24, 7, rechargetop);
     drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
 }
