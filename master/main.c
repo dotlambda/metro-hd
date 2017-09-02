@@ -98,55 +98,50 @@ void getAchievement()
 { 
     char line1[MAX_STRING_LEN];
     char line2[MAX_STRING_LEN];
-    if ((level >= BOSS_LEVEL_DISTANCE || level < BOSS_LEVEL_DISTANCE)
-        || (level >= 2 * BOSS_LEVEL_DISTANCE || level < 2 * BOSS_LEVEL_DISTANCE)
-        || (level >= 3 * BOSS_LEVEL_DISTANCE || level < 3 * BOSS_LEVEL_DISTANCE)
-        || (level >= 4 * BOSS_LEVEL_DISTANCE || level < 4 * BOSS_LEVEL_DISTANCE))
+
+    srand(level_seed);
+    switch(random_below(3))
     {
-        srand(level_seed);
-        switch(random_below(3))
-        {
-            case 0:
-                Rocket_Upgrade = true;
-                eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
-                strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
-                strncpy(line2, "CAN NOW SHOOT FASTER.", MAX_STRING_LEN);
-                break;
+        case 0:
+            Rocket_Upgrade = true;
+            eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
+            strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
+            strncpy(line2, "CAN NOW SHOOT FASTER.", MAX_STRING_LEN);
+            break;
 
-            case 1:
-                Run_And_Jump_Faster_Upgrade = true;
-                eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
-                strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
-                strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
-                break;
-            case 2:
-                Bigger_Bomb_Explosion = true;
-                eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
-                strncpy(line1, "WELL DONE! THE RADIUS OF YOUR", MAX_STRING_LEN);
-                strncpy(line2, "BOMB EXPLOSION IS NOW BIGGER", MAX_STRING_LEN);
-        }
-
-        char buffer[MAX_STRING_LEN];
-        uint8_t len = strlen(line1);
-        for (int i = 0; i < len; i++)
-        {
-            buffer[i] = line1[i];
-            buffer[i + 1] = '\0';
-            drawletters(10, CEILING_Y / 4 + 3, buffer);
-            delay(100);
-        }
-        len = strlen(line2);
-        for (int i = 0; i < len; i++)
-        {
-            buffer[i] = line2[i];
-            buffer[i + 1] = '\0';
-            drawletters(10, CEILING_Y / 4 + 6, buffer);
-            delay(100);
-        }
-        delay(2000);
-        redraw();
-        
+        case 1:
+            Run_And_Jump_Faster_Upgrade = true;
+            eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
+            strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
+            strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
+            break;
+        case 2:
+            Bigger_Bomb_Explosion = true;
+            eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
+            strncpy(line1, "WELL DONE! THE RADIUS OF YOUR", MAX_STRING_LEN);
+            strncpy(line2, "BOMB EXPLOSION IS NOW BIGGER", MAX_STRING_LEN);
     }
+
+    char buffer[MAX_STRING_LEN];
+    uint8_t len = strlen(line1);
+    for (int i = 0; i < len; i++)
+    {
+        buffer[i] = line1[i];
+        buffer[i + 1] = '\0';
+        drawletters(10, CEILING_Y / 4 + 3, buffer);
+        delay(100);
+    }
+    len = strlen(line2);
+    for (int i = 0; i < len; i++)
+    {
+        buffer[i] = line2[i];
+        buffer[i + 1] = '\0';
+        drawletters(10, CEILING_Y / 4 + 6, buffer);
+        delay(100);
+    }
+    delay(2000);
+    redraw();
+        
 }
 
 bool open_door_projectile(struct Character* projectile)
