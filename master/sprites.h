@@ -42,6 +42,9 @@ extern PROGMEM const uint8_t securityrobup[222];
 // 32x17
 extern PROGMEM const uint8_t zazabi[136];
 
+// 20x20
+extern PROGMEM const uint8_t Upgraded_Explosion[100];
+
 // 4x4
 extern PROGMEM const uint8_t bomb[4];
 
