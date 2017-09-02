@@ -12,14 +12,17 @@ extern PROGMEM const uint8_t dragon2_flying_left[252];
 // 33x28
 extern PROGMEM const uint8_t dragon2_left[252];
 
+// 36x30
+extern PROGMEM const uint8_t dragon_left[270];
+
 // 8x8
 extern PROGMEM const uint8_t fireball2[16];
 
 // 34x33
 extern PROGMEM const uint8_t megacorex1[297];
 
-// 34x33
-extern PROGMEM const uint8_t megacorex2[297];
+// 33x34
+extern PROGMEM const uint8_t megacorex2[306];
 
 // 3x6
 extern PROGMEM const uint8_t secrobmunitionleft[6];
