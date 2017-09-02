@@ -73,13 +73,13 @@ void takingdamage(uint8_t damage)
     {
         // game over
         uint16_t i = 0;
-        for (uint8_t y = 0; y < DISPLAY_HEIGHT / 4; y++)
+        for (uint8_t y = 0; y < 36; y++)
         {
             for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
             {
                 if (y > 7 && y < 21 && x > 17 && x < 141)
                 {
-                    page(x, y, pgm_read_byte_near(gameover + i));
+                    page(x, y, pgm_read_byte_near(gameover_top + i));
                     i++;
                 }
                 else
@@ -89,6 +89,11 @@ void takingdamage(uint8_t damage)
             }
             delay(30);
         }
+        char* line = "PRESS A TO RESTART";
+        drawletters(15, 40, line);
+        drawcolor(11, 36, 1, 4, 0xFF);
+        drawcolor(11, 51, 113, 1, 0x11000000);
+        drawcolor(114, 36, 1, 4, 0xFF);
         while (!B_A);
         newgame();
     }
