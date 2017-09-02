@@ -28,6 +28,7 @@ with open('music.h', 'w') as hfile:
                     delays = []
                     for event in track:
                         if isinstance(event, midi.SetTempoEvent):
+                            # see https://github.com/vishnubob/python-midi#Side_Note_What_is_a_MIDI_Tick
                             us_per_tick = 60 * 100000 / event.bpm / pattern.resolution
                         elif isinstance(event, midi.TrackNameEvent):
                             name = event.text
@@ -43,7 +44,7 @@ with open('music.h', 'w') as hfile:
 
                 tones_array = 'const PROGMEM uint8_t ' + base + '_tones[' + str(len(tracks)) + '][] = {\n'
                 events_array = 'const PROGMEM uint8_t ' + base + '_events[' + str(len(tracks)) + '][] = {\n'
-                delays_array = 'const PROGMEM uint16_t ' + base + '_delays[' + str(len(tracks)) + '][] = {\n'
+                delays_array = 'const PROGMEM uint32_t ' + base + '_delays[' + str(len(tracks)) + '][] = {\n'
                 for name, tones, delays in tracks:
                     tones_array += '    // ' + name + '\n    { '
                     events_array += '    // ' + name + '\n    { '
@@ -60,6 +61,7 @@ with open('music.h', 'w') as hfile:
                             events_array += '1, '
                         else:
                             events_array += '0, '
+                        assert(delays[i] < 2**32) # delays are stored as uint32_t
                         delays_array += str(int(delays[i])) + ', '
                     tones_array = tones_array[:-2] + ' },\n'
                     events_array = events_array[:-2] + ' },\n'
@@ -70,7 +72,7 @@ with open('music.h', 'w') as hfile:
 
                 hfile.write('extern PROGMEM const uint8_t ' + base + '_tones**;\n')
                 hfile.write('extern PROGMEM const uint8_t ' + base + '_events**;\n')
-                hfile.write('extern PROGMEM const uint16_t ' + base + '_delays**;\n\n')
+                hfile.write('extern PROGMEM const uint32_t ' + base + '_delays**;\n\n')
                 cfile.write(tones_array)
                 cfile.write(events_array)
                 cfile.write(delays_array)
