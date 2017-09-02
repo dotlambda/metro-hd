@@ -395,44 +395,38 @@ void newlevelpos()
     {
         redraw();
         
-        char line1[MAX_STRING_LEN];
-        char line2[MAX_STRING_LEN];
+        char line[2][MAX_STRING_LEN];
         switch (monsters[0]->look)
         {
             case LOOK_BOSS_SECROB:
-                strncpy(line1, "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
-                strncpy(line2, "CLIMB THE WALL TO SURVIVE!", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
+                strncpy(line[1], "CLIMB THE WALL TO SURVIVE!", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_MEGACOREX:
-                strncpy(line1, "SAMUS WATCH OUT! MEGACOREX", MAX_STRING_LEN);
-                strncpy(line2, "IS TRYING TO KILL YOU", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS WATCH OUT! MEGACOREX", MAX_STRING_LEN);
+                strncpy(line[1], "IS TRYING TO KILL YOU", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_ZAZABI:
-                strncpy(line1, "SAMUS, FIGHT AGAINST ZAZABI", MAX_STRING_LEN);
-                strncpy(line2, "TRY NOT TO GET EATEN", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS, FIGHT AGAINST ZAZABI", MAX_STRING_LEN);
+                strncpy(line[1], "TRY NOT TO GET EATEN", MAX_STRING_LEN);
                 break;
             case LOOK_NEO_RIDLEY_DRAGON:
-                strncpy(line1, "SAMUS, BEWARE OF NEO RIDLEY.", MAX_STRING_LEN);
-                strncpy(line2, "WATCH OUT WHEN HE IS FLYING.", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS, BEWARE OF NEO RIDLEY.", MAX_STRING_LEN);
+                strncpy(line[1], "WATCH OUT WHEN HE IS FLYING.", MAX_STRING_LEN);
                 break;
         }
         // print text
         char buffer[MAX_STRING_LEN];
-        uint8_t len = strlen(line1);
-        for (int i = 0; i < len; i++)
+        for (int j = 0; j < 2; j++)
         {
-            buffer[i] = line1[i];
-            buffer[i + 1] = '\0';
-            drawletters(10, CEILING_Y / 4 + 3, buffer);
-            delay(100);
-        }
-        len = strlen(line2);
-        for (int i = 0; i < len; i++)
-        {
-            buffer[i] = line2[i];
-            buffer[i + 1] = '\0';
-            drawletters(10, CEILING_Y / 4 + 6, buffer);
-            delay(100);
+            uint8_t len = strlen(line[j]);
+            for (int i = 0; i < len; i++)
+            {
+                buffer[i] = line[j][i];
+                buffer[i + 1] = '\0';
+                drawletters(10, CEILING_Y / 4 + 3 + j * 3, buffer);
+                delay(100);             
+            }
         }
         delay(1000);
     }
