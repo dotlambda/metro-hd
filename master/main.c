@@ -126,24 +126,25 @@ void getAchievement()
                 strncpy(line2, "BOMB EXPLOSION IS NOW BIGGER", MAX_STRING_LEN);
         }
 
-            char buffer[MAX_STRING_LEN];
-            uint8_t len = strlen(line1);
-            for (int i = 0; i < len; i++)
-            {
-                buffer[i] = line1[i];
-                buffer[i + 1] = '\0';
-                drawletters(10, CEILING_Y / 4 + 3, buffer);
-                delay(100);
-            }
-            len = strlen(line2);
-            for (int i = 0; i < len; i++)
-            {
-                buffer[i] = line2[i];
-                buffer[i + 1] = '\0';
-                drawletters(10, CEILING_Y / 4 + 6, buffer);
-                delay(100);
-            }
-            delay(1000);
+        char buffer[MAX_STRING_LEN];
+        uint8_t len = strlen(line1);
+        for (int i = 0; i < len; i++)
+        {
+            buffer[i] = line1[i];
+            buffer[i + 1] = '\0';
+            drawletters(10, CEILING_Y / 4 + 3, buffer);
+            delay(100);
+        }
+        len = strlen(line2);
+        for (int i = 0; i < len; i++)
+        {
+            buffer[i] = line2[i];
+            buffer[i + 1] = '\0';
+            drawletters(10, CEILING_Y / 4 + 6, buffer);
+            delay(100);
+        }
+        delay(2000);
+        redraw();
         
     }
 }
