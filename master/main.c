@@ -151,7 +151,7 @@ void getAchievement()
 bool open_door_projectile(struct Character* projectile)
 {
     // in a boss level, we can only open the door once the boss is dead
-    if (bosslevel && monsters[0]->movement == HIDDEN)
+    if (bosslevel && monsters[0]->movement != HIDDEN)
     {
         return 0;
     }
@@ -173,7 +173,7 @@ bool open_door_projectile(struct Character* projectile)
 void open_door_bomb(uint8_t x1, uint8_t x2, uint8_t y1, uint8_t y2)
 {
     // in a boss level, we can only open the door once the boss is dead
-    if (bosslevel && monsters[0]->movement == HIDDEN)
+    if (bosslevel && monsters[0]->movement != HIDDEN)
     {
         return;
     }
@@ -645,16 +645,16 @@ int main(void)
                 uint8_t blast_x2;
                 uint8_t blast_y1;
                 uint8_t blast_y2;
-                int16_t x;
-                int16_t y;
+                int16_t x1;
+                int16_t y1;
                 int16_t x2;
                 int16_t y2;
                 const uint8_t* sprite;
                 if (Bigger_Bomb_Explosion)
                 {
-                    x = bombstruct->x - 8;
+                    x1 = bombstruct->x - 8;
                     x2 = bombstruct->x + 12;
-                    y = bombstruct->y / 4 - 2;
+                    y1 = bombstruct->y / 4 - 2;
                     y2 = bombstruct->y / 4 + bombstruct->height / 4 + 2;
                     blast_x1 = MAX(0, bombstruct->x - 8);
                     blast_x2 = MIN(bombstruct->x + bombstruct->width + 8, DISPLAY_WIDTH);
@@ -664,9 +664,9 @@ int main(void)
                 }
                 else
                 {
-                    x = bombstruct->x - 6;
+                    x1 = bombstruct->x - 6;
                     x2 = bombstruct->x + 10;
-                    y = bombstruct->y / 4 - 1;
+                    y1 = bombstruct->y / 4 - 1;
                     y2 = bombstruct->y / 4 + bombstruct->height / 4 + 2;
                     blast_x1 = MAX(0, bombstruct->x - 6);
                     blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
@@ -676,9 +676,9 @@ int main(void)
                 }
                 hide(bombstruct);
                 uint16_t i = 0;
-                for (; y < y2; y++)
+                for (int16_t y = y1; y < y2; y++)
                 {
-                    for (; x < x2; x++)
+                    for (int16_t x = x1; x < x2; x++)
                     {
                         if (x >= 0 && x < DISPLAY_WIDTH
                            && y > CEILING_Y / 4 && y < FLOOR_Y / 4
@@ -692,9 +692,9 @@ int main(void)
 
                 delay(600);
                 i = 0;
-                for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
+                for (int16_t y = y1; y < y2; y++)
                 {
-                    for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
+                    for (int16_t x = x1; x < x2; x++)
                     {   
                         if (x >= 0 && x < DISPLAY_WIDTH
                             && y > CEILING_Y / 4 && y < FLOOR_Y / 4
