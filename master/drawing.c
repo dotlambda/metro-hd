@@ -7,7 +7,10 @@
 
 void drawsplash(uint8_t show_resume_option)
 {
-    drawsprite(15, 3, 126, 19, splash);
+    drawsprite(15, 6, 40, 7, splashleft);
+    drawsprite(55, 3, 52, 15, splashcenter);
+    drawsprite(107, 6, 34, 7, splashright);
+    drawsprite(39, 19, 84, 3, splashtext);
     if (show_resume_option)
         drawsprite(43, 23, 74, 3, resume);
 }

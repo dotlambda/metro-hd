@@ -24,9 +24,6 @@ extern PROGMEM const uint8_t megacorex2[484];
 // 44x44
 extern PROGMEM const uint8_t megacorex3[484];
 
-// 44x44
-extern PROGMEM const uint8_t megacorex4[484];
-
 // 3x6
 extern PROGMEM const uint8_t secrobmunitionleft[6];
 
@@ -273,8 +270,17 @@ extern PROGMEM const uint8_t seven[9];
 // 9x3
 extern PROGMEM const uint8_t six[9];
 
-// 76x126
-extern PROGMEM const uint8_t splash[2394];
+// 59x52
+extern PROGMEM const uint8_t splashcenter[780];
+
+// 27x40
+extern PROGMEM const uint8_t splashleft[280];
+
+// 28x34
+extern PROGMEM const uint8_t splashright[238];
+
+// 12x84
+extern PROGMEM const uint8_t splashtext[252];
 
 // 9x3
 extern PROGMEM const uint8_t three[9];
