@@ -228,14 +228,23 @@ extern PROGMEM const uint8_t dot[2];
 // 9x3
 extern PROGMEM const uint8_t eight[9];
 
+// 8x3
+extern PROGMEM const uint8_t eight2[6];
+
 // 8x1
 extern PROGMEM const uint8_t ex[2];
 
 // 9x3
 extern PROGMEM const uint8_t five[9];
 
+// 8x3
+extern PROGMEM const uint8_t five2[6];
+
 // 9x3
 extern PROGMEM const uint8_t four[9];
+
+// 8x3
+extern PROGMEM const uint8_t four2[6];
 
 // 36x123
 extern PROGMEM const uint8_t gameover_top[1107];
@@ -252,8 +261,14 @@ extern PROGMEM const uint8_t labelrocket[45];
 // 9x3
 extern PROGMEM const uint8_t nine[9];
 
+// 8x3
+extern PROGMEM const uint8_t nine2[6];
+
 // 9x3
 extern PROGMEM const uint8_t one[9];
+
+// 8x3
+extern PROGMEM const uint8_t one2[6];
 
 // 14x39
 extern PROGMEM const uint8_t pause[156];
@@ -273,8 +288,14 @@ extern PROGMEM const uint8_t resume[222];
 // 9x3
 extern PROGMEM const uint8_t seven[9];
 
+// 8x3
+extern PROGMEM const uint8_t seven2[6];
+
 // 9x3
 extern PROGMEM const uint8_t six[9];
+
+// 8x3
+extern PROGMEM const uint8_t six2[6];
 
 // 59x52
 extern PROGMEM const uint8_t splashcenter[780];
@@ -291,11 +312,20 @@ extern PROGMEM const uint8_t splashtext[252];
 // 9x3
 extern PROGMEM const uint8_t three[9];
 
+// 8x3
+extern PROGMEM const uint8_t three2[6];
+
 // 9x3
 extern PROGMEM const uint8_t two[9];
 
+// 8x3
+extern PROGMEM const uint8_t two2[6];
+
 // 9x3
 extern PROGMEM const uint8_t zero[9];
+
+// 8x3
+extern PROGMEM const uint8_t zero2[6];
 
 // 14x12
 extern PROGMEM const uint8_t eyemonster_left[48];

@@ -379,7 +379,7 @@ void draw(struct Character* character)
     }
     
     if (inverted)
-        drawsprite_px_inverted(character->x, character->y, character->width, character->height, sprite);
+        drawsprite_px_rotated(character->x, character->y, character->width, character->height, sprite);
     else
         drawsprite_px(character->x, character->y, character->width, character->height, sprite);
 }

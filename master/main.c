@@ -129,7 +129,7 @@ void getAchievement()
             Bigger_Bomb_Explosion = true;
             eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
             strncpy(line1, "WELL DONE! THE RADIUS OF YOUR", MAX_STRING_LEN);
-            strncpy(line2, "BOMB EXPLOSION IS BIGGER NOW", MAX_STRING_LEN);
+            strncpy(line2, "BOMB EXPLOSION IS NOW BIGGER", MAX_STRING_LEN);
     }
 
     char buffer[MAX_STRING_LEN];
