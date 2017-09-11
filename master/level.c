@@ -369,6 +369,10 @@ void newlevelpos()
 
     energytankstruct->look = LOOK_ENERGYTANK;
     initcharacter(energytankstruct);
+    if (rechargeroom || bosslevel)
+    {
+        energytankstruct->look = HIDDEN;
+    }
     energytankstruct->x = really_random_below(DISPLAY_WIDTH - 9);
     if (really_random_below(2) == 0)
     {

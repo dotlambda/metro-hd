@@ -353,7 +353,7 @@ void drawrechargeroom()
     drawsprite(23, 6, 68, 4, rechargeleft);
     drawcolor(91, 6, 12, 4, 0xFF);
     drawsprite(103, 6, 37, 4, rechargeright);
-    drawcolor(138, 6, 18, 4, 0xFF);
+    drawcolor(140, 6, 16, 4, 0xFF);
     drawsprite(DISPLAY_WIDTH/2 - 12, 10, 24, 7, rechargetop);
     drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
 }

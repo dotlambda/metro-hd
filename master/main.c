@@ -116,20 +116,20 @@ void getAchievement()
             Rocket_Upgrade = true;
             eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
             strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
-            strncpy(line2, "CAN NOW SHOOT FASTER.", MAX_STRING_LEN);
+            strncpy(line2, "CAN SHOOT FASTER NOW.", MAX_STRING_LEN);
             break;
 
         case 1:
             Run_And_Jump_Faster_Upgrade = true;
             eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
-            strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
-            strncpy(line2, "ARE NOW FASTER", MAX_STRING_LEN);
+            strncpy(line1, "CONGRATULATIONS! YOU CAN", MAX_STRING_LEN);
+            strncpy(line2, "RUN FASTER NOW", MAX_STRING_LEN);
             break;
         case 2:
             Bigger_Bomb_Explosion = true;
             eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
             strncpy(line1, "WELL DONE! THE RADIUS OF YOUR", MAX_STRING_LEN);
-            strncpy(line2, "BOMB EXPLOSION IS NOW BIGGER", MAX_STRING_LEN);
+            strncpy(line2, "BOMB EXPLOSION IS BIGGER NOW", MAX_STRING_LEN);
     }
 
     char buffer[MAX_STRING_LEN];
@@ -241,6 +241,12 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
             if (monsters[i]->look == LOOK_BIGXPARASITE)
             {
                 getAchievement();
+                num_bombs = 10;
+                num_rockets = 30;
+                protagonist->health = 99;
+                drawnumber(29, 1, protagonist->health);
+                drawnumber(57, 1, num_rockets);
+                drawnumber(86, 1, num_bombs);
             }
             else
             {
@@ -829,15 +835,15 @@ int main(void)
                 if (xparasites[i]->look == LOOK_XPARASITE1)
                 {
                     num_rockets += 2;
-                    if (num_rockets > 20)
-                        num_rockets = 20;
+                    if (num_rockets > 30)
+                        num_rockets = 30;
                     drawnumber(57, 1, num_rockets);
                 }
                 else
                 {
                     num_bombs += 1;
-                    if (num_bombs > 20)
-                        num_bombs = 20;
+                    if (num_bombs > 10)
+                        num_bombs = 10;
                     drawnumber(86, 1, num_bombs);
                 }
             }
