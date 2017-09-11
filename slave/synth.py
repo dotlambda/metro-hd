@@ -27,8 +27,8 @@ class Synth():
         return array
     def appendTime(self, time): # time is in ms
         print time
-        assert(time < 2 ** 32) # times are stored as uint32_t
-        #TODO check relative error
+        assert(time < 2 ** 16) # times are stored as uint16_t
+        #TODO check relative error of conversion to ms
         # append time to array
         array = str(int(round(time)))
         array += ", "
@@ -39,11 +39,11 @@ class Synth():
         print "Number of tracks:",len(mid.tracks)
         for i, track in enumerate(mid.tracks):
             print('Track {}: {}'.format(i, track.name))
+            t = 0
             if not (includeTracks==[] or i in includeTracks):
                 continue
-            t=0
             for message in track:
-                t+=message.time
+                t+= message.time
                 if (message.type=="note_on" or message.type=="note_off") :
                     e={}
                     if message.velocity==0:
@@ -60,10 +60,13 @@ class Synth():
         tempo=600000
         events.sort(key=lambda tup: tup[0])
         tones_array = "const PROGMEM uint8_t " + arrayname + "_tones[] = {\n    "
-        times_array = "const PROGMEM uint32_t " + arrayname + "_times[] = {\n    "
+        times_array = "const PROGMEM uint16_t " + arrayname + "_times[] = {\n    "
         nr_note_events = 0
+        t = 0
         for e in events:
-            time = e[0]*10**(-3)/480.*tempo # in ms
+            # calculate the number of ms to wait after previous event
+            time = (e[0] - t) * 10**(-3) / 480. * tempo # in ms
+            t += e[0]
             ev=e[1]
             if ev["type"]=="note_on":
                 print "PLAY  ",ev["note"]-self.noteOffset
@@ -84,6 +87,8 @@ class Synth():
                 print "TEMPO ", tempo,"=",60000000./tempo,"BPM"
         tones_array = tones_array[:-2] + "\n};"
         times_array = times_array[:-2] + "\n};"
+        hfile.write("extern PROGMEM const uint8_t " + arrayname + "_tones[" + str(nr_note_events) + "];\n")
+        hfile.write("extern PROGMEM const uint16_t " + arrayname + "_times[" + str(nr_note_events) + "];\n\n")
         cfile.write(tones_array)
         cfile.write("\n")
         cfile.write(times_array)
@@ -91,6 +96,9 @@ class Synth():
 
 with open(hfilename, "w") as hfile:
     with open(cfilename, "w") as cfile:
+        cfile.write("#include \"music.h\"\n\n")
+        hfile.write("#ifndef MUSIC_H\n#define MUSIC_H\n\n#include <inttypes.h>\n#include <avr/pgmspace.h>\n\n")
         synth=Synth(60 - 36, hfile, cfile)
         # for ... in os.walk("../music"):
         synth.writeCArray("elise2.mid", "elise")
+        hfile.write("#endif")
