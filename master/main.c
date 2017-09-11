@@ -85,10 +85,17 @@ void takingdamage(uint8_t damage)
                 else if ((x == 28 || x == 131) && (y >= 17 && y < 21))
                 {
                     page (x, y, 0xFF);
+                    
+
                 }
                 else
                 {
                     page(x, y, 0);
+                    
+                    if (y == 20 && x == DISPLAY_WIDTH - 1)
+                    {
+                        drawletters(40, 18, "PRESS A TO RESTART");
+                    }
                 }
                 if (y == 21)
                 {
@@ -98,7 +105,6 @@ void takingdamage(uint8_t damage)
             }
             delay(30);
         }
-        drawletters(40, 18, "PRESS A TO RESTART");
         while (!B_A);
         newgame();
     }
