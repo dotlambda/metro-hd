@@ -4,7 +4,6 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 
-extern PROGMEM const uint8_t elise_tones[1148];
-extern PROGMEM const uint16_t elise_times[1148];
+extern const uint16_t elise[228] PROGMEM;
 
 #endif

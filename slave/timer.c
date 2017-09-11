@@ -32,6 +32,13 @@ SIGNAL (TIMER2_COMPA_vect)
 
 }
 
+void reset_timer()
+{
+    cli();
+    ms_timer = 0;
+    sei();
+}
+
 uint32_t getMsTimer() {
 	uint32_t ret;
 	cli(); // interrupts aus

@@ -7,80 +7,41 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "uart.h"
-#include "tone.h"
+#include "timer.h"
 #include "music.h"
 
 void init();
 
-volatile uint8_t tone_on[NO_TONES];
-volatile uint16_t t[NO_TONES];
-
-volatile uint32_t time;
-SIGNAL(TIMER1_COMPA_vect)
+int main()
 {
-    time++;
-}
-
-SIGNAL(TIMER2_COMPA_vect)
-{
-    uint32_t pwm = 0;
-    uint8_t nr_tones = 0;
-    for (uint8_t i = 0; i < NO_TONES; ++i)
+    uint8_t i = 0;
+    while (1)
     {
-        if (tone_on[i])
+        uint16_t delay = pgm_read_word(&elise[i]);
+        if (i > 0 && delay == 0)
         {
-            if (t[i] >= toneLength[i])
-                t[i] = 0;
-            pwm += pgm_read_byte(&tones[toneOffset[i] + t[i]]);
-            nr_tones++;
-            t[i]++;
+            PINB = 0;
+            break;
         }
-        else
-        {
-            t[i] = 0;
-        }
+        i += 2;
+        reset_timer();
+        while(getMsTimer() < delay);
+        OCR1A = pgm_read_word(&elise[i+1]);
     }
-    if (nr_tones == 0)
-        OCR1A = 0;
-    else
-        OCR1A = pwm / nr_tones;
-}
-
-int main(void)
-{
-    init();
-
-    for (uint8_t i = 0; i < 2078; ++i)
-    {
-        uint16_t delay = pgm_read_word(&elise_times[i]);
-        uint32_t now = time;
-        while(time < now + delay);
-        uint8_t tone = pgm_read_byte(&elise_tones[i]);
-        tone_on[tone & ~(1 << 7)] = tone & (1 << 7);
-    }
+    OCR1A = 0;
 }
 
 void init()
 {
-    for (uint8_t i = 0; i < NO_TONES; ++i)
-    {
-        tone_on[i] = 0;
-        t[i] = 0;
-    }
-
     uartInit();   // serielle Ausgabe an PC
+    timerInit();
+
+    DDRB |= (1 << 1); // set B1 to output
 
     // Timer1
-    DDRB |= (1 << 1); // set B1 to output
-    TCCR1A = (1 << WGM12) | (1 << WGM10); // Fast PWM, 8-bit
-    TCCR1A |= (1 << COM1A1); // toggle pin B1 on compare match
-    TCCR1B = (1 << CS10); // prescaler = 1
-    TIMSK1 = (1 << OCIE1A); // enable interrupt
-
-    // Timer2
-    TCCR2A = (1 << WGM21); // CTC
-    TCCR2B = (1 << CS22); // prescaler = 64
-    OCR2A = 25;
-    TIMSK2 |= (1 << OCIE2A); // enable interrupt
-    sei();
+    // Fast PWM, TOP is OCR1A
+    TCCR1A = (1 << WGM13) | (1 << WGM12) | (1 << WGM11) | (1 << WGM10);
+    TCCR1A |= (1 << COM1A1); // toggle pin OC1A (B1) on compare match
+    TCCR1B = (1 << CS11); // prescaler = 8
+    //TIMSK1 = (1 << OCIE1A); // enable interrupt
 }

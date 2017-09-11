@@ -8,7 +8,7 @@ PROJECT = basis
 # Sourcefiles
 SOURCE = main.c music.c
 # Files from basis
-SOURCE += uart.c
+SOURCE += uart.c timer.c
 # Libraries
 LIBS = -lm 
 

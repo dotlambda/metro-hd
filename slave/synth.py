@@ -2,6 +2,7 @@
 
 from mido import MidiFile
 
+F_CPU = 16000000
 n_octave=6
 
 hfilename = "music.h"
@@ -12,34 +13,10 @@ class Synth():
         self.noteOffset = noteOffset
         self.hfile = hfile
         self.cfile = cfile
-    def appendTone(self,nr, onOff):
-        if nr<0 or nr>n_octave*12:
-            print "-----------",nr,"out of range"
-            return False
-        assert(nr < (1 << 7)) # the most significant bit is used for storing onOff
-        # append tone to array
-        array = ""
-        if onOff:
-            array += str(nr | (1 << 7))
-        else:
-            array += str(nr)
-        array += ", "
-        return array
-    def appendTime(self, time): # time is in ms
-        print time
-        #TODO check relative error of conversion to tenth ms
-        time /= 2 ** 10 # convert to tenth ms
-        assert(time < 2 ** 16) # times are stored as uint16_t
-        # append time to array
-        array = str(int(round(time)))
-        array += ", "
-        return array
     def writeCArray(self,filename,arrayname,includeTracks=[]):
         mid = MidiFile(filename)
         events=[]
-        print "Number of tracks:",len(mid.tracks)
         for i, track in enumerate(mid.tracks):
-            print('Track {}: {}'.format(i, track.name))
             t = 0
             if not (includeTracks==[] or i in includeTracks):
                 continue
@@ -58,41 +35,46 @@ class Synth():
                     e["type"]=message.type
                     e["tempo"]=message.tempo
                     events.append((t,e))
-        tempo=600000
-        events.sort(key=lambda tup: tup[0])
-        tones_array = "const PROGMEM uint8_t " + arrayname + "_tones[] = {\n    "
-        times_array = "const PROGMEM uint16_t " + arrayname + "_times[] = {\n    "
-        nr_note_events = 0
+        tempo = 600000
+        events.sort(key = lambda tup: tup[0])
+        notes = set()
+        note = None
+        last_time = 0
         t = 0
+        changes = []
         for e in events:
-            # calculate the number of ms to wait after previous event
-            time = (e[0] - t) / 480. * tempo # in us
-            t=e[0]
-            ev=e[1]
-            if ev["type"]=="note_on":
-                print "PLAY  ",ev["note"]-self.noteOffset
-                new_tone = self.appendTone(ev["note"]-self.noteOffset,True)
-                if new_tone:
-                    tones_array += new_tone
-                    times_array += self.appendTime(time)
-                    nr_note_events += 1
-            elif ev["type"]=="note_off":
-                print "STOP ",ev["note"]-self.noteOffset
-                new_tone = self.appendTone(ev["note"]-self.noteOffset,False)
-                if new_tone:
-                    tones_array += new_tone
-                    times_array += self.appendTime(time)
-                    nr_note_events += 1
-            elif ev["type"]=="set_tempo":
-                tempo=ev["tempo"]
-                print "TEMPO ", tempo,"=",60000000./tempo,"BPM"
-        tones_array = tones_array[:-2] + "\n};"
-        times_array = times_array[:-2] + "\n};"
-        hfile.write("extern PROGMEM const uint8_t " + arrayname + "_tones[" + str(nr_note_events) + "];\n")
-        hfile.write("extern PROGMEM const uint16_t " + arrayname + "_times[" + str(nr_note_events) + "];\n\n")
-        cfile.write(tones_array)
-        cfile.write("\n")
-        cfile.write(times_array)
+            ev = e[1]
+            if ev["type"]=="set_tempo":
+                tempo = ev["tempo"]
+            elif ev["type"] == "note_on":
+                notes.add(ev["note"])
+            elif ev["type"] == "note_off":
+                # should be notes.remove() but MIDI files are not coherent
+                notes.discard(ev["note"])
+            if len(notes) > 0:
+                if note not in notes or max(notes) > note:
+                    note = max(notes)
+                    t = e[0]
+                    delay = int((t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
+                    last_time = t
+                    freq = 2.0 ** ((note - 69) / 12.0) * 440.0 # in Hz
+                    period = 1.0 / freq # in seconds
+                    # value for compare register with prescaler=8
+                    compare = F_CPU * period / 8
+                    if delay == 0 and len(changes) > 0:
+                        changes[-1]["freq"] = int(compare)
+                    else:
+                        changes.append({"delay": delay, "freq": int(compare)})
+        array = "const uint16_t " + arrayname + "[] PROGMEM = {\n"
+        for change in changes:
+            delay = change["delay"]
+            assert(delay < 2 ** 16)
+            freq = change["freq"]
+            assert(freq < 2 ** 16)
+            array += "    " + str(delay) + ", " + str(freq) + ",\n"
+        array = array[:-2] + "\n};"
+        hfile.write("extern const uint16_t " + arrayname + "[" + str(2 * len(changes)) + "] PROGMEM;\n\n")
+        cfile.write(array)
         cfile.write("\n\n")
 
 with open(hfilename, "w") as hfile:
