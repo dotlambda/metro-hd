@@ -284,6 +284,17 @@ int main(void)
         if (B_A)
         {
             initial_level = 0; // start a new game
+            clear();
+            drawsprite(20, 5, 8, 2, Abutton);
+            drawletters(30, 5, "SHOOT A ROCKET");
+            drawsprite(20, 10, 8, 3, BButton);
+            drawletters(30, 10, "PLACE A BOMB");
+            drawsprite(20, 15, 8, 2, Pbutton);
+            drawletters(30, 15, "PAUSE");
+            drawletters(20, 20, "PRESS");
+            drawsprite(48, 20, 9, 3, UPButton);
+            drawletters(60, 20, "TO JUMP");
+            delay(5000);
             break;
         }
         if (initial_level != 0 && B_B)
