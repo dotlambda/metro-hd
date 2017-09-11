@@ -27,8 +27,9 @@ class Synth():
         return array
     def appendTime(self, time): # time is in ms
         print time
+        #TODO check relative error of conversion to tenth ms
+        time /= 2 ** 10 # convert to tenth ms
         assert(time < 2 ** 16) # times are stored as uint16_t
-        #TODO check relative error of conversion to ms
         # append time to array
         array = str(int(round(time)))
         array += ", "
@@ -43,7 +44,7 @@ class Synth():
             if not (includeTracks==[] or i in includeTracks):
                 continue
             for message in track:
-                t+= message.time
+                t+=message.time
                 if (message.type=="note_on" or message.type=="note_off") :
                     e={}
                     if message.velocity==0:
@@ -65,8 +66,8 @@ class Synth():
         t = 0
         for e in events:
             # calculate the number of ms to wait after previous event
-            time = (e[0] - t) * 10**(-3) / 480. * tempo # in ms
-            t += e[0]
+            time = (e[0] - t) / 480. * tempo # in us
+            t=e[0]
             ev=e[1]
             if ev["type"]=="note_on":
                 print "PLAY  ",ev["note"]-self.noteOffset
@@ -100,5 +101,5 @@ with open(hfilename, "w") as hfile:
         hfile.write("#ifndef MUSIC_H\n#define MUSIC_H\n\n#include <inttypes.h>\n#include <avr/pgmspace.h>\n\n")
         synth=Synth(60 - 36, hfile, cfile)
         # for ... in os.walk("../music"):
-        synth.writeCArray("elise2.mid", "elise")
+        synth.writeCArray("../music/rand.mid", "elise")
         hfile.write("#endif")
