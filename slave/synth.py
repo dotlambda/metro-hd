@@ -3,14 +3,12 @@
 from mido import MidiFile
 
 F_CPU = 16000000
-n_octave=6
 
 hfilename = "music.h"
 cfilename = "music.c"
 
 class Synth():
-    def __init__(self, noteOffset, hfile, cfile):
-        self.noteOffset = noteOffset
+    def __init__(self, hfile, cfile):
         self.hfile = hfile
         self.cfile = cfile
     def writeCArray(self,filename,arrayname,includeTracks=[]):
@@ -60,7 +58,8 @@ class Synth():
                     freq = 2.0 ** ((note - 69) / 12.0) * 440.0 # in Hz
                     period = 1.0 / freq # in seconds
                     # value for compare register with prescaler=8
-                    compare = F_CPU * period / 8
+                    # /2 because the timer counts up twice per period
+                    compare = F_CPU * period / 8 / 2
                     if delay == 0 and len(changes) > 0:
                         changes[-1]["freq"] = int(compare)
                     else:
@@ -70,10 +69,10 @@ class Synth():
             delay = change["delay"]
             assert(delay < 2 ** 16)
             freq = change["freq"]
-            assert(freq < 2 ** 16)
+            #assert(freq < 2 ** 16)
             array += "    " + str(delay) + ", " + str(freq) + ",\n"
-        array = array[:-2] + "\n};"
-        hfile.write("extern const uint16_t " + arrayname + "[" + str(2 * len(changes)) + "] PROGMEM;\n\n")
+        array += "    0\n};"
+        hfile.write("extern const uint16_t " + arrayname + "[" + str(2 * len(changes) + 1) + "] PROGMEM;\n\n")
         cfile.write(array)
         cfile.write("\n\n")
 
@@ -81,7 +80,7 @@ with open(hfilename, "w") as hfile:
     with open(cfilename, "w") as cfile:
         cfile.write("#include \"music.h\"\n\n")
         hfile.write("#ifndef MUSIC_H\n#define MUSIC_H\n\n#include <inttypes.h>\n#include <avr/pgmspace.h>\n\n")
-        synth=Synth(60 - 36, hfile, cfile)
+        synth=Synth(hfile, cfile)
         # for ... in os.walk("../music"):
-        synth.writeCArray("../music/rand.mid", "elise")
+        synth.writeCArray("../music/ussr1.mid", "elise")
         hfile.write("#endif")

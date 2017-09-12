@@ -4,6 +4,6 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 
-extern const uint16_t elise[228] PROGMEM;
+extern const uint16_t elise[821] PROGMEM;
 
 #endif
