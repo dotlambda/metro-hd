@@ -371,22 +371,27 @@ void newlevelpos()
     initcharacter(energytankstruct);
     if (rechargeroom || bosslevel)
     {
-        energytankstruct->look = HIDDEN;
-    }
-    energytankstruct->x = really_random_below(DISPLAY_WIDTH - 9);
-    if (really_random_below(2) == 0)
-    {
-        energytankstruct->y = 19 * 4 - energytankstruct->height;
+        energytankstruct->movement = HIDDEN;
     }
     else
     {
-        energytankstruct->y = 13 * 4 - energytankstruct->height;
-    }
-    for (uint8_t x = energytankstruct->x; x < energytankstruct->x + 9; x++)
-    {
-        if (!obstacle(x, energytankstruct->y + energytankstruct->height))
+        // -8 and +4 to ensure the energy tank is not inside the wall
+        energytankstruct->x = really_random_below(DISPLAY_WIDTH - energytankstruct->width - 8) + 4;
+        if (really_random_below(2) == 0)
         {
-            energytankstruct->movement = HIDDEN;
+            energytankstruct->y = 19 * 4 - energytankstruct->height;
+        }
+        else
+        {
+            energytankstruct->y = 13 * 4 - energytankstruct->height;
+        }
+        for (uint8_t x = energytankstruct->x; x < energytankstruct->x + energytankstruct->width; x++)
+        {
+            // ensure that the energy tank is standing on a platform
+            if (!obstacle(x, energytankstruct->y + energytankstruct->height))
+            {
+                energytankstruct->movement = HIDDEN;
+            }
         }
     }
     
