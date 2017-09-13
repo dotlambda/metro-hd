@@ -276,6 +276,7 @@ int main(void)
 {
 	init();
 
+    uart_putc(0); // play title music
     // show splash screen until button A is pressed
     initial_level = eeprom_read_dword(&initial_level_stored);
     drawsplash(initial_level != 0);
@@ -339,7 +340,11 @@ int main(void)
     bombstruct = &bomb_;
     
     left_door_open = true;
-    right_door_open = true;    
+    right_door_open = true;
+    
+    //ingame music
+    uart_putc(1);
+    
     newgame();
     
     while (1)
@@ -672,6 +677,7 @@ int main(void)
         {
             if (explode < getMsTimer())
             {
+                uart_putc('e');
                 uint8_t blast_x1;
                 uint8_t blast_x2;
                 uint8_t blast_y1;

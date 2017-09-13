@@ -11,7 +11,7 @@ class Synth():
     def __init__(self, hfile, cfile):
         self.hfile = hfile
         self.cfile = cfile
-    def writeCArray(self,filename,arrayname,allow_pause=True,includeTracks=[]):
+    def writeCArray(self,filename,arrayname,allow_pause=True,timescale=1,includeTracks=[],pitch=1):
         mid = MidiFile(filename)
         events=[]
         for i, track in enumerate(mid.tracks):
@@ -21,7 +21,7 @@ class Synth():
             for message in track:
                 t+=message.time
                 if (message.type=="note_on" or message.type=="note_off") :
-                    e={}
+                    e={} 
                     if message.velocity==0:
                         e["type"]="note_off"
                     else:
@@ -53,20 +53,20 @@ class Synth():
                 if note not in notes or max(notes) > note:
                     note = max(notes)
                     t = e[0]
-                    delay = int((t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
+                    delay = int(timescale*(t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
                     last_time = t
                     freq = 2.0 ** ((note - 69) / 12.0) * 440.0 # in Hz
                     period = 1.0 / freq # in seconds
                     # value for compare register with prescaler=8
                     # /2 because the timer counts up twice per period
-                    compare = F_CPU * period / 8 / 2
+                    compare = F_CPU * period / 8 / 2 / pitch
                     if delay == 0 and len(changes) > 0:
                         changes[-1]["freq"] = int(compare)
                     else:
                         changes.append({"delay": delay, "freq": int(compare)})
             elif allow_pause: # there is currently no note playing
                 t = e[0]
-                delay = int((t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
+                delay = int(timescale*(t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
                 last_time = t
                 compare = 0 # sound off
                 if delay == 0 and len(changes) > 0:
@@ -91,5 +91,10 @@ with open(hfilename, "w") as hfile:
         hfile.write("#ifndef MUSIC_H\n#define MUSIC_H\n\n#include <inttypes.h>\n#include <avr/pgmspace.h>\n\n")
         synth=Synth(hfile, cfile)
         # for ... in os.walk("../music"):
-        synth.writeCArray("../music/sevenfortyam.mid", "elise", True)
+        synth.writeCArray("../../bomb_explosion_1.wav.mid", "elise", True)
+        #synth.writeCArray("../music/sevenfortyam.mid", "splash", True)
+        #synth.writeCArray("../music/Combat 2.mid", "splash", True, 4, [3])
+        #synth.writeCArray("../music/SERAPHO.MID", "splash", True, 1, [1], .5)
+        synth.writeCArray("../music/Boss_Musik_2.mid", "splash", True)
+        synth.writeCArray("../music/Ingame_Musik_Tief.mid", "ingame", True)
         hfile.write("#endif")
