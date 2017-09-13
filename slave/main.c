@@ -21,7 +21,7 @@ int main()
 {
     init();
 
-    while (1)
+    /*while (1)
     {
         while(!uart_data_waiting());
         switch (uart_getc())
@@ -47,7 +47,14 @@ int main()
         _delay_us(100);
     }
     OCR1A = 0;
-    _delay_ms(1000);
+    _delay_ms(1000);*/
+
+    // random
+    /*while(1)
+    {
+        OCR1A = random() % 100 * 100 + 2000;
+        _delay_ms(300);
+    }*/
 
     while (1)
     {
