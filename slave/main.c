@@ -21,14 +21,22 @@ int main()
 {
     init();
 
-    // shoot
-    for (uint16_t i = 0; i < 10000; i += 15)
+    while (1)
     {
-        OCR1A = i;
-        _delay_ms(1);
+        while(!uart_data_waiting());
+        switch (uart_getc())
+        {
+            case 's':
+                // shoot
+                for (uint16_t i = 0; i < 10000; i += 15)
+                {
+                    OCR1A = i;
+                    _delay_us(500);
+                }
+                OCR1A = 0;
+                break;
+        }
     }
-    OCR1A = 0;
-    _delay_ms(1000);
 
     // explosion
     for (uint16_t i = 5000; i < 40000; i *= 1.002)

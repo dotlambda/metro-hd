@@ -580,6 +580,7 @@ int main(void)
                 }
                 if (enough_space)
                 {
+                    uart_putc('s');
                     projectiles[i]->movement = PROJECTILE;
                     draw(projectiles[i]);
                     num_rockets--;
@@ -597,6 +598,7 @@ int main(void)
                 }
                 else if(open_door_projectile(projectiles[i]))
                 {
+                    uart_putc('s');
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
                     drawnumber(57, 1, num_rockets);
