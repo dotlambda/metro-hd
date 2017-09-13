@@ -360,8 +360,11 @@ void newlevelpos()
     
     // no water/spikes when there is a frog/sidehopper
     // these would otherwise fall into the void
-    if (monsters[0]->movement == JUMPMOVE)
-        nofloor = UINT32_MAX;
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
+    {
+        if (monsters[i]->movement == JUMPMOVE)
+            nofloor = UINT32_MAX;
+    }
 
     for (uint8_t i = 0; i < NUM_ROCKETS; ++i)    
         projectiles[i]->movement = HIDDEN;
