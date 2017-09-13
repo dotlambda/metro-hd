@@ -17,6 +17,9 @@ EEMEM int32_t level_stored;
 EEMEM uint8_t health_stored;
 EEMEM uint8_t num_rockets_stored;
 EEMEM uint8_t num_bombs_stored;
+EEMEM bool Rocket_Upgrade_stored;
+EEMEM bool Run_And_Jump_Faster_Upgrade_stored;
+EEMEM bool Bigger_Bomb_Explosion_stored;
 
 long obstacle(uint8_t x, uint8_t y)
 {
@@ -357,8 +360,11 @@ void newlevelpos()
     
     // no water/spikes when there is a frog/sidehopper
     // these would otherwise fall into the void
-    if (monsters[0]->movement == JUMPMOVE)
-        nofloor = UINT32_MAX;
+    for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
+    {
+        if (monsters[i]->movement == JUMPMOVE)
+            nofloor = UINT32_MAX;
+    }
 
     for (uint8_t i = 0; i < NUM_ROCKETS; ++i)    
         projectiles[i]->movement = HIDDEN;
@@ -366,20 +372,29 @@ void newlevelpos()
 
     energytankstruct->look = LOOK_ENERGYTANK;
     initcharacter(energytankstruct);
-    energytankstruct->x = really_random_below(DISPLAY_WIDTH - 9);
-    if (really_random_below(2) == 0)
+    if (rechargeroom || bosslevel)
     {
-        energytankstruct->y = 19 * 4 - energytankstruct->height;
+        energytankstruct->movement = HIDDEN;
     }
     else
     {
-        energytankstruct->y = 13 * 4 - energytankstruct->height;
-    }
-    for (uint8_t x = energytankstruct->x; x < energytankstruct->x + 9; x++)
-    {
-        if (!obstacle(x, energytankstruct->y + energytankstruct->height))
+        // -8 and +4 to ensure the energy tank is not inside the wall
+        energytankstruct->x = really_random_below(DISPLAY_WIDTH - energytankstruct->width - 8) + 4;
+        if (really_random_below(2) == 0)
         {
-            energytankstruct->movement = HIDDEN;
+            energytankstruct->y = 19 * 4 - energytankstruct->height;
+        }
+        else
+        {
+            energytankstruct->y = 13 * 4 - energytankstruct->height;
+        }
+        for (uint8_t x = energytankstruct->x; x < energytankstruct->x + energytankstruct->width; x++)
+        {
+            // ensure that the energy tank is standing on a platform
+            if (!obstacle(x, energytankstruct->y + energytankstruct->height))
+            {
+                energytankstruct->movement = HIDDEN;
+            }
         }
     }
     
@@ -392,45 +407,38 @@ void newlevelpos()
     {
         redraw();
         
-        #define MAX_STRING_LEN 40
-        char line1[MAX_STRING_LEN];
-        char line2[MAX_STRING_LEN];
+        char line[2][MAX_STRING_LEN];
         switch (monsters[0]->look)
         {
             case LOOK_BOSS_SECROB:
-                strncpy(line1, "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
-                strncpy(line2, "CLIMB THE WALL TO SURVIVE!", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS, THIS IS THE SECROB", MAX_STRING_LEN);
+                strncpy(line[1], "CLIMB THE WALL TO SURVIVE!", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_MEGACOREX:
-                strncpy(line1, "SAMUS WATCH OUT! MEGACOREX", MAX_STRING_LEN);
-                strncpy(line2, "IS TRYING TO KILL YOU", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS WATCH OUT! MEGACOREX", MAX_STRING_LEN);
+                strncpy(line[1], "IS TRYING TO KILL YOU", MAX_STRING_LEN);
                 break;
             case LOOK_BOSS_ZAZABI:
-                strncpy(line1, "SAMUS, FIGHT AGAINST ZAZABI", MAX_STRING_LEN);
-                strncpy(line2, "TRY NOT TO GET EATEN", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS, FIGHT AGAINST ZAZABI", MAX_STRING_LEN);
+                strncpy(line[1], "TRY NOT TO GET EATEN", MAX_STRING_LEN);
                 break;
             case LOOK_NEO_RIDLEY_DRAGON:
-                strncpy(line1, "SAMUS, BEWARE OF NEO RIDLEY.", MAX_STRING_LEN);
-                strncpy(line2, "WATCH OUT WHEN HE IS FLYING.", MAX_STRING_LEN);
+                strncpy(line[0], "SAMUS, BEWARE OF NEO RIDLEY.", MAX_STRING_LEN);
+                strncpy(line[1], "WATCH OUT WHEN HE IS FLYING.", MAX_STRING_LEN);
                 break;
         }
         // print text
         char buffer[MAX_STRING_LEN];
-        uint8_t len = strlen(line1);
-        for (int i = 0; i < len; i++)
+        for (int j = 0; j < 2; j++)
         {
-            buffer[i] = line1[i];
-            buffer[i + 1] = '\0';
-            drawletters(10, CEILING_Y / 4 + 3, buffer);
-            delay(100);
-        }
-        len = strlen(line2);
-        for (int i = 0; i < len; i++)
-        {
-            buffer[i] = line2[i];
-            buffer[i + 1] = '\0';
-            drawletters(10, CEILING_Y / 4 + 6, buffer);
-            delay(100);
+            uint8_t len = strlen(line[j]);
+            for (int i = 0; i < len; i++)
+            {
+                buffer[i] = line[j][i];
+                buffer[i + 1] = '\0';
+                drawletters(10, CEILING_Y / 4 + 3 + j * 3, buffer);
+                delay(100);             
+            }
         }
         delay(1000);
     }
@@ -482,6 +490,12 @@ void newgame()
     {
         initial_level = getMsTimer();
         level = 0;
+        Run_And_Jump_Faster_Upgrade = false;
+        Rocket_Upgrade = false;
+        Bigger_Bomb_Explosion = false;
+        eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
+        eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
+        eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
         eeprom_write_block(&initial_level, &initial_level_stored, sizeof initial_level);
         eeprom_write_block(&level, &level_stored, sizeof level);
         eeprom_write_block(&protagonist->health, &health_stored, sizeof protagonist->health);
@@ -492,6 +506,8 @@ void newgame()
     }
     else // resume previous game
     {
+        eeprom_read_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
+        eeprom_read_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
         eeprom_read_block(&level, &level_stored, sizeof level);
         protagonist->health = eeprom_read_byte(&health_stored);
         num_rockets = eeprom_read_byte(&num_rockets_stored);

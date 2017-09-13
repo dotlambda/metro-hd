@@ -13,6 +13,7 @@
 #include "sprites.h"
 #include "rand.h"
 #include "drawing.h"
+#include "string.h"
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
@@ -31,6 +32,7 @@ uint32_t nextfireballmoveevent[NUM_FIREBALLS];
 uint32_t nextfireballjumpevent[NUM_FIREBALLS];
 uint32_t nextfireevent = 0;
 uint32_t nextrechargeevent = 0;
+
 
 void init();
 
@@ -71,19 +73,35 @@ void takingdamage(uint8_t damage)
     {
         // game over
         uint16_t i = 0;
-        for (uint8_t y = 0; y < DISPLAY_HEIGHT / 4; y++)
+        for (uint8_t y = 0; y < 26; y++)
         {
             for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
             {
-                if (y > 7 && y < 21 && x > 17 && x < 141)
+                if (y >= 8 && y < 17 && x >= 18 && x < 141)
                 {
-                    page(x, y, pgm_read_byte_near(gameover + i));
+                    page(x, y, pgm_read_byte_near(gameover_top + i));
                     i++;
+                }
+                else if ((x == 28 || x == 131) && (y >= 17 && y < 21))
+                {
+                    page (x, y, 0xFF);
+                    
+
                 }
                 else
                 {
                     page(x, y, 0);
+                    
+                    if (y == 20 && x == DISPLAY_WIDTH - 1)
+                    {
+                        drawletters(40, 18, "PRESS A TO RESTART");
+                    }
                 }
+                if (y == 21)
+                {
+                    drawcolor(28, 21, 104, 1, 0b00000011);
+                }
+                
             }
             delay(30);
         }
@@ -92,85 +110,99 @@ void takingdamage(uint8_t damage)
     }
 }
 
+void getAchievement()
+{ 
+    char line1[MAX_STRING_LEN];
+    char line2[MAX_STRING_LEN];
+
+    srand(level_seed);
+    switch(random_below(3))
+    {
+        case 0:
+            Rocket_Upgrade = true;
+            eeprom_write_block(&Rocket_Upgrade, &Rocket_Upgrade_stored, sizeof Rocket_Upgrade);
+            strncpy(line1, "CONGRATULATIONS! YOU", MAX_STRING_LEN);
+            strncpy(line2, "CAN SHOOT FASTER NOW.", MAX_STRING_LEN);
+            break;
+
+        case 1:
+            Run_And_Jump_Faster_Upgrade = true;
+            eeprom_write_block(&Run_And_Jump_Faster_Upgrade, &Run_And_Jump_Faster_Upgrade_stored, sizeof Run_And_Jump_Faster_Upgrade);
+            strncpy(line1, "CONGRATULATIONS! YOU CAN", MAX_STRING_LEN);
+            strncpy(line2, "RUN FASTER NOW", MAX_STRING_LEN);
+            break;
+        case 2:
+            Bigger_Bomb_Explosion = true;
+            eeprom_write_block(&Bigger_Bomb_Explosion, &Bigger_Bomb_Explosion_stored, sizeof Bigger_Bomb_Explosion);
+            strncpy(line1, "WELL DONE! THE RADIUS OF YOUR", MAX_STRING_LEN);
+            strncpy(line2, "BOMB EXPLOSION IS NOW BIGGER", MAX_STRING_LEN);
+    }
+
+    char buffer[MAX_STRING_LEN];
+    uint8_t len = strlen(line1);
+    for (int i = 0; i < len; i++)
+    {
+        buffer[i] = line1[i];
+        buffer[i + 1] = '\0';
+        drawletters(10, CEILING_Y / 4 + 3, buffer);
+        delay(100);
+    }
+    len = strlen(line2);
+    for (int i = 0; i < len; i++)
+    {
+        buffer[i] = line2[i];
+        buffer[i + 1] = '\0';
+        drawletters(10, CEILING_Y / 4 + 6, buffer);
+        delay(100);
+    }
+    delay(2000);
+    redraw();
+        
+}
+
 bool open_door_projectile(struct Character* projectile)
 {
+    // in a boss level, we can only open the door once the boss is dead
+    if (bosslevel && monsters[0]->movement != HIDDEN)
+    {
+        return 0;
+    }
     if (projectile->x <= 6 && projectile->y >= 80 && (doors & 0b00000010))
     {
-        if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;
-            return 1;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;
-            return 1;                    
-        }
+        drawsprite(0, 20, 6, 5, doorleft_open);
+        left_door_open = true;
+        return 1;
     }
     else if (projectile->x >= DISPLAY_WIDTH - 6 - projectile->width && projectile->y >= 80 && (doors & 0b00000001))
     {
-        if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
-            right_door_open = true;
-            return 1;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
-            right_door_open = true;
-            return 1;                 
-        }
+        drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
+        right_door_open = true;
+        return 1;                 
     }
     return 0;
 }
 
-void open_door_bomb(struct Character* bombstruct)
+void open_door_bomb(uint8_t x1, uint8_t x2, uint8_t y1, uint8_t y2)
 {
-    if (bombstruct->x <= 12 &&
-        bombstruct->y >= FLOOR_Y - 19
+    // in a boss level, we can only open the door once the boss is dead
+    if (bosslevel && monsters[0]->movement != HIDDEN)
+    {
+        return;
+    }
+    if (x1 <= 6 &&
+        y1 >= FLOOR_Y - 19
         && (doors & 0b00000010))
     {
-        if(!(level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(0, 20, 6, 5, doorleft_open);
-            left_door_open = true;                  
-        }
+        drawsprite(0, 20, 6, 5, doorleft_open);
+        left_door_open = true;
     }
 
-    else if ((bombstruct->x <= DISPLAY_WIDTH - 12) &&
-             (bombstruct->y >= FLOOR_Y - 19) &&
+    else if ((x2 >= DISPLAY_WIDTH - 6) &&
+             (y1 >= FLOOR_Y - 19) &&
              (doors & 0b00000001))
     {
-        if(!((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1)
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0)))
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
-            right_door_open = true;
-        }
-        else if(((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
-            || (level < 0 && level % BOSS_LEVEL_DISTANCE == 0))
-            && monsters[0]->movement == HIDDEN)
-        {
-            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open);
-            right_door_open = true;                 
-        }
+        drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5, doorright_open); 
+        right_door_open = true;
     }
 }
 
@@ -210,10 +242,24 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
     if (monsters[i]->health <= 0)
     {
         hide(monsters[i]);
-        if (monsters[i]->look == LOOK_BOSS_MEGACOREX || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
+        if (bosslevel)
         {
-            monsters[i]->look = LOOK_BIGXPARASITE;
-            initcharacter(monsters[i]);
+            if (monsters[i]->look == LOOK_BIGXPARASITE)
+            {
+                getAchievement();
+                num_bombs = 10;
+                num_rockets = 30;
+                protagonist->health = 99;
+                drawnumber(29, 1, protagonist->health);
+                drawnumber(57, 1, num_rockets);
+                drawnumber(86, 1, num_bombs);
+            }
+            else
+            {
+                monsters[i]->look = LOOK_BIGXPARASITE;
+                initcharacter(monsters[i]);
+                draw(monsters[i]);
+            }
         }
         else
         {
@@ -238,6 +284,17 @@ int main(void)
         if (B_A)
         {
             initial_level = 0; // start a new game
+            clear();
+            drawsprite(20, 5, 8, 2, Abutton);
+            drawletters(30, 5, "SHOOT A ROCKET");
+            drawsprite(20, 10, 8, 3, BButton);
+            drawletters(30, 10, "PLACE A BOMB");
+            drawsprite(20, 15, 8, 2, Pbutton);
+            drawletters(30, 15, "PAUSE");
+            drawletters(20, 20, "PRESS");
+            drawsprite(48, 20, 9, 3, UPButton);
+            drawletters(60, 20, "TO JUMP");
+            delay(5000);
             break;
         }
         if (initial_level != 0 && B_B)
@@ -329,7 +386,14 @@ int main(void)
                 {
                     moveright(protagonist);
                 }
-                nextmoveevent = getMsTimer() + 50;
+                if (Run_And_Jump_Faster_Upgrade)
+                {
+                    nextmoveevent = getMsTimer() + 40;
+                }
+                else
+                {
+                    nextmoveevent = getMsTimer() + 50;
+                }
             }
             if (B_LEFT)
             {
@@ -355,7 +419,14 @@ int main(void)
                 {
                     moveleft(protagonist);
                 }
-                nextmoveevent = getMsTimer() + 50;
+                if (Run_And_Jump_Faster_Upgrade)
+                {
+                    nextmoveevent = getMsTimer() + 40;
+                }
+                else
+                {
+                    nextmoveevent = getMsTimer() + 50;
+                }
             }
         }
         if (protagonist->jumpstate == CLIMBING)
@@ -426,7 +497,7 @@ int main(void)
             && protagonist->y >= DOOR_Y - protagonist->height && right_door_open)
         {
             // im endbosslevel
-            if (monsters[0]->look == LOOK_BOSS_MEGACOREX || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            if (bosslevel)
             {
                 // falls boss tot
                 if (monsters[0]->movement == HIDDEN)
@@ -445,7 +516,7 @@ int main(void)
             && protagonist->x <= 6 
             && protagonist->y >= DOOR_Y - protagonist->height && left_door_open)
         {
-            if(monsters[0]->look == LOOK_BOSS_MEGACOREX || monsters[0]->look == LOOK_BOSS_SECROB || monsters[0]->look == LOOK_BOSS_ZAZABI || monsters[0]->look == LOOK_BIGXPARASITE)
+            if(bosslevel)
             {
                 if (monsters[0]->movement == HIDDEN)
                 {
@@ -515,14 +586,28 @@ int main(void)
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
                     drawnumber(57, 1, num_rockets);
                     nextprojectilevent[i] = getMsTimer() + 35;
-                    nextshootevent = getMsTimer() + 500;
+                    if (Rocket_Upgrade)
+                    {
+                        nextshootevent = getMsTimer() + 500;
+                    }
+                    else
+                    {
+                        nextshootevent = getMsTimer() + 1000;
+                    }
                 }
                 else if(open_door_projectile(projectiles[i]))
                 {
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
                     drawnumber(57, 1, num_rockets);
-                    nextshootevent = getMsTimer() + 500;
+                    if (Rocket_Upgrade)
+                    {
+                        nextshootevent = getMsTimer() + 500;
+                    }
+                    else
+                    {
+                        nextshootevent = getMsTimer() + 1000;
+                    }
                 }
             }
             else if (projectiles[i]->movement != HIDDEN
@@ -585,30 +670,60 @@ int main(void)
         {
             if (explode < getMsTimer())
             {
-                hide(bombstruct);
-                uint8_t blast_x1 = MAX(0, bombstruct->x - 6);
-                uint8_t blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
-                uint8_t blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 4);
-                uint8_t blast_y2 = MIN(bombstruct->y + bombstruct->height + 8, FLOOR_Y);
-                uint16_t i = 0;
-                for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
+                uint8_t blast_x1;
+                uint8_t blast_x2;
+                uint8_t blast_y1;
+                uint8_t blast_y2;
+                int16_t x1;
+                int16_t y1;
+                int16_t x2;
+                int16_t y2;
+                const uint8_t* sprite;
+                if (Bigger_Bomb_Explosion)
                 {
-                    for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
+                    x1 = bombstruct->x - 8;
+                    x2 = bombstruct->x + 12;
+                    y1 = bombstruct->y / 4 - 2;
+                    y2 = bombstruct->y / 4 + bombstruct->height / 4 + 2;
+                    blast_x1 = MAX(0, bombstruct->x - 8);
+                    blast_x2 = MIN(bombstruct->x + bombstruct->width + 8, DISPLAY_WIDTH);
+                    blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 6);
+                    blast_y2 = MIN(bombstruct->y + bombstruct->height + 10, FLOOR_Y);
+                    sprite = Upgraded_Explosion;
+                }
+                else
+                {
+                    x1 = bombstruct->x - 6;
+                    x2 = bombstruct->x + 10;
+                    y1 = bombstruct->y / 4 - 1;
+                    y2 = bombstruct->y / 4 + bombstruct->height / 4 + 2;
+                    blast_x1 = MAX(0, bombstruct->x - 6);
+                    blast_x2 = MIN(bombstruct->x + bombstruct->width + 6, DISPLAY_WIDTH);
+                    blast_y1 = MAX(CEILING_Y + 4, bombstruct->y - 4);
+                    blast_y2 = MIN(bombstruct->y + bombstruct->height + 8, FLOOR_Y);
+                    sprite = explosion;
+                }
+                hide(bombstruct);
+                uint16_t i = 0;
+                for (int16_t y = y1; y < y2; y++)
+                {
+                    for (int16_t x = x1; x < x2; x++)
                     {
                         if (x >= 0 && x < DISPLAY_WIDTH
-                            && y > CEILING_Y / 4 && y < FLOOR_Y / 4
-                            && !obstacle(x, 4 * y))
+                           && y > CEILING_Y / 4 && y < FLOOR_Y / 4
+                           && !obstacle(x, 4 * y))
                         {
-                            page(x, y, pgm_read_byte_near(explosion + i));
+                           page(x, y, pgm_read_byte_near(sprite + i));
                         }
                         i++;
                     }
                 }
+
                 delay(600);
                 i = 0;
-                for (int16_t y = bombstruct->y / 4 - 1; y < bombstruct->y / 4 + bombstruct->height / 4 + 2; y++)
+                for (int16_t y = y1; y < y2; y++)
                 {
-                    for (int16_t x = bombstruct->x - 6; x < bombstruct->x + 10; x++)
+                    for (int16_t x = x1; x < x2; x++)
                     {   
                         if (x >= 0 && x < DISPLAY_WIDTH
                             && y > CEILING_Y / 4 && y < FLOOR_Y / 4
@@ -633,7 +748,7 @@ int main(void)
                 {
                     takingdamage(bombstruct->damage);
                 }
-                open_door_bomb(bombstruct);
+                open_door_bomb(blast_x1, blast_x2, blast_y1, blast_y2);
             }
             else
             {
@@ -737,15 +852,15 @@ int main(void)
                 if (xparasites[i]->look == LOOK_XPARASITE1)
                 {
                     num_rockets += 2;
-                    if (num_rockets > 20)
-                        num_rockets = 20;
+                    if (num_rockets > 30)
+                        num_rockets = 30;
                     drawnumber(57, 1, num_rockets);
                 }
                 else
                 {
                     num_bombs += 1;
-                    if (num_bombs > 20)
-                        num_bombs = 20;
+                    if (num_bombs > 10)
+                        num_bombs = 10;
                     drawnumber(86, 1, num_bombs);
                 }
             }

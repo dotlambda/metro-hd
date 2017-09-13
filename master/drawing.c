@@ -5,9 +5,14 @@
 #include "level.h"
 #include "string.h"
 
+bool inverted = false;
+
 void drawsplash(uint8_t show_resume_option)
 {
-    drawsprite(15, 3, 126, 19, splash);
+    drawsprite(15, 6, 40, 7, splashleft);
+    drawsprite(55, 3, 52, 15, splashcenter);
+    drawsprite(107, 6, 34, 7, splashright);
+    drawsprite(39, 19, 84, 3, splashtext);
     if (show_resume_option)
         drawsprite(43, 23, 74, 3, resume);
 }
@@ -51,12 +56,60 @@ void drawdigit(uint8_t x, uint8_t y, uint8_t digit)
     drawsprite(x, y, 3, 3, sprite);
 }
 
+void drawdigit2(uint8_t x, uint8_t y, uint8_t digit)
+{
+    const uint8_t* sprite = NULL;
+    switch (digit)
+    {
+        case 0:
+            sprite = zero2;
+            break;
+        case 1:
+            sprite = one2;
+            break;
+        case 2:
+            sprite = two2;
+            break;
+        case 3:
+            sprite = three2;
+            break;
+        case 4: 
+            sprite = four2;
+            break;
+        case 5: 
+            sprite = five2;
+            break;
+        case 6:
+            sprite = six2;
+            break;
+        case 7:
+            sprite = seven2;
+            break;
+        case 8:
+            sprite = eight2;
+            break;
+        case 9:
+            sprite = nine2;
+            break;
+    }
+    drawsprite_inverted(x, y, 3, 2, sprite);
+        
+}
+
 void drawnumber(uint8_t x, uint8_t y, uint8_t number)
 {
     uint8_t leftdigit = number / 10;
     uint8_t rightdigit = number % 10;
-    drawdigit(x, y, leftdigit);
-    drawdigit(x + 4, y, rightdigit);
+    if (inverted)
+    {
+        drawdigit2(x, y, leftdigit);
+        drawdigit2(x + 4, y, rightdigit);
+    }
+    else
+    {
+        drawdigit(x, y, leftdigit);
+        drawdigit(x + 4, y, rightdigit);
+    }
 }
 
 void drawlabels()
@@ -121,6 +174,17 @@ void black()
 void movedoorleft()
 {
     black();
+    inverted = true;
+    drawletters(60, 15, "LEVEL");
+    if (level < 0)
+    {
+        drawnumber(85, 15, -level);
+    }
+    else
+    {
+        drawnumber(85, 15, level);
+    }
+    inverted = false;
     drawlabels();
     for (int x = DISPLAY_WIDTH - 6; x >= -33 + 6; x--)
     {
@@ -134,11 +198,23 @@ void movedoorleft()
             page(x + 33, 24, 0xFF);
         }
     }
+    
 }
 
 void movedoorright()
 {
     black();
+    inverted = true;
+    drawletters(60, 15, "LEVEL");
+    if (level < 0)
+    {
+        drawnumber(85, 15, -level);
+    }
+    else
+    {
+        drawnumber(85, 15, level);
+    }
+    inverted = false;
     drawlabels();
     for (int x = -33 + 6; x <= DISPLAY_WIDTH - 6; x++)
     {
@@ -272,8 +348,19 @@ void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8
     disable_window();
 }
 
-// y axis inverted
+//color inverted
 void drawsprite_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+{
+    enable_window(x, y, width, height);
+    for (uint16_t i = 0; i < width * height; ++i)
+    {
+        sendbyte(~pgm_read_byte_near(sprite + i), 1);
+    }
+    disable_window();
+}
+
+// y axis inverted
+void drawsprite_rotated(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
 {
     enable_window(x, y, width, height);
     for (uint16_t i = 0; i < width * height; i += width)
@@ -309,12 +396,12 @@ void drawsprite_px(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const ui
 }
 
 // y axis inverted
-void drawsprite_px_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
+void drawsprite_px_rotated(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
 {
     uint8_t offset = 2 * (y % 4);
     if (offset == 0)
     {
-        drawsprite_inverted(x, y / 4, width, height / 4, sprite);
+        drawsprite_rotated(x, y / 4, width, height / 4, sprite);
     }
     else
     {
@@ -338,23 +425,19 @@ void drawsprite_px_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height,
 // color is actually the byte that will be used for each page
 void drawcolor(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t color)
 {
-    sendbyte(0b11110100, 0); // set window start column
-    sendbyte(x, 0);
-    sendbyte(0b11110110, 0); // set window end column
-    sendbyte(x + width - 1, 0);
-    sendbyte(0b11110101, 0); // set window start page
-    sendbyte(y, 0);
-    sendbyte(0b11110111, 0); // set window end page
-    sendbyte(y + height - 1, 0);
-    sendbyte(0b11111001, 0); // enable window function
+    enable_window(x, y, width, height);
     for (uint16_t i = 0; i < width * height; ++i)
         sendbyte(color, 1);
-    sendbyte(0b11111000, 0); // disable window function
+    disable_window();
 }
 
 void drawrechargeroom()
 {
-    drawsprite(4, 6, 152, 4, labelrecharge);
+    drawcolor(4, 6, 19, 4, 0xFF);
+    drawsprite(23, 6, 68, 4, rechargeleft);
+    drawcolor(91, 6, 12, 4, 0xFF);
+    drawsprite(103, 6, 37, 4, rechargeright);
+    drawcolor(140, 6, 16, 4, 0xFF);
     drawsprite(DISPLAY_WIDTH/2 - 12, 10, 24, 7, rechargetop);
     drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
 }
@@ -366,11 +449,17 @@ void drawletters(uint8_t x, uint8_t y, char* string)
     {
         if (string[i] == ' ')
         {
+            //page(x, y, 0);
+            //page(x, y + 1, 0);
+            //page(x + 1, y, 0);
+            //page(x + 1, y + 1, 0);
             x += 2;
         }
         else if (string[i] == ',')
         {
             drawsprite(x, y + 1, 2, 2, comma);
+            //page(x + 2, y, 0);
+            //page(x + 2, y + 1, 0);
             x += 3; // 2 pixels for the comma, 1 for the space between letters
         }
         else
@@ -483,16 +572,25 @@ void drawletters(uint8_t x, uint8_t y, char* string)
                     sprite = Z;
                     width = 4;
                     break;
-                case ',':
-                    sprite = comma;
-                    width = 2;
-                    break;
                 case '!':
                     sprite = ex;
                     width = 1;
                     break;
+                case '.':
+                    sprite = dot;
+                    width = 1;
+                    break;
             }
-            drawsprite(x, y, width, 2, sprite); 
+            if (inverted)
+            {
+                drawsprite_inverted(x, y, width, 2, sprite);
+            }
+            else
+            {
+                drawsprite(x, y, width, 2, sprite);
+            }
+            //page(x + width, y, 0);
+            //page(x + width, y + 1, 0); 
             x += width + 1;
         }
     }

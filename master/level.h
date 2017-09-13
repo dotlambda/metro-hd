@@ -13,6 +13,8 @@
 #define HILL_Y 76
 #define CEILING_Y 20
 
+#define MAX_STRING_LEN 40
+
 #define MAX_LEVEL_WIDTH 5 // max 5 displays for one level
 #define MIN_LEVEL_WIDTH 1
 
@@ -24,6 +26,12 @@ uint8_t num_rockets;
 extern EEMEM uint8_t num_rockets_stored;
 uint8_t num_bombs;
 extern EEMEM uint8_t num_bombs_stored;
+extern EEMEM bool Rocket_Upgrade_stored;
+bool Rocket_Upgrade;
+extern EEMEM bool Run_And_Jump_Faster_Upgrade_stored;
+bool Run_And_Jump_Faster_Upgrade;
+extern EEMEM bool Bigger_Bomb_Explosion_stored;
+bool Bigger_Bomb_Explosion;
 
 #define NUM_MONSTERS 3
 #define NUM_FIREBALLS 6
