@@ -11,7 +11,7 @@ class Synth():
     def __init__(self, hfile, cfile):
         self.hfile = hfile
         self.cfile = cfile
-    def writeCArray(self,filename,arrayname,includeTracks=[]):
+    def writeCArray(self,filename,arrayname,allow_pause=True,includeTracks=[]):
         mid = MidiFile(filename)
         events=[]
         for i, track in enumerate(mid.tracks):
@@ -64,6 +64,15 @@ class Synth():
                         changes[-1]["freq"] = int(compare)
                     else:
                         changes.append({"delay": delay, "freq": int(compare)})
+            elif allow_pause: # there is currently no note playing
+                t = e[0]
+                delay = int((t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
+                last_time = t
+                compare = 0 # sound off
+                if delay == 0 and len(changes) > 0:
+                    changes[-1]["freq"] = compare
+                else:
+                    changes.append({"delay": delay, "freq": compare})
         array = "const uint16_t " + arrayname + "[] PROGMEM = {\n"
         for change in changes:
             delay = change["delay"]
@@ -82,5 +91,5 @@ with open(hfilename, "w") as hfile:
         hfile.write("#ifndef MUSIC_H\n#define MUSIC_H\n\n#include <inttypes.h>\n#include <avr/pgmspace.h>\n\n")
         synth=Synth(hfile, cfile)
         # for ... in os.walk("../music"):
-        synth.writeCArray("../music/ussr1.mid", "elise")
+        synth.writeCArray("../music/sevenfortyam.mid", "elise", True)
         hfile.write("#endif")
