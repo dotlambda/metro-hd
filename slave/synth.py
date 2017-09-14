@@ -65,6 +65,7 @@ class Synth():
                     else:
                         changes.append({"delay": delay, "freq": int(compare)})
             elif allow_pause: # there is currently no note playing
+                note = None
                 t = e[0]
                 delay = int(timescale*(t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
                 last_time = t
@@ -91,10 +92,11 @@ with open(hfilename, "w") as hfile:
         hfile.write("#ifndef MUSIC_H\n#define MUSIC_H\n\n#include <inttypes.h>\n#include <avr/pgmspace.h>\n\n")
         synth=Synth(hfile, cfile)
         # for ... in os.walk("../music"):
-        synth.writeCArray("../../bomb_explosion_1.wav.mid", "elise", True)
+        #synth.writeCArray("../../bomb_explosion_1.wav.mid", "elise", True)
         #synth.writeCArray("../music/sevenfortyam.mid", "splash", True)
         #synth.writeCArray("../music/Combat 2.mid", "splash", True, 4, [3])
         #synth.writeCArray("../music/SERAPHO.MID", "splash", True, 1, [1], .5)
-        synth.writeCArray("../music/Boss_Musik_2.mid", "splash", True)
+        #synth.writeCArray("../music/Boss_Musik_2.mid", "splash", True)
+        synth.writeCArray("../music/boss6.mid", "splash", True)
         synth.writeCArray("../music/Ingame_Musik_Tief.mid", "ingame", True)
         hfile.write("#endif")
