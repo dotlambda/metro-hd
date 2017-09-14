@@ -72,6 +72,7 @@ void takingdamage(uint8_t damage)
     if (protagonist->health <= 0)
     {
         // game over
+        uart_putc('g');
         uint16_t i = 0;
         for (uint8_t y = 0; y < 26; y++)
         {
@@ -341,9 +342,6 @@ int main(void)
     
     left_door_open = true;
     right_door_open = true;
-    
-    //ingame music
-    uart_putc(1);
     
     newgame();
     

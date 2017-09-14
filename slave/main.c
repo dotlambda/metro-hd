@@ -106,6 +106,18 @@ int main()
                 OCR1A = 0;
                 j++;
                 break;
+            case 'b':
+                start_playing(boss1);
+                break;
+            case 'c':
+                start_playing(boss2);
+                break;
+            case 'd':
+                start_playing(boss3);
+                break;
+            case 'g':
+                start_playing(gameover);
+                break;
         }
         if (!uart_data_waiting())
             continue_playing();
