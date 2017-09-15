@@ -53,33 +53,30 @@ class Synth():
                 if note not in notes or max(notes) > note:
                     note = max(notes)
                     t = e[0]
-                    delay = int(timescale*(t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
+                    delay = int(timescale*(t - last_time) * 10 ** (-4) / 480. * tempo) # in 1/10,000 seconds
                     last_time = t
                     freq = 2.0 ** ((note - 69) / 12.0) * 440.0 # in Hz
-                    period = 1.0 / freq # in seconds
-                    # value for compare register with prescaler=8
-                    # /2 because the timer counts up twice per period
-                    compare = F_CPU * period / 8 / 2 / pitch
+                    period = 10000.0 / freq # in 1/10,000 seconds
                     if delay == 0 and len(changes) > 0:
-                        changes[-1]["freq"] = int(compare)
+                        changes[-1]["period"] = int(period)
                     else:
-                        changes.append({"delay": delay, "freq": int(compare)})
+                        changes.append({"delay": delay, "period": int(period)})
             elif allow_pause: # there is currently no note playing
                 note = None
                 t = e[0]
-                delay = int(timescale*(t - last_time) * 10 ** (-3) / 480. * tempo) # in ms
+                delay = int(timescale*(t - last_time) * 10 ** (-4) / 480. * tempo) # in 1/10,000 seconds
                 last_time = t
-                compare = 0 # sound off
+                period = 0 # sound off
                 if delay == 0 and len(changes) > 0:
-                    changes[-1]["freq"] = compare
+                    changes[-1]["period"] = period
                 else:
-                    changes.append({"delay": delay, "freq": compare})
+                    changes.append({"delay": delay, "period": period})
         array = "const uint16_t " + arrayname + "[] PROGMEM = {\n"
         for change in changes:
             delay = change["delay"]
             assert(delay < 2 ** 16)
-            freq = change["freq"]
-            #assert(freq < 2 ** 16)
+            period = change["period"]
+            assert(period < 2 ** 16)
             array += "    " + str(delay) + ", " + str(freq) + ",\n"
         array += "    0\n};"
         hfile.write("extern const uint16_t " + arrayname + "[" + str(2 * len(changes) + 1) + "] PROGMEM;\n\n")
