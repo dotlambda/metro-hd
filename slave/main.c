@@ -6,9 +6,12 @@
 #include <inttypes.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <math.h>
 #include "uart.h"
 #include "music.h"
+
+#define F_CPU 16000000UL
+
+#define INTERRUPT_COMPARE 50
 
 void init();
 
@@ -28,35 +31,26 @@ SIGNAL(TIMER2_COMPA_vect)
 {
     time++; // this interrupt is called at a frequency of 10kHz
     
-    // generate sound
-    uint32_t pwm = 0;
-    uint8_t nr_tones = 0;
-    for (uint8_t i = 0; i < CONCURRENT_TONES; ++i)
+    // music
+    uint32_t pwm = 123 * t[0] / period[0];
+    t[0]++;
+    if (t[0] > period[0])
+        t[0] = 0;
+
+    if (period[1])
     {
-        if (period[i])
-        {
-            nr_tones++;
+        // effect
+        pwm += 255 * t[1] / period[1];
+        t[1]++;
+        if (t[1] > period[1])
+            t[1] = 0;
 
-            // triangle
-            /*if (2 * t[i] < period[i])
-                pwm += 510 * t[i] / period[i];
-            else if (t[i] < period[i])
-                pwm += 510 - 510 * t[i] / period[i];
-            else
-                t[i] = 0; // pwm += 0
-            t[i]++;*/
-
-            // sawtooth
-            pwm += 255 * t[i] / period[i];
-            t[i]++;
-            if (t[i] > period[i])
-                t[i] = 0;
-        }
+        OCR1A = 3 * pwm / 2;
     }
-    if (nr_tones == 0)
-        OCR1A = 0;
     else
-        OCR1A = pwm / nr_tones;
+    {
+        OCR1A = pwm;
+    }
 
     if (time > delay)
     {
@@ -95,15 +89,16 @@ int main()
                 start_playing(splash);
                 break;
             case 1:
-                start_playing(ingame);
+                //start_playing(boss2);
                 break;
             case 's': // shoot
-                for (uint16_t i = 0; i < 10000; i += 15)
+                for (uint16_t i = 11; i < 60; i += 1)
                 {
                     EFFECT = i;
-                    _delay_us(500);
+                    uint32_t wait = time + 10;
+                    while (time != 0 && time < wait);
                 }
-                OCR1A = 0;
+                EFFECT = 0;
                 break;
             case 'e': // explosion
                 if (j % 2)
@@ -129,7 +124,7 @@ int main()
                         _delay_us(100);
                     }
                 }
-                OCR1A = 0;
+                EFFECT = 0;
                 j++;
                 break;
             case 'b':
@@ -155,6 +150,7 @@ void init()
     for (uint8_t i = 0; i < CONCURRENT_TONES; ++i)
     {
         period[i] = 0;
+        t[i] = 0;
     }
 
     // Timer1
@@ -167,7 +163,7 @@ void init()
     // Timer2
     TCCR2A = (1 << WGM21); // CTC
     TCCR2B = (1 << CS22); // prescaler = 64
-    OCR2A = 25;
+    OCR2A = INTERRUPT_COMPARE;
     TIMSK2 |= (1 << OCIE2A); // enable interrupt
     sei();
 }
