@@ -9,53 +9,27 @@
 #include "uart.h"
 #include "music.h"
 
-#define F_CPU 16000000UL
-
-#define INTERRUPT_COMPARE 50
+#define INTERRUPT_COMPARE 128
 
 void init();
 
 volatile uint32_t time = 0;
 
 #define CONCURRENT_TONES 2
-volatile uint32_t period[CONCURRENT_TONES]; // in 1/10,000 seconds
-volatile uint32_t t[CONCURRENT_TONES];
-#define MUSIC period[0]
-#define EFFECT period[1]
+volatile uint16_t state[CONCURRENT_TONES];
+volatile uint16_t increment[CONCURRENT_TONES];
+#define MUSIC increment[0]
+#define EFFECT increment[1]
 
 const uint16_t* playing;
 uint16_t i;
 uint16_t delay;
 
-SIGNAL(TIMER2_COMPA_vect)
+static inline void update_increment()
 {
-    time++; // this interrupt is called at a frequency of 10kHz
-    
-    // music
-    uint32_t pwm = 123 * t[0] / period[0];
-    t[0]++;
-    if (t[0] > period[0])
-        t[0] = 0;
-
-    if (period[1])
-    {
-        // effect
-        pwm += 255 * t[1] / period[1];
-        t[1]++;
-        if (t[1] > period[1])
-            t[1] = 0;
-
-        OCR1A = 3 * pwm / 2;
-    }
-    else
-    {
-        OCR1A = pwm;
-    }
-
     if (time > delay)
     {
         time = 0;
-        i += 2;
         delay = pgm_read_word(&playing[i]);
         if (i > 0 && delay == 0)
         {
@@ -66,13 +40,41 @@ SIGNAL(TIMER2_COMPA_vect)
         {
             MUSIC = pgm_read_word(&playing[i+1]);
         }
+        i += 2;
     }
 }
 
-void start_playing(const uint16_t* music)
+SIGNAL(TIMER2_COMPA_vect)
 {
+    time++;
+    
+    // music
+    uint32_t pwm = state[0] >> 9;
+    state[0] += increment[0];
+    
+    if (increment[1])
+    {
+        // effect
+        pwm += state[1] >> 8;
+        state[1] += increment[1];
+
+        OCR1A = pwm >> 1;
+    }
+    else
+    {
+        OCR1A = pwm;
+    }
+
+    update_increment();
+}
+
+static inline void start_playing(const uint16_t* music)
+{
+    cli();
     i = 0;
     playing = music;
+    update_increment();
+    sei();
 }
 
 int main()
@@ -92,7 +94,7 @@ int main()
                 //start_playing(boss2);
                 break;
             case 's': // shoot
-                for (uint16_t i = 11; i < 60; i += 1)
+                for (uint16_t i = 4000; i > 1500; i -= 10)
                 {
                     EFFECT = i;
                     uint32_t wait = time + 10;
@@ -149,21 +151,21 @@ void init()
 
     for (uint8_t i = 0; i < CONCURRENT_TONES; ++i)
     {
-        period[i] = 0;
-        t[i] = 0;
+        increment[i] = 0;
+        state[i] = 0;
     }
 
     // Timer1
-    DDRB |= (1 << 1); // set B1 to output
-    TCCR1A |= (1 << WGM10); // Fast PWM, 8-bit
-    TCCR1B |= (1 << WGM12);
+    DDRB = (1 << 1); // set B1 to output
+    TCCR1A = (1 << WGM10); // Fast PWM, 8-bit
+    TCCR1B = (1 << WGM12);
     TCCR1A |= (1 << COM1A1); // toggle pin B1 on compare match
     TCCR1B |= (1 << CS10); // prescaler = 1
 
     // Timer2
     TCCR2A = (1 << WGM21); // CTC
-    TCCR2B = (1 << CS22); // prescaler = 64
+    TCCR2B = (1 << CS21); // prescaler = 8
     OCR2A = INTERRUPT_COMPARE;
-    TIMSK2 |= (1 << OCIE2A); // enable interrupt
+    TIMSK2 = (1 << OCIE2A); // enable interrupt
     sei();
 }

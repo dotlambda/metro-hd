@@ -3,8 +3,8 @@
 from mido import MidiFile
 
 F_CPU = 16000000
-INTERRUPT_COMPARE = 50
-INTERRUPT_PRESCALER = 64
+INTERRUPT_COMPARE = 128
+INTERRUPT_PRESCALER = 8
 
 INTERRUPT_FREQ = F_CPU / (INTERRUPT_PRESCALER * INTERRUPT_COMPARE)
 
@@ -54,32 +54,33 @@ class Synth():
                 # should be notes.remove() but MIDI files are not coherent
                 notes.discard(ev["note"])
             t = e[0]
-            delay = int(timescale*(t - last_time) * INTERRUPT_FREQ / (10 ** 6) / 480. * tempo)
+            delay = int(timescale*(t - last_time) * INTERRUPT_FREQ / (10.0 ** 6) / 480. * tempo)
             if len(notes) > 0:
                 if note not in notes or max(notes) > note:
                     note = max(notes)
                     last_time = t
                     freq = 2.0 ** ((note - 69) / 12.0) * 440.0 # in Hz
-                    period = INTERRUPT_FREQ / freq
+                    period = INTERRUPT_FREQ / freq # how often the interrupt is called in one period
+                    increment = 2.0 ** 16 / period
                     if delay == 0 and len(changes) > 0:
-                        changes[-1]["period"] = int(period)
+                        changes[-1]["increment"] = int(increment)
                     else:
-                        changes.append({"delay": delay, "period": int(period)})
+                        changes.append({"delay": delay, "increment": int(increment)})
             elif allow_pause: # there is currently no note playing
                 note = None
                 last_time = t
-                period = 0 # sound off
+                increment = 0 # sound off
                 if delay == 0 and len(changes) > 0:
-                    changes[-1]["period"] = period
+                    changes[-1]["increment"] = increment
                 else:
-                    changes.append({"delay": delay, "period": period})
+                    changes.append({"delay": delay, "increment": increment})
         array = "const uint16_t " + arrayname + "[] PROGMEM = {\n"
         for change in changes:
             delay = change["delay"]
             assert(delay < 2 ** 16)
-            period = change["period"]
-            assert(period < 2 ** 16)
-            array += "    " + str(delay) + ", " + str(period) + ",\n"
+            increment = change["increment"]
+            assert(increment < 2 ** 16)
+            array += "    " + str(delay) + ", " + str(increment) + ",\n"
         array += "    0\n};"
         hfile.write("extern const uint16_t " + arrayname + "[" + str(2 * len(changes) + 1) + "] PROGMEM;\n\n")
         cfile.write(array)
@@ -102,4 +103,7 @@ with open(hfilename, "w") as hfile:
         synth.writeCArray("../music/Ingame_Musik_Tief.mid", "ingame", True)
         synth.writeCArray("../music/Game_Over.mid", "gameover", True) 
         synth.writeCArray("../music/combat.mid", "splash", True, timescale = 0.8)
+        
+        synth.writeCArray("../music/TOP.mid", "splash0", timescale = 2, includeTracks = [1])
+        synth.writeCArray("../music/TOP.mid", "splash1", includeTracks = [2])
         hfile.write("#endif")
