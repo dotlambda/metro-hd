@@ -46,20 +46,21 @@ static inline void start_playing(const uint16_t* music)
 
 static inline void update_increment()
 {
-    if (time > delay)
+    while (time > delay)
     {
         time = 0;
         delay = pgm_read_word(&playing[i]);
-        if (i > 0 && delay == 0)
+        if (delay == STOP)
         {
             i = 0;
-            MUSIC = 0;
         }
         else
         {
-            MUSIC = pgm_read_word(&playing[i+1]);
+            uint8_t track = pgm_read_word(&playing[i+1]);
+            increment[track] = pgm_read_word(&playing[i+2]);
+            state[track] = 0;
         }
-        i += 2;
+        i += 3;
     }
 }
 
@@ -69,7 +70,6 @@ int main()
 
     start_playing(splash);
     
-    uint16_t j = 0;
     while (1)
     {
         if (uart_data_waiting())
@@ -79,7 +79,7 @@ int main()
                 case 0:
                     start_playing(splash);
                     break;
-                case 1:
+                /*case 1:
                     //start_playing(boss2);
                     break;
                 case 's': // shoot
@@ -129,22 +129,24 @@ int main()
                     break;
                 case 'g':
                     start_playing(gameover);
-                    break;
+                    break;*/
             }
         }
 
         if (next_sample)
         {
-            // music
-            pwm = state[0] >> 8;
+            pwm = 0;
+
+            uint16_t tmp = state[1];
+            if (tmp < 0x8000)
+                tmp <<= 1; // * 2
+            else
+                tmp = 0xFFFF - ((tmp & 0x7FFF) << 1);
+            pwm += tmp >> 8;
+            state[1] += increment[1];
+
+            pwm += state[0] >> 8;
             state[0] += increment[0];
-    
-            if (increment[1])
-            {
-                // effect
-                pwm += state[1] >> 8;
-                state[1] += increment[1];
-            }
 
             pwm >>= 1; // divide by 2
 
