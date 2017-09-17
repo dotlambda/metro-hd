@@ -6,6 +6,3 @@
 
 #define STOP 0xFFFF
 
-extern const uint16_t splash[3001] PROGMEM;
-
-#endif

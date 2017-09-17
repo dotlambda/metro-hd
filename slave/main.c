@@ -68,7 +68,7 @@ int main()
 {
     init();
 
-    start_playing(splash);
+    start_playing(boss2);
     
     while (1)
     {
@@ -76,11 +76,11 @@ int main()
         {
             switch (uart_getc())
             {
-                case 0:
+                /*case 0:
                     start_playing(splash);
                     break;
-                /*case 1:
-                    //start_playing(boss2);
+                case 1:
+                    //start_playing(ingame);
                     break;
                 case 's': // shoot
                     for (uint16_t i = 4000; i > 1500; i -= 10)
@@ -137,7 +137,7 @@ int main()
         {
             pwm = 0;
 
-            uint16_t tmp = state[1];
+            /*uint16_t tmp = state[1];
             if (tmp < 0x8000)
                 tmp <<= 1; // * 2
             else
@@ -145,10 +145,22 @@ int main()
             pwm += tmp >> 8;
             state[1] += increment[1];
 
-            pwm += state[0] >> 8;
-            state[0] += increment[0];
+            pwm += (state[0] >> 8U) & 0x80;
+            //pwm += state[0] >> 8;
+            state[0] += increment[0];*/
 
-            pwm >>= 1; // divide by 2
+            for (uint8_t i = 0; i < CONCURRENT_TONES; ++i)
+            {
+                //pwm += state[i] >> 8; // saw
+                pwm += (state[i] >> 8) & 0x80; // square
+                /*if (state[i] < 0x8000) // triangle
+                    pwm += state[i] >> 7;
+                else
+                    pwm += (0xFFFF - (state[i] & 0x7FFF << 1)) >> 8;*/
+                state[i] += increment[i];
+            }
+
+            pwm >>= 1; // divide by 4
 
             update_increment();
             next_sample = 0;
