@@ -15,7 +15,7 @@ void init();
 
 volatile uint32_t time = 0;
 
-#define CONCURRENT_TONES 2
+#define CONCURRENT_TONES 3
 volatile uint16_t state[CONCURRENT_TONES];
 volatile uint16_t increment[CONCURRENT_TONES];
 #define MUSIC increment[0]
@@ -68,7 +68,7 @@ int main()
 {
     init();
 
-    start_playing(boss2);
+    start_playing(splash);
     
     while (1)
     {
@@ -160,7 +160,7 @@ int main()
                 state[i] += increment[i];
             }
 
-            pwm >>= 1; // divide by 4
+            pwm >>= 2; // divide by 4
 
             update_increment();
             next_sample = 0;

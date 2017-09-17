@@ -49,6 +49,9 @@ class Synth():
             t = e[0]
             delay = timescale * (t-last_time)*10**(-6)/480.*tempo # in seconds
             delay = delay * INTERRUPT_FREQ # in calls of the interrupt
+            if filename == "../music/fish forest.MID" and int(delay) == 2500 and ev["type"] == "note_off":
+                changes[-1]["delay"] = 3750
+                continue
             if ev["type"]=="set_tempo":
                 tempo = ev["tempo"]
             elif ev["type"] == "note_on":
@@ -72,7 +75,7 @@ class Synth():
         array = "const uint16_t " + arrayname + "[] PROGMEM = {\n"
         for change in changes:
             delay = change["delay"]
-            #assert(delay < 2 ** 16)
+            assert(delay < 2 ** 16)
             track = change["track"]
             increment = change["increment"]
             assert(increment < 2 ** 16)
@@ -103,6 +106,7 @@ with open(hfilename, "w") as hfile:
         #synth.writeCArray("../music/Keith-ou-Passe-Bad.mid", "splash", [1,4], timescale=3.5) # triangle
         #synth.writeCArray("../music/HP1.MID", "splash", [1,2,14], timescale=4)
         #synth.writeCArray("../music/PER.MID", "splash", [1], timescale=4)
-        synth.writeCArray("../music/boss6.mid", "boss2", [0], timescale=2)
+        #synth.writeCArray("../music/Cave 1.MID", "splash", [1], timescale=6)
+        synth.writeCArray("../music/fish forest.MID", "splash", [1,3,4], timescale=4)
 
         hfile.write("#endif")
