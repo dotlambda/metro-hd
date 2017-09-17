@@ -14,7 +14,7 @@ uint8_t platform_above(uint8_t x, uint8_t y)
     return 0;
 }
 
-// whether there iss a platform/foor below
+// whether there is a platform/foor below
 uint8_t platform_below(uint8_t x, uint8_t y)
 {
     if (doors & 0b00000010 && x == 0 && y == 1) // blocked by door
