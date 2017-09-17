@@ -309,14 +309,14 @@ extern PROGMEM const uint8_t six[9];
 // 8x3
 extern PROGMEM const uint8_t six2[6];
 
-// 59x52
+// 60x52
 extern PROGMEM const uint8_t splashcenter[780];
 
-// 27x40
+// 28x40
 extern PROGMEM const uint8_t splashleft[280];
 
-// 28x34
-extern PROGMEM const uint8_t splashright[238];
+// 29x34
+extern PROGMEM const uint8_t splashright[272];
 
 // 12x84
 extern PROGMEM const uint8_t splashtext[252];
