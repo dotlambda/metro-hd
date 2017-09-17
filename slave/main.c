@@ -6,31 +6,37 @@
 #include <inttypes.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
 #include "uart.h"
 #include "music.h"
+#include "fx.h"
 
 #define INTERRUPT_COMPARE 128
 
 void init();
 
-volatile uint32_t time = 0;
-
-#define CONCURRENT_TONES 3
+#define CONCURRENT_TONES 4
+#define EFFECT 3
 volatile uint16_t state[CONCURRENT_TONES];
 volatile uint16_t increment[CONCURRENT_TONES];
-#define MUSIC increment[0]
-#define EFFECT increment[1]
 
-const uint16_t* playing;
+volatile uint32_t time = 0;
+const uint16_t* playing = NULL;
 uint16_t i;
 uint16_t delay;
 
-volatile uint32_t pwm;
-volatile uint8_t next_sample = 1;
+volatile uint32_t time_fx = 0;
+const uint16_t* playing_fx = NULL;
+uint16_t i_fx;
+uint16_t delay_fx;
+
+volatile uint8_t pwm = 0;
+volatile uint8_t next_sample = 0;
 
 SIGNAL(TIMER2_COMPA_vect)
 {
     time++;
+    time_fx++;
     OCR1A = pwm;
     next_sample = 1;
 }
@@ -40,27 +46,59 @@ static inline void start_playing(const uint16_t* music)
     cli();
     i = 0;
     playing = music;
+    delay = 0;
+    next_sample = 1;
+    sei();
+}
+
+static inline void start_playing_fx(const uint16_t* effect)
+{
+    cli();
+    i_fx = 0;
+    playing_fx = effect;
+    delay_fx = 0;
     next_sample = 1;
     sei();
 }
 
 static inline void update_increment()
 {
-    while (time > delay)
+    if (playing != NULL)
     {
-        time = 0;
-        delay = pgm_read_word(&playing[i]);
-        if (delay == STOP)
+        while (time > delay)
         {
-            i = 0;
+            time = 0;
+            delay = pgm_read_word(&playing[i]);
+            if (delay == STOP)
+            {
+                i = 0;
+            }
+            else
+            {
+                uint8_t track = pgm_read_word(&playing[i+1]);
+                increment[track] = pgm_read_word(&playing[i+2]);
+            }
+            i += 3;
         }
-        else
+    }
+
+    if (playing_fx != NULL)
+    {
+        if (time_fx > delay_fx)
         {
-            uint8_t track = pgm_read_word(&playing[i+1]);
-            increment[track] = pgm_read_word(&playing[i+2]);
-            state[track] = 0;
+            time_fx = 0;
+            delay_fx = pgm_read_word(&playing_fx[i_fx]);
+            if (delay_fx == STOP)
+            {
+                playing_fx = NULL;
+                increment[EFFECT] = 0;
+            }
+            else
+            {
+                increment[EFFECT] = pgm_read_word(&playing_fx[i_fx+1]);
+            }
+            i_fx += 2;
         }
-        i += 3;
     }
 }
 
@@ -69,56 +107,26 @@ int main()
     init();
 
     start_playing(splash);
-    
+
     while (1)
     {
         if (uart_data_waiting())
         {
             switch (uart_getc())
             {
-                /*case 0:
+                case 0:
                     start_playing(splash);
                     break;
                 case 1:
                     //start_playing(ingame);
                     break;
-                case 's': // shoot
-                    for (uint16_t i = 4000; i > 1500; i -= 10)
-                    {
-                        EFFECT = i;
-                        uint32_t wait = time + 10;
-                        while (time != 0 && time < wait);
-                    }
-                    EFFECT = 0;
+                case 's':
+                    start_playing_fx(shoot);
                     break;
-                case 'e': // explosion
-                    if (j % 2)
-                    {
-                        for (uint16_t i = 50000; i > 5000; i -= 500)
-                        {
-                            EFFECT = i;
-                            _delay_ms(1);
-                        }
-                        for (uint16_t i = 5000; i < 50000; i += 40)
-                        {
-                            EFFECT = i;
-                            _delay_ms(1);
-                        }
-                    }
-                    else
-                    {
-                        for (uint16_t i = 5000; i < 40000; i *= 1.002)
-                        {
-                            EFFECT = i;
-                            _delay_us(1000);
-                            EFFECT /= 2;
-                            _delay_us(100);
-                        }
-                    }
-                    EFFECT = 0;
-                    j++;
+                case 'e':
+                    start_playing_fx(explosion);
                     break;
-                case 'b':
+                /*case 'b':
                     start_playing(boss1);
                     break;
                 case 'c':
@@ -135,32 +143,24 @@ int main()
 
         if (next_sample)
         {
-            pwm = 0;
+            uint16_t tmp = 0;
 
-            /*uint16_t tmp = state[1];
-            if (tmp < 0x8000)
-                tmp <<= 1; // * 2
-            else
-                tmp = 0xFFFF - ((tmp & 0x7FFF) << 1);
-            pwm += tmp >> 8;
-            state[1] += increment[1];
-
-            pwm += (state[0] >> 8U) & 0x80;
-            //pwm += state[0] >> 8;
-            state[0] += increment[0];*/
-
-            for (uint8_t i = 0; i < CONCURRENT_TONES; ++i)
+            for (uint8_t i = 0; i < EFFECT; ++i)
             {
-                //pwm += state[i] >> 8; // saw
-                pwm += (state[i] >> 8) & 0x80; // square
+                //tmp += state[i] >> 8; // saw
+                tmp += (state[i] >> 8) & 0x80; // square
                 /*if (state[i] < 0x8000) // triangle
-                    pwm += state[i] >> 7;
+                    tmp += state[i] >> 7;
                 else
-                    pwm += (0xFFFF - (state[i] & 0x7FFF << 1)) >> 8;*/
+                    tmp += (0xFFFF - (state[i] & 0x7FFF << 1)) >> 8;*/
                 state[i] += increment[i];
             }
 
-            pwm >>= 2; // divide by 4
+            // >> 7 to make fx louder
+            tmp += ((state[EFFECT] >> 7) & 0x80) << 1;
+            state[EFFECT] += increment[EFFECT];
+
+            pwm = tmp >> 2; // divide by 4
 
             update_increment();
             next_sample = 0;

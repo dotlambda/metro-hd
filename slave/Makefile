@@ -6,7 +6,7 @@
 PROJECT = basis
 
 # Sourcefiles
-SOURCE = main.c music.c
+SOURCE = main.c music.c fx.c
 # Files from basis
 SOURCE += uart.c
 # Libraries
