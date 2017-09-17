@@ -72,15 +72,23 @@ class Synth():
                     changes[-1]["increment"] = increment
                 else:
                     changes.append({"delay": int(delay), "track": track, "increment": increment})
+        
         array = "const uint16_t " + arrayname + "[] PROGMEM = {\n"
+        array += "    0, "
         for change in changes:
             delay = change["delay"]
             assert(delay < 2 ** 16)
             track = change["track"]
             increment = change["increment"]
             assert(increment < 2 ** 16)
-            array += "    " + str(delay) + ", " + str(track) + ", " + str(increment) + ",\n"
-        array += "    STOP\n};"
+            array += str(track) + ", " + str(increment) + ",\n"
+            array += "    " + str(delay) + ", "
+        
+        # remove last delay
+        i = array[:-1].rfind(" ")
+        array = array[:i+1]
+
+        array += "STOP\n};"
         hfile.write("extern const uint16_t " + arrayname + "[" + str(3 * len(changes) + 1) + "] PROGMEM;\n\n")
         cfile.write(array)
         cfile.write("\n\n")
@@ -96,8 +104,6 @@ with open(hfilename, "w") as hfile:
         #synth.writeCArray("../music/sevenfortyam.mid", "splash", True)
         #synth.writeCArray("../music/Combat 2.mid", "splash", True, 4, [3])
         #synth.writeCArray("../music/SERAPHO.MID", "splash", True, 1, [1], .5)
-        #synth.writeCArray("../music/Boss_Musik_2.mid", "boss1", True)
-        #synth.writeCArray("../music/Boss_Musik_1_remastered.mid", "boss3", True)
         #synth.writeCArray("../music/title.mid", "splash", True)
         #synth.writeCArray("../music/Ingame_Musik_Tief.mid", "ingame", True)
         #synth.writeCArray("../music/Game_Over.mid", "gameover", True) 
@@ -108,5 +114,8 @@ with open(hfilename, "w") as hfile:
         #synth.writeCArray("../music/PER.MID", "splash", [1], timescale=4)
         #synth.writeCArray("../music/Cave 1.MID", "splash", [1], timescale=6)
         synth.writeCArray("../music/fish forest.MID", "splash", [1,3,4], timescale=4)
+        synth.writeCArray("../music/Boss_Musik_2.mid", "boss1", [0])
+        synth.writeCArray("../music/boss6.mid", "boss2", [0], pitch=2)
+        synth.writeCArray("../music/Boss_Musik_1_remastered.mid", "boss3", [0])
 
         hfile.write("#endif")

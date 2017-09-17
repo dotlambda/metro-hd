@@ -8,4 +8,10 @@
 
 extern const uint16_t splash[2116] PROGMEM;
 
+extern const uint16_t boss1[157] PROGMEM;
+
+extern const uint16_t boss2[1201] PROGMEM;
+
+extern const uint16_t boss3[985] PROGMEM;
+
 #endif

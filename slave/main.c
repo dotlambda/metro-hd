@@ -106,7 +106,7 @@ int main()
 {
     init();
 
-    start_playing(splash);
+    start_playing(boss2);
 
     while (1)
     {
@@ -115,7 +115,7 @@ int main()
             switch (uart_getc())
             {
                 case 0:
-                    start_playing(splash);
+                    //start_playing(splash);
                     break;
                 case 1:
                     //start_playing(ingame);
@@ -148,7 +148,7 @@ int main()
             for (uint8_t i = 0; i < EFFECT; ++i)
             {
                 //tmp += state[i] >> 8; // saw
-                tmp += (state[i] >> 8) & 0x80; // square
+                tmp += ((state[i] >> 8) & 0x80) << 1; // square
                 /*if (state[i] < 0x8000) // triangle
                     tmp += state[i] >> 7;
                 else
