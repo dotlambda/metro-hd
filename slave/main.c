@@ -25,47 +25,14 @@ const uint16_t* playing;
 uint16_t i;
 uint16_t delay;
 
-static inline void update_increment()
-{
-    if (time > delay)
-    {
-        time = 0;
-        delay = pgm_read_word(&playing[i]);
-        if (i > 0 && delay == 0)
-        {
-            i = 0;
-            MUSIC = 0;
-        }
-        else
-        {
-            MUSIC = pgm_read_word(&playing[i+1]);
-        }
-        i += 2;
-    }
-}
+volatile uint32_t pwm;
+volatile uint8_t next_sample = 1;
 
 SIGNAL(TIMER2_COMPA_vect)
 {
     time++;
-    
-    // music
-    uint32_t pwm = state[0] >> 9;
-    state[0] += increment[0];
-    
-    if (increment[1])
-    {
-        // effect
-        pwm += state[1] >> 8;
-        state[1] += increment[1];
-
-        OCR1A = pwm >> 1;
-    }
-    else
-    {
-        OCR1A = pwm;
-    }
-
-    update_increment();
+    OCR1A = pwm;
+    next_sample = 1;
 }
 
 static inline void start_playing(const uint16_t* music)
@@ -73,74 +40,130 @@ static inline void start_playing(const uint16_t* music)
     cli();
     i = 0;
     playing = music;
-    update_increment();
+    next_sample = 1;
     sei();
+}
+
+static inline void update_increment()
+{
+    while (time > delay)
+    {
+        time = 0;
+        delay = pgm_read_word(&playing[i]);
+        if (delay == STOP)
+        {
+            i = 0;
+        }
+        else
+        {
+            uint8_t track = pgm_read_word(&playing[i+1]);
+            increment[track] = pgm_read_word(&playing[i+2]);
+            state[track] = 0;
+        }
+        i += 3;
+    }
 }
 
 int main()
 {
     init();
+
+    start_playing(boss2);
     
-    uint16_t j = 0;
     while (1)
     {
-        while(!uart_data_waiting());
-        switch (uart_getc())
+        if (uart_data_waiting())
         {
-            case 0:
-                start_playing(splash);
-                break;
-            case 1:
-                //start_playing(boss2);
-                break;
-            case 's': // shoot
-                for (uint16_t i = 4000; i > 1500; i -= 10)
-                {
-                    EFFECT = i;
-                    uint32_t wait = time + 10;
-                    while (time != 0 && time < wait);
-                }
-                EFFECT = 0;
-                break;
-            case 'e': // explosion
-                if (j % 2)
-                {
-                    for (uint16_t i = 50000; i > 5000; i -= 500)
+            switch (uart_getc())
+            {
+                /*case 0:
+                    start_playing(splash);
+                    break;
+                case 1:
+                    //start_playing(ingame);
+                    break;
+                case 's': // shoot
+                    for (uint16_t i = 4000; i > 1500; i -= 10)
                     {
                         EFFECT = i;
-                        _delay_ms(1);
+                        uint32_t wait = time + 10;
+                        while (time != 0 && time < wait);
                     }
-                    for (uint16_t i = 5000; i < 50000; i += 40)
+                    EFFECT = 0;
+                    break;
+                case 'e': // explosion
+                    if (j % 2)
                     {
-                        EFFECT = i;
-                        _delay_ms(1);
+                        for (uint16_t i = 50000; i > 5000; i -= 500)
+                        {
+                            EFFECT = i;
+                            _delay_ms(1);
+                        }
+                        for (uint16_t i = 5000; i < 50000; i += 40)
+                        {
+                            EFFECT = i;
+                            _delay_ms(1);
+                        }
                     }
-                }
+                    else
+                    {
+                        for (uint16_t i = 5000; i < 40000; i *= 1.002)
+                        {
+                            EFFECT = i;
+                            _delay_us(1000);
+                            EFFECT /= 2;
+                            _delay_us(100);
+                        }
+                    }
+                    EFFECT = 0;
+                    j++;
+                    break;
+                case 'b':
+                    start_playing(boss1);
+                    break;
+                case 'c':
+                    start_playing(boss2);
+                    break;
+                case 'd':
+                    start_playing(boss3);
+                    break;
+                case 'g':
+                    start_playing(gameover);
+                    break;*/
+            }
+        }
+
+        if (next_sample)
+        {
+            pwm = 0;
+
+            /*uint16_t tmp = state[1];
+            if (tmp < 0x8000)
+                tmp <<= 1; // * 2
+            else
+                tmp = 0xFFFF - ((tmp & 0x7FFF) << 1);
+            pwm += tmp >> 8;
+            state[1] += increment[1];
+
+            pwm += (state[0] >> 8U) & 0x80;
+            //pwm += state[0] >> 8;
+            state[0] += increment[0];*/
+
+            for (uint8_t i = 0; i < CONCURRENT_TONES; ++i)
+            {
+                //pwm += state[i] >> 8; // saw
+                pwm += (state[i] >> 8) & 0x80; // square
+                /*if (state[i] < 0x8000) // triangle
+                    pwm += state[i] >> 7;
                 else
-                {
-                    for (uint16_t i = 5000; i < 40000; i *= 1.002)
-                    {
-                        EFFECT = i;
-                        _delay_us(1000);
-                        EFFECT /= 2;
-                        _delay_us(100);
-                    }
-                }
-                EFFECT = 0;
-                j++;
-                break;
-            case 'b':
-                start_playing(boss1);
-                break;
-            case 'c':
-                start_playing(boss2);
-                break;
-            case 'd':
-                start_playing(boss3);
-                break;
-            case 'g':
-                start_playing(gameover);
-                break;
+                    pwm += (0xFFFF - (state[i] & 0x7FFF << 1)) >> 8;*/
+                state[i] += increment[i];
+            }
+
+            pwm >>= 1; // divide by 4
+
+            update_increment();
+            next_sample = 0;
         }
     }
 }
