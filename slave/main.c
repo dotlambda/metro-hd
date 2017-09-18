@@ -92,6 +92,7 @@ static inline void update_increment()
             {
                 playing_fx = NULL;
                 increment[EFFECT] = 0;
+                state[EFFECT] = 0;
             }
             else
             {
@@ -106,8 +107,6 @@ int main()
 {
     init();
 
-    start_playing(boss2);
-
     while (1)
     {
         if (uart_data_waiting())
@@ -115,7 +114,7 @@ int main()
             switch (uart_getc())
             {
                 case 0:
-                    //start_playing(splash);
+                    start_playing(splash);
                     break;
                 case 1:
                     //start_playing(ingame);
@@ -126,7 +125,7 @@ int main()
                 case 'e':
                     start_playing_fx(explosion);
                     break;
-                /*case 'b':
+                case 'b':
                     start_playing(boss1);
                     break;
                 case 'c':
@@ -135,7 +134,7 @@ int main()
                 case 'd':
                     start_playing(boss3);
                     break;
-                case 'g':
+                /*case 'g':
                     start_playing(gameover);
                     break;*/
             }
@@ -148,7 +147,7 @@ int main()
             for (uint8_t i = 0; i < EFFECT; ++i)
             {
                 //tmp += state[i] >> 8; // saw
-                tmp += ((state[i] >> 8) & 0x80) << 1; // square
+                tmp += (state[i] >> 8) & 0x80; // square
                 /*if (state[i] < 0x8000) // triangle
                     tmp += state[i] >> 7;
                 else
@@ -157,7 +156,7 @@ int main()
             }
 
             // >> 7 to make fx louder
-            tmp += ((state[EFFECT] >> 7) & 0x80) << 1;
+            tmp += state[EFFECT] >> 7;
             state[EFFECT] += increment[EFFECT];
 
             pwm = tmp >> 2; // divide by 4
