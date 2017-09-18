@@ -110,24 +110,15 @@ with open(hfilename, "w") as hfile:
                   + "} Event;\n\n")
         hfile.write("#define STOP { { 0xFFFF, 0, 0 } }\n\n")
         synth=Synth(hfile, cfile)
-        # for ... in os.walk("../music"):
-        #synth.writeCArray("../../bomb_explosion_1.wav.mid", "elise", True)
-        #synth.writeCArray("../music/sevenfortyam.mid", "splash", True)
-        #synth.writeCArray("../music/Combat 2.mid", "splash", True, 4, [3])
-        #synth.writeCArray("../music/SERAPHO.MID", "splash", True, 1, [1], .5)
-        #synth.writeCArray("../music/title.mid", "splash", True)
-        #synth.writeCArray("../music/Ingame_Musik_Tief.mid", "ingame", True)
-        #synth.writeCArray("../music/combat.mid", "splash", True, timescale = 0.8)
         
         synth.writeCArray("../music/Keith-ou-Passe-Bad.mid", "ingame2", [1,4], timescale=3.5) # triangle
-        #synth.writeCArray("../music/HP1.MID", "splash", [1,2,14], timescale=4)
-        #synth.writeCArray("../music/PER.MID", "splash", [1], timescale=4)
-        #synth.writeCArray("../music/Cave 1.MID", "splash", [1,2,3], timescale=6)
         synth.writeCArray("../music/fish forest.MID", "ingame1", [1,3,4], timescale=4)
         
         synth.writeCArray("../music/Boss_Musik_2.mid", "boss1", [0])
         synth.writeCArray("../music/boss6.mid", "boss2", [0], pitch=2)
         synth.writeCArray("../music/Boss_Musik_1_remastered.mid", "boss3", [0])
+        synth.writeCArray("../music/organic.MID", "boss4", [1,2,3], timescale=6) 
+
         synth.writeCArray("../music/Game_Over.mid", "gameover", [0]) 
 
         hfile.write("#endif")

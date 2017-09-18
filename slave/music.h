@@ -27,6 +27,8 @@ extern const Event boss2[401] PROGMEM;
 
 extern const Event boss3[329] PROGMEM;
 
+extern const Event boss4[947] PROGMEM;
+
 extern const Event gameover[25] PROGMEM;
 
 #endif

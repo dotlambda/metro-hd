@@ -129,6 +129,8 @@ int main()
 {
     init();
 
+    start_playing(boss4, 1, 1);
+
     while (1)
     {
         if (uart_data_waiting())
@@ -136,10 +138,10 @@ int main()
             switch (uart_getc())
             {
                 case 0:
-                    start_playing(ingame1, 0, 1);
+                    //start_playing(ingame1, 0, 1);
                     break;
                 case 1:
-                    start_playing(ingame2, 0, 1);
+                    //start_playing(ingame2, 0, 1);
                     break;
                 case 's':
                     start_playing_fx(shoot);
