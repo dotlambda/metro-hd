@@ -25,6 +25,7 @@ const uint16_t* playing = NULL;
 uint16_t i;
 uint16_t delay;
 uint8_t single_channel = 0;
+uint8_t repeat = 0;
 
 volatile uint32_t time_fx = 0;
 const uint16_t* playing_fx = NULL;
@@ -42,7 +43,7 @@ SIGNAL(TIMER2_COMPA_vect)
     next_sample = 1;
 }
 
-static inline void start_playing(const uint16_t* music, uint8_t single_channel_)
+static inline void start_playing(const uint16_t* music, uint8_t single_channel_, uint8_t repeat_)
 {
     cli();
     i = 0;
@@ -55,6 +56,7 @@ static inline void start_playing(const uint16_t* music, uint8_t single_channel_)
         state[i] = 0;
     }
     single_channel = single_channel_;
+    repeat = repeat_;
     sei();
 }
 
@@ -78,7 +80,19 @@ static inline void update_increment()
             delay = pgm_read_word(&playing[i]);
             if (delay == STOP)
             {
-                i = 0;
+                if (repeat)
+                {
+                    i = 0;
+                }
+                else
+                {
+                    playing = NULL;
+                    for (uint8_t i = 0; i < EFFECT; ++i)
+                    {
+                        increment[i] = 0;
+                        state[i] = 0;
+                    }
+                }
             }
             else
             {
@@ -121,10 +135,10 @@ int main()
             switch (uart_getc())
             {
                 case 0:
-                    start_playing(ingame1, 0);
+                    start_playing(ingame1, 0, 1);
                     break;
                 case 1:
-                    start_playing(ingame2, 0);
+                    start_playing(ingame2, 0, 1);
                     break;
                 case 's':
                     start_playing_fx(shoot);
@@ -133,17 +147,17 @@ int main()
                     start_playing_fx(explosion);
                     break;
                 case 'b':
-                    start_playing(boss1, 1);
+                    start_playing(boss1, 1, 1);
                     break;
                 case 'c':
-                    start_playing(boss2, 1);
+                    start_playing(boss2, 1, 1);
                     break;
                 case 'd':
-                    start_playing(boss3, 1);
+                    start_playing(boss3, 1, 1);
                     break;
-                /*case 'g':
-                    start_playing(gameover, 1);
-                    break;*/
+                case 'g':
+                    start_playing(gameover, 1, 0);
+                    break;
             }
         }
 

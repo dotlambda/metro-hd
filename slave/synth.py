@@ -106,7 +106,6 @@ with open(hfilename, "w") as hfile:
         #synth.writeCArray("../music/SERAPHO.MID", "splash", True, 1, [1], .5)
         #synth.writeCArray("../music/title.mid", "splash", True)
         #synth.writeCArray("../music/Ingame_Musik_Tief.mid", "ingame", True)
-        #synth.writeCArray("../music/Game_Over.mid", "gameover", True) 
         #synth.writeCArray("../music/combat.mid", "splash", True, timescale = 0.8)
         
         synth.writeCArray("../music/Keith-ou-Passe-Bad.mid", "ingame2", [1,4], timescale=3.5) # triangle
@@ -118,5 +117,6 @@ with open(hfilename, "w") as hfile:
         synth.writeCArray("../music/Boss_Musik_2.mid", "boss1", [0])
         synth.writeCArray("../music/boss6.mid", "boss2", [0], pitch=2)
         synth.writeCArray("../music/Boss_Musik_1_remastered.mid", "boss3", [0])
+        synth.writeCArray("../music/Game_Over.mid", "gameover", [0]) 
 
         hfile.write("#endif")

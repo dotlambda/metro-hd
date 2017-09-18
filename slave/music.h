@@ -16,4 +16,6 @@ extern const uint16_t boss2[1201] PROGMEM;
 
 extern const uint16_t boss3[985] PROGMEM;
 
+extern const uint16_t gameover[73] PROGMEM;
+
 #endif
