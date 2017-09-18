@@ -942,8 +942,8 @@ int main(void)
                 {
                     fireballs[0]->y = fireballs[2]->y = monsters[0]->y + 4;
                     fireballs[1]->y = fireballs[3]->y = monsters[0]->y + 12;
-                    fireballs[0]->x = fireballs[1]->x = monsters[0]->x - fireballs[0]->width;
-                    fireballs[2]->x = fireballs[3]->x = monsters[0]->x + monsters[0]->width;
+                    fireballs[0]->x = fireballs[1]->x = monsters[0]->x - fireballs[0]->width - 1;
+                    fireballs[2]->x = fireballs[3]->x = monsters[0]->x + monsters[0]->width + 1;
                     fireballs[0]->direction = fireballs[1]->direction = DIRECTION_LEFT;
                     fireballs[2]->direction = fireballs[3]->direction = DIRECTION_RIGHT;
                     draw(fireballs[0]);
