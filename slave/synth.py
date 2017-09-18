@@ -74,22 +74,22 @@ class Synth():
                     changes.append({"delay": int(delay), "track": track, "increment": increment})
         
         array = "const Event " + arrayname + "[] PROGMEM = {\n"
-        array += "    { { .delay = 0, "
-        for change in changes:
+        for i, change in enumerate(changes):
             delay = change["delay"]
             assert(delay < 2 ** 16)
+            if i > 0:
+                array += ", .delay = " + str(delay) + " } },\n"
             track = change["track"]
             assert(track < 2 ** 2)
             increment = change["increment"]
             assert(increment < 2 ** 14)
-            array += " .track = " + str(track) + ", .increment = " + str(increment) + " } },\n"
-            array += "    { { .delay = " + str(delay) + ", "
+            array += "    { { .track = " + str(track) + ", .increment = " + str(increment)
         
-        # remove last "{ {"
-        i = array[:-1].rfind("{ {")
-        array = array[:i]
+        # remove last delay
+        i = array[:-1].rfind(".delay = ")
+        array = array[:i] + ".delay = 0 } },\n"
 
-        array += "STOP\n};"
+        array += "    STOP\n};"
         hfile.write("extern const Event " + arrayname + "[" + str(len(changes) + 1) + "] PROGMEM;\n\n")
         cfile.write(array)
         cfile.write("\n\n")
@@ -108,7 +108,7 @@ with open(hfilename, "w") as hfile:
                   + "    Change change;\n"
                   + "    uint32_t bits;\n"
                   + "} Event;\n\n")
-        hfile.write("#define STOP { { 0xFFFF, 0, 0 } }\n\n")
+        hfile.write("#define STOP { { .delay = 0xFFFF, .track = 0, .increment = 0 } }\n\n")
         synth=Synth(hfile, cfile)
         
         synth.writeCArray("../music/Keith-ou-Passe-Bad.mid", "ingame2", [1,4], timescale=3.5) # triangle

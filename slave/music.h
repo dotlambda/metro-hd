@@ -15,7 +15,7 @@ typedef union {
     uint32_t bits;
 } Event;
 
-#define STOP { { 0xFFFF, 0, 0 } }
+#define STOP { { .delay = 0xFFFF, .track = 0, .increment = 0 } }
 
 extern const Event ingame2[669] PROGMEM;
 

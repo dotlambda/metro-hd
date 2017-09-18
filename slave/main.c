@@ -92,6 +92,7 @@ static inline void update_increment()
                         increment[i] = 0;
                         state[i] = 0;
                     }
+                    break;
                 }
             }
             else
