@@ -276,7 +276,7 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
 int main(void)
 {
 	init();
-    uart_putc(0); // play title music
+ 
     // show splash screen until button A is pressed
     initial_level = eeprom_read_dword(&initial_level_stored);
     drawsplash(initial_level != 0);
