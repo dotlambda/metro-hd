@@ -72,6 +72,7 @@ void takingdamage(uint8_t damage)
     if (protagonist->health <= 0)
     {
         // game over
+        uart_putc('g');
         uint16_t i = 0;
         for (uint8_t y = 0; y < 26; y++)
         {
@@ -275,7 +276,7 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
 int main(void)
 {
 	init();
-
+ 
     // show splash screen until button A is pressed
     initial_level = eeprom_read_dword(&initial_level_stored);
     drawsplash(initial_level != 0);
@@ -339,7 +340,8 @@ int main(void)
     bombstruct = &bomb_;
     
     left_door_open = true;
-    right_door_open = true;    
+    right_door_open = true;
+    
     newgame();
     
     while (1)
@@ -580,6 +582,7 @@ int main(void)
                 }
                 if (enough_space)
                 {
+                    uart_putc('s');
                     projectiles[i]->movement = PROJECTILE;
                     draw(projectiles[i]);
                     num_rockets--;
@@ -597,6 +600,7 @@ int main(void)
                 }
                 else if(open_door_projectile(projectiles[i]))
                 {
+                    uart_putc('s');
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
                     drawnumber(57, 1, num_rockets);
@@ -670,6 +674,7 @@ int main(void)
         {
             if (explode < getMsTimer())
             {
+                uart_putc('e');
                 uint8_t blast_x1;
                 uint8_t blast_x2;
                 uint8_t blast_y1;

@@ -6,9 +6,9 @@
 PROJECT = basis
 
 # Sourcefiles
-SOURCE =main.c
+SOURCE = main.c music.c fx.c
 # Files from basis
-SOURCE += adc.c timer.c pwm.c uart.c servo.c
+SOURCE += uart.c
 # Libraries
 LIBS = -lm 
 
@@ -17,7 +17,7 @@ LIBS = -lm
 # O1 and 02 - optimize for speed
 # O3 - faster but not always correct
 # Os - optimize for programmsize (default)
-OPT=Os
+OPT=O2
 
 #keep the next line
 all:

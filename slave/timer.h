@@ -13,6 +13,7 @@
 
 
 void timerInit(void);
+void reset_timer();
 uint32_t getMsTimer();
 
 #endif
