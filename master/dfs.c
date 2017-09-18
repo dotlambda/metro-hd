@@ -1,26 +1,10 @@
 #include "dfs.h"
 #include "level.h"
 
-uint8_t platform_above(uint8_t x, uint8_t y)
-{
-    if (doors & 0b00000010 && x == 0 && y == 0) // blocked by door
-        return 1;
-    else if (doors & 0b00000001 && x == GRAPH_WIDTH - 1 && y == 0)
-        return 1;
-    else if (y == 0)
-        return !(platforms_19 & (3l << (x * 2)));
-    else if (y == 1)
-        return !(platforms_13 & (3l << (x * 2)));
-    return 0;
-}
-
 // whether there is a platform/foor below
-uint8_t platform_below(uint8_t x, uint8_t y)
+bool stand_on(uint8_t x, uint8_t y)
 {
-    if (doors & 0b00000010 && x == 0 && y == 1) // blocked by door
-        return 1;
-    else if (doors & 0b00000001 && x == GRAPH_WIDTH - 1 && y == 1)
-        return 1;
+    // cannot stand on door, therefore this is different from below
     if (y == 0)
         // return 1 if there is a floor on the left AND on the right
         return (nofloor & (3l << PLATFORM_WIDTH * x / 16 * 2)) && (nofloor & (3l << (PLATFORM_WIDTH * (x + 1) - 1) / 16 * 2));
@@ -31,7 +15,17 @@ uint8_t platform_below(uint8_t x, uint8_t y)
     return 0;
 }
 
-uint8_t is_door_reachable()
+// whether there is a platform/foor below
+bool blocked(uint8_t x, uint8_t y)
+{
+    if (doors & 0b00000010 && x == 0 && y == 1) // blocked by door
+        return 1;
+    else if (doors & 0b00000001 && x == GRAPH_WIDTH - 1 && y == 1)
+        return 1;
+    return stand_on(x, y);
+}
+
+bool is_door_reachable()
 {
     // there are 16 different x positions for platforms
     // and 3 different y positions (floor, first and second platform level)
@@ -81,13 +75,13 @@ uint8_t is_door_reachable()
                 continue;
             if (visited[y + 1] & (1 << (x + i)))
                 continue;
-            if (!platform_below(x + i, y + 1)) // can't jump onto nothing
+            if (!stand_on(x + i, y + 1)) // can't jump onto nothing
                 continue;
             // check if there is no platform in the way
             uint8_t platform = 0;
             for (int8_t j = 0; j != i; j += (i < 0 ? -1 : 1))
             {
-                if (platform_above(x + j, y))
+                if (blocked(x + j, y + 1))
                 {
                     platform = 1;
                     break;
@@ -109,13 +103,13 @@ uint8_t is_door_reachable()
                 continue;
             if (visited[y - 1] & (1 << (x + i)))
                 continue;
-            if (!platform_below(x + i, y - 1)) // can't jump onto nothing
+            if (!stand_on(x + i, y - 1)) // can't jump onto nothing
                 continue;
             // check if there is no platform in the way
             uint8_t platform = 0;
             for (int8_t j = i; j != 0; j += (i < 0 ? 1 : -1))
             {
-                if (platform_below(x + j, y))
+                if (blocked(x + j, y))
                 {
                     platform = 1;
                     break;
@@ -137,14 +131,14 @@ uint8_t is_door_reachable()
                 continue;
             if (visited[y] & (1 << (x + i)))
                 continue;
-            if (!platform_below(x + i, y)) // can't jump into water/spikes
+            if (!stand_on(x + i, y)) // can't jump into water/spikes
                 continue;
             // check if there is no platform in the way
             // a platform above the current or the target position is okay
             uint8_t platform = 0;
             for (int8_t j = (i < 0 ? i + 1 : i - 1); j != 0; j += (i < 0 ? 1 : -1))
             {
-                if (platform_above(x + j, y))
+                if (blocked(x + j, y + 1))
                 {
                     platform = 1;
                     break;
