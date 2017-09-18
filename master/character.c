@@ -26,17 +26,20 @@ void initcharacter(struct Character* character)
             character->width = 8;
             character->height = 8;
             character->damage = 10;
+            character->health = 2;
             character->movement = BACK_AND_FORTH;
             break;
         case LOOK_EYEMONSTER:
             character->width = 12;
             character->height = 16;
             character->damage = 15;
+            character->health = 4;
             break;
         case LOOK_MONSTER_ZOOMER:
             character->width = 15;
             character->height = 12;
             character->damage = 20;
+            character->health = 4;
             break;
         case LOOK_ROCKET:
             character->width = 14;
@@ -48,13 +51,14 @@ void initcharacter(struct Character* character)
             character->width = 17;
             character->height = 32;
             character->damage = 10;
-            character->health = 2;
+            character->health = 10;
             character->movement = ZAZABI;
             break;
         case LOOK_MONSTER_METROID:
             character->width = 14;
             character->height = 12;
             character->damage = 15;
+            character->health = 3;
             character->movement = BACK_AND_FORTH;
             break;
         case LOOK_MONSTER_HORNOAD:
@@ -62,12 +66,14 @@ void initcharacter(struct Character* character)
             character->height = 12;
             character->damage = 15;
             character->jumpheight = 20;
+            character->health = 3;
             character->movement = JUMPMOVE;
             break;
         case LOOK_MONSTER_SIDEHOPPER:
             character->width = 16;
             character->height = 12;
             character->damage = 20;
+            character->health = 3;
             character->jumpheight = 40;
             character->movement = JUMPMOVE;
             break;
@@ -87,6 +93,7 @@ void initcharacter(struct Character* character)
             character->width = 16;
             character->height = 16;
             character->damage = 5;
+            character->health = 5;
             character->movement = FLYING_AROUND;
             break;
         case LOOK_XPARASITE1:
@@ -111,7 +118,7 @@ void initcharacter(struct Character* character)
             character->health = 20;
             character->damage = 10;
             character->y_pace = 10;
-            character->health = 1;
+            character->health = 20;
             break;
         case LOOK_FIREBALL:
             character->width = 8;
@@ -135,7 +142,7 @@ void initcharacter(struct Character* character)
             character->width = 28;
             character->height = 33;
             character->damage = 15;
-            character->health = 2;
+            character->health = 15;
             character->movement = BOSS_DRAGON_GROUND;
             break;
 
@@ -153,7 +160,7 @@ void initcharacter(struct Character* character)
             character->width = 44;
             character->height = 44;
             character->damage = 5;
-            character->health = 1;
+            character->health = 15;
             character->movement = FLYING_AROUND;
             character->x_pace = 70;
             character->y_pace = 35;
@@ -695,7 +702,7 @@ void move(struct Character* character)
             break;
 
         case BOSS_DRAGON_GROUND:
-            if(character->health > 10)
+            if(character->health > character->initial_health/2)
             {
                 if(protagonist->x <= DISPLAY_WIDTH / 2)
                 {
