@@ -151,7 +151,7 @@ const uint16_t shoot[] PROGMEM = {
     10, 1060,
     10, 1040,
     10, 1020,
-    STOP
+    0xFFFF
 };
 
 const uint16_t explosion[] PROGMEM = {
@@ -291,6 +291,6 @@ const uint16_t explosion[] PROGMEM = {
     100, 0.5625,
     100, 0.25,
     100, 0.0625,
-    STOP
+    0xFFFF
 };
 

@@ -73,23 +73,24 @@ class Synth():
                 else:
                     changes.append({"delay": int(delay), "track": track, "increment": increment})
         
-        array = "const uint16_t " + arrayname + "[] PROGMEM = {\n"
-        array += "    0, "
+        array = "const Event " + arrayname + "[] PROGMEM = {\n"
+        array += "    { { .delay = 0, "
         for change in changes:
             delay = change["delay"]
             assert(delay < 2 ** 16)
             track = change["track"]
+            assert(track < 2 ** 2)
             increment = change["increment"]
-            assert(increment < 2 ** 16)
-            array += str(track) + ", " + str(increment) + ",\n"
-            array += "    " + str(delay) + ", "
+            assert(increment < 2 ** 14)
+            array += " .track = " + str(track) + ", .increment = " + str(increment) + " } },\n"
+            array += "    { { .delay = " + str(delay) + ", "
         
-        # remove last delay
-        i = array[:-1].rfind(" ")
-        array = array[:i+1]
+        # remove last "{ {"
+        i = array[:-1].rfind("{ {")
+        array = array[:i]
 
         array += "STOP\n};"
-        hfile.write("extern const uint16_t " + arrayname + "[" + str(3 * len(changes) + 1) + "] PROGMEM;\n\n")
+        hfile.write("extern const Event " + arrayname + "[" + str(len(changes) + 1) + "] PROGMEM;\n\n")
         cfile.write(array)
         cfile.write("\n\n")
 
@@ -97,7 +98,17 @@ with open(hfilename, "w") as hfile:
     with open(cfilename, "w") as cfile:
         cfile.write("#include \"music.h\"\n\n")
         hfile.write("#ifndef MUSIC_H\n#define MUSIC_H\n\n#include <inttypes.h>\n#include <avr/pgmspace.h>\n\n")
-        hfile.write("#define STOP 0xFFFF\n\n")
+        hfile.write("// a Change has a size of 32 bits\n"
+                  + "typedef struct __attribute__((packed)) {\n"
+                  + "    uint16_t delay;\n"
+                  + "    unsigned track: 2;\n"
+                  + "    unsigned increment: 14;\n"
+                  + "} Change;\n")
+        hfile.write("typedef union {\n"
+                  + "    Change change;\n"
+                  + "    uint32_t bits;\n"
+                  + "} Event;\n\n")
+        hfile.write("#define STOP { { 0xFFFF, 0, 0 } }\n\n")
         synth=Synth(hfile, cfile)
         # for ... in os.walk("../music"):
         #synth.writeCArray("../../bomb_explosion_1.wav.mid", "elise", True)

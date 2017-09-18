@@ -6,7 +6,7 @@
 #include <inttypes.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <stdlib.h>
+#include <stddef.h>
 #include "uart.h"
 #include "music.h"
 #include "fx.h"
@@ -21,7 +21,7 @@ volatile uint16_t state[CONCURRENT_TONES];
 volatile uint16_t increment[CONCURRENT_TONES];
 
 volatile uint32_t time = 0;
-const uint16_t* playing = NULL;
+const Event* playing = NULL;
 uint16_t i;
 uint16_t delay;
 uint8_t single_channel = 0;
@@ -43,7 +43,7 @@ SIGNAL(TIMER2_COMPA_vect)
     next_sample = 1;
 }
 
-static inline void start_playing(const uint16_t* music, uint8_t single_channel_, uint8_t repeat_)
+static inline void start_playing(const Event* music, uint8_t single_channel_, uint8_t repeat_)
 {
     cli();
     i = 0;
@@ -70,15 +70,15 @@ static inline void start_playing_fx(const uint16_t* effect)
     sei();
 }
 
+Event event;
 static inline void update_increment()
 {
     if (playing != NULL)
     {
         while (time > delay)
         {
-            time = 0;
-            delay = pgm_read_word(&playing[i]);
-            if (delay == STOP)
+            event.bits = pgm_read_dword(&playing[i]);
+            if (event.change.delay == 0xFFFF) // stop
             {
                 if (repeat)
                 {
@@ -96,10 +96,11 @@ static inline void update_increment()
             }
             else
             {
-                uint8_t track = pgm_read_word(&playing[i+1]);
-                increment[track] = pgm_read_word(&playing[i+2]);
+                time = 0;
+                delay = event.change.delay;
+                increment[event.change.track] = event.change.increment;
             }
-            i += 3;
+            i++;
         }
     }
 
@@ -109,7 +110,7 @@ static inline void update_increment()
         {
             time_fx = 0;
             delay_fx = pgm_read_word(&playing_fx[i_fx]);
-            if (delay_fx == STOP)
+            if (delay_fx == 0xFFFF) // stop
             {
                 playing_fx = NULL;
                 increment[EFFECT] = 0;

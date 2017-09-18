@@ -4,18 +4,29 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 
-#define STOP 0xFFFF
+// a Change has a size of 32 bits
+typedef struct __attribute__((packed)) {
+    uint16_t delay;
+    unsigned track: 2;
+    unsigned increment: 14;
+} Change;
+typedef union {
+    Change change;
+    uint32_t bits;
+} Event;
 
-extern const uint16_t ingame2[2005] PROGMEM;
+#define STOP { { 0xFFFF, 0, 0 } }
 
-extern const uint16_t ingame1[2116] PROGMEM;
+extern const Event ingame2[669] PROGMEM;
 
-extern const uint16_t boss1[157] PROGMEM;
+extern const Event ingame1[706] PROGMEM;
 
-extern const uint16_t boss2[1201] PROGMEM;
+extern const Event boss1[53] PROGMEM;
 
-extern const uint16_t boss3[985] PROGMEM;
+extern const Event boss2[401] PROGMEM;
 
-extern const uint16_t gameover[73] PROGMEM;
+extern const Event boss3[329] PROGMEM;
+
+extern const Event gameover[25] PROGMEM;
 
 #endif
