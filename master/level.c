@@ -456,7 +456,10 @@ void newlevelpos()
 void newlevel()
 {
     //ingame music
-    uart_putc(1);
+    if (level % 2)
+        uart_putc('i');
+    else
+        uart_putc('j');
     
     eeprom_write_block(&level, &level_stored, sizeof level);
     

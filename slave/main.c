@@ -136,10 +136,10 @@ int main()
         {
             switch (uart_getc())
             {
-                case 0:
+                case 'i':
                     start_playing(ingame1, 0, 1);
                     break;
-                case 1:
+                case 'j':
                     start_playing(ingame2, 0, 1);
                     break;
                 case 's':
