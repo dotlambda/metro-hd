@@ -24,6 +24,7 @@ volatile uint32_t time = 0;
 const uint16_t* playing = NULL;
 uint16_t i;
 uint16_t delay;
+uint8_t single_channel = 0;
 
 volatile uint32_t time_fx = 0;
 const uint16_t* playing_fx = NULL;
@@ -41,13 +42,19 @@ SIGNAL(TIMER2_COMPA_vect)
     next_sample = 1;
 }
 
-static inline void start_playing(const uint16_t* music)
+static inline void start_playing(const uint16_t* music, uint8_t single_channel_)
 {
     cli();
     i = 0;
     playing = music;
     delay = 0;
     next_sample = 1;
+    for (uint8_t i = 0; i < EFFECT; ++i)
+    {
+        increment[i] = 0;
+        state[i] = 0;
+    }
+    single_channel = single_channel_;
     sei();
 }
 
@@ -114,10 +121,10 @@ int main()
             switch (uart_getc())
             {
                 case 0:
-                    start_playing(splash);
+                    start_playing(ingame1, 0);
                     break;
                 case 1:
-                    //start_playing(ingame);
+                    start_playing(ingame2, 0);
                     break;
                 case 's':
                     start_playing_fx(shoot);
@@ -126,16 +133,16 @@ int main()
                     start_playing_fx(explosion);
                     break;
                 case 'b':
-                    start_playing(boss1);
+                    start_playing(boss1, 1);
                     break;
                 case 'c':
-                    start_playing(boss2);
+                    start_playing(boss2, 1);
                     break;
                 case 'd':
-                    start_playing(boss3);
+                    start_playing(boss3, 1);
                     break;
                 /*case 'g':
-                    start_playing(gameover);
+                    start_playing(gameover, 1);
                     break;*/
             }
         }
@@ -144,15 +151,23 @@ int main()
         {
             uint16_t tmp = 0;
 
-            for (uint8_t i = 0; i < EFFECT; ++i)
+            if (single_channel)
             {
-                //tmp += state[i] >> 8; // saw
-                tmp += (state[i] >> 8) & 0x80; // square
-                /*if (state[i] < 0x8000) // triangle
-                    tmp += state[i] >> 7;
-                else
-                    tmp += (0xFFFF - (state[i] & 0x7FFF << 1)) >> 8;*/
-                state[i] += increment[i];
+                tmp += 3 * ((state[0] >> 8) & 0x80);
+                state[0] += increment[0];
+            }
+            else
+            {
+                for (uint8_t i = 0; i < EFFECT; ++i)
+                {
+                    //tmp += state[i] >> 8; // saw
+                    tmp += (state[i] >> 8) & 0x80; // square
+                    /*if (state[i] < 0x8000) // triangle
+                        tmp += state[i] >> 7;
+                    else
+                        tmp += (0xFFFF - (state[i] & 0x7FFF << 1)) >> 8;*/
+                    state[i] += increment[i];
+                }
             }
 
             // >> 7 to make fx louder

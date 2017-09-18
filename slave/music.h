@@ -6,7 +6,9 @@
 
 #define STOP 0xFFFF
 
-extern const uint16_t splash[2116] PROGMEM;
+extern const uint16_t ingame2[2005] PROGMEM;
+
+extern const uint16_t ingame1[2116] PROGMEM;
 
 extern const uint16_t boss1[157] PROGMEM;
 

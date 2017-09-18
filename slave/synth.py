@@ -109,11 +109,12 @@ with open(hfilename, "w") as hfile:
         #synth.writeCArray("../music/Game_Over.mid", "gameover", True) 
         #synth.writeCArray("../music/combat.mid", "splash", True, timescale = 0.8)
         
-        #synth.writeCArray("../music/Keith-ou-Passe-Bad.mid", "splash", [1,4], timescale=3.5) # triangle
+        synth.writeCArray("../music/Keith-ou-Passe-Bad.mid", "ingame2", [1,4], timescale=3.5) # triangle
         #synth.writeCArray("../music/HP1.MID", "splash", [1,2,14], timescale=4)
         #synth.writeCArray("../music/PER.MID", "splash", [1], timescale=4)
-        #synth.writeCArray("../music/Cave 1.MID", "splash", [1], timescale=6)
-        synth.writeCArray("../music/fish forest.MID", "splash", [1,3,4], timescale=4)
+        #synth.writeCArray("../music/Cave 1.MID", "splash", [1,2,3], timescale=6)
+        synth.writeCArray("../music/fish forest.MID", "ingame1", [1,3,4], timescale=4)
+        
         synth.writeCArray("../music/Boss_Musik_2.mid", "boss1", [0])
         synth.writeCArray("../music/boss6.mid", "boss2", [0], pitch=2)
         synth.writeCArray("../music/Boss_Musik_1_remastered.mid", "boss3", [0])
