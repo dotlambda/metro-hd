@@ -9,6 +9,7 @@
 #include "sprites.h"
 #include "rand.h"
 #include "dfs.h"
+#include "uart.h"
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
@@ -213,9 +214,11 @@ void newlevelpos()
         {
             case 0:
                 monsters[0]->look = LOOK_BOSS_MEGACOREX;
+                uart_putc('b');
                 break;
             case 1:
                 monsters[0]->look = LOOK_BOSS_SECROB;
+                uart_putc('c');
                 for (uint8_t i = 0; i < 4; ++i)
                 {
                     fireballs[i]->look = LOOK_ARROW;
@@ -233,10 +236,12 @@ void newlevelpos()
                 break;
             case 2: 
                 monsters[0]->look = LOOK_BOSS_ZAZABI;
+                uart_putc('d');
                 monsters[0]->direction = protagonist->direction; // begin jumping towards the protagonist
                 break;
             case 3:
                 monsters[0]->look = LOOK_NEO_RIDLEY_DRAGON;
+                uart_putc('d');
                 for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
                 {
                     fireballs[i]->look = LOOK_FIREBALL;
@@ -450,8 +455,14 @@ void newlevelpos()
 
 void newlevel()
 {
+    //ingame music
+    if (level % 2)
+        uart_putc('i');
+    else
+        uart_putc('j');
+    
     eeprom_write_block(&level, &level_stored, sizeof level);
-
+    
     level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
     
     srand(level_seed);
