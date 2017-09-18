@@ -144,13 +144,13 @@ extern PROGMEM const uint8_t xparasite2[12];
 // 8x4
 extern PROGMEM const uint8_t A[8];
 
-// 8x8
-extern PROGMEM const uint8_t Abutton[16];
+// 9x8
+extern PROGMEM const uint8_t Abutton[24];
 
 // 8x4
 extern PROGMEM const uint8_t B[8];
 
-// 12x8
+// 9x8
 extern PROGMEM const uint8_t BButton[24];
 
 // 8x3
@@ -195,8 +195,8 @@ extern PROGMEM const uint8_t O[8];
 // 8x4
 extern PROGMEM const uint8_t P[8];
 
-// 8x8
-extern PROGMEM const uint8_t Pbutton[16];
+// 9x8
+extern PROGMEM const uint8_t Pbutton[24];
 
 // 8x4
 extern PROGMEM const uint8_t Q[8];
@@ -290,9 +290,6 @@ extern PROGMEM const uint8_t rechargeleft[272];
 
 // 16x37
 extern PROGMEM const uint8_t rechargeright[148];
-
-// 9x96
-extern PROGMEM const uint8_t restart[288];
 
 // 9x74
 extern PROGMEM const uint8_t resume[222];
