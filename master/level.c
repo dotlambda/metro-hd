@@ -433,6 +433,8 @@ void newlevelpos()
                 strncpy(line[0], "SAMUS, BEWARE OF NEO RIDLEY.", MAX_STRING_LEN);
                 strncpy(line[1], "WATCH OUT WHEN HE IS FLYING.", MAX_STRING_LEN);
                 break;
+            default:
+                break;
         }
         // print text
         char buffer[MAX_STRING_LEN];

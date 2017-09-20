@@ -464,8 +464,8 @@ void drawletters(uint8_t x, uint8_t y, char* string)
         }
         else
         {
-            const uint8_t* sprite;
-            uint8_t width;
+            const uint8_t* sprite = NULL;
+            uint8_t width = 0;
             switch(string[i])
             {
                 case 'A':
