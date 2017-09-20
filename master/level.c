@@ -262,17 +262,22 @@ void newlevelpos()
         platforms_24 = random();
         platforms_24 |= 1l << 0; // no hill at the display boundary
         platforms_24 |= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
-        nofloor = random();
-        nofloor|= 1l << 0; 
-        nofloor|= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
-        for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
+
+        do
         {
-            if (!(platforms_24 & (3l << 2 * pos)))
+            nofloor = random();
+            nofloor|= 1l << 0; 
+            nofloor|= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
+            for (uint8_t pos = 0; pos < DISPLAY_WIDTH / 16; ++pos)
             {
-                nofloor |= 1l << 2 * pos;
+                if (!(platforms_24 & (3l << 2 * pos)))
+                {
+                    nofloor |= 1l << 2 * pos;
+                }
             }
         }
-
+        while (!is_door_reachable());
+    
         doors = 0;
     
         // draw door to previous level
@@ -286,9 +291,6 @@ void newlevelpos()
         {
             doors |= 0b00000001;
         }
-
-        if (!is_door_reachable())
-            nofloor = UINT32_MAX;
  
         monsters[0]->look = random_below(NUM_MONSTER_LOOKS);
         if (monsters[0]->look == LOOK_MONSTER_MEMU) // make memus appear in swarms
