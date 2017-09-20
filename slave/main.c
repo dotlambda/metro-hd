@@ -177,7 +177,7 @@ int main()
                 for (uint8_t i = 0; i < EFFECT; ++i)
                 {
                     //tmp += state[i] >> 8; // saw
-                    tmp += (state[i] >> 8) & 0x80; // square
+                    tmp += ((state[i] >> 8) & 0x80) << 1; // square
                     /*if (state[i] < 0x8000) // triangle
                         tmp += state[i] >> 7;
                     else
