@@ -38,7 +38,7 @@ long obstacle(uint8_t x, uint8_t y)
         return 1l;
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (3l << x / 16 * 2);
-    else if (y >= HILL_Y && y < HILL_Y + 4)
+    else if (y >= 19 * 4 && y < 20 * 4)
         return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y >= 13 * 4 && y < 14 * 4)
         return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));
@@ -69,7 +69,7 @@ long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
         return 1l;
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (3l << x / 16 * 2);
-    else if (y >= HILL_Y && y < HILL_Y + 4)
+    else if (y >= 19 * 4 && y < 20 * 4)
         return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y >= 13 * 4 && y < 14 * 4)
         return !(platforms_13 & (3l << (x / PLATFORM_WIDTH * 2)));

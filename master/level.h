@@ -10,7 +10,6 @@
 
 #define FLOOR_Y 100
 #define DOOR_Y 80
-#define HILL_Y 76
 #define CEILING_Y 20
 
 #define MAX_STRING_LEN 40
