@@ -133,15 +133,17 @@ bool is_door_reachable()
                 continue;
             if (!stand_on(x + i, y)) // can't jump into water/spikes
                 continue;
-            // check if there is no platform in the way
-            // a platform above the current or the target position is okay
             uint8_t platform = 0;
-            for (int8_t j = (i < 0 ? i + 1 : i - 1); j != 0; j += (i < 0 ? 1 : -1))
+            if (i != -1 && i != 1)
             {
-                if (blocked(x + j, y + 1))
+                // check if there is no platform in the way
+                for (int8_t j = 0; i < 0 ? j >= i : j <= i; j += (i < 0 ? -1 : 1))
                 {
-                    platform = 1;
-                    break;
+                    if (blocked(x + j, y + 1))
+                    {
+                        platform = 1;
+                        break;
+                    }
                 }
             }
             if (platform) // can't jump if there is a platform above
