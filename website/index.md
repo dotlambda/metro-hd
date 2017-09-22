@@ -38,6 +38,54 @@ and the latter is used solely as a sound controller.
 # The Game
 ![](images/splash.png){width=100%}
 
+We based our game on the Metroid Series, especially on Metroid Fusion.
+Thus we made this Logo, which is inspired by the actual Metroid Logo.
+
+
+So what is there to do in our Game?
+
+
+
+![Fight against various Monster.](images/world2.png){width=50%}
+
+
+There are no less than 12 Monster types in our Game, which can be encountered at least one of in each Room and
+just like in the real Metroid the transition between levels happens through
+passing through doors, which can be opened by shooting them.
+
+![Explore different Level layouts.](images/world3.png){width=50%}
+
+
+The Monsters you kill have a possibility to drop so called X-Parasites,
+which is also a reference to Metroid Fusion (X-Parasite right next to the Protagonist in the Picture).
+There is an infinite amount of levels to explore, meaning the game is endless.
+
+![Rest in the Recharge Room.](images/world4.png){width=50%}
+
+
+Every fourth level there is a so called Recharge Room. There Energy and Ammunition can be refilled by standing in the Recharger
+in the middle of the Room.
+
+![Fight bosses.](images/world5.png){width=50%}
+
+
+After the recharge room - so every fifth level - there will be a boss encounter in which one of the 4 bosses appear.
+All the bosses have different moves, so none is like the other.
+
+![Achieve Power-Ups.](images/world6.png){width=50%}
+
+
+After successfully defeating a Boss Power-Ups are obtained, which will stay until death.
+
+
+
+The amount of Monster which can appear will increase by one after the second slain Boss and increases by one for every Boss after that,
+which will make the game increase in difficulty after slaying Bosses.
+
+
+
+
+
 # Level Setup
 
 ## Depth-first Search
