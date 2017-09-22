@@ -180,7 +180,7 @@ because B1 is set to high at $0$ and set to low when reaching `OCR1A`.
 `OCR1A` is set in the interrupt of Timer2,
 which is called with a frequency of $15625\,\mathrm{Hz}$.
 To e.g. generate a tone with $440\,\mathrm{Hz}$,
-we simply need to reach the maximum pulse width ($255$) with a frequency of $440\,\mathrm{Hz}.
+we simply need to reach the maximum pulse width ($255$) with a frequency of $440\,\mathrm{Hz}$.
 To do this, the pulse width can simply be incremented by
 
 $$ \frac{255}{15625\,\mathrm{Hz} / 440\,\mathrm{Hz}} \approx 7.18 $$
@@ -195,7 +195,31 @@ we use `uint16_t`{.c}s and increment the pulse width by
 $$ \lfloor 7.18 \cdot 256 \rfloor = \lfloor 1838.08 \rfloor = 1838 $$
 
 which is obviously a lot more accurate.
+Additionally, Timer2 is used to keep track of the time.
 
-<!-- TODO: python script -->
+To make easier to write our own music for the console and use existing tunes,
+we wrote a Python script that converts MIDI files
+into C arrays that are stored in the `PROGMEM`.
+We use the [mido](https://mido.readthedocs.io/en/latest/) library to read the files.
+The entries of these arrays contain information about
+
+- the track (as explained above, there are three channels for the music),
+- the increment corresponding to the tone that should be played
+  (an increment of $0$ means that no tone should be playing on this track)
+  and
+- the delay until the next entry in the array should be read.
+
+For example, an array could look like this:
+```{.c}
+const Event boss4[] PROGMEM = {
+    { { .track = 0, .increment = 615, .delay = 0 } },
+    { { .track = 1, .increment = 307, .delay = 0 } },
+    { { .track = 2, .increment = 2463, .delay = 2812 } },
+    { { .track = 2, .increment = 1231, .delay = 2812 } },
+    { { .track = 0, .increment = 1231, .delay = 0 } },
+    ...,
+    STOP
+};
+```
 
 # Download
