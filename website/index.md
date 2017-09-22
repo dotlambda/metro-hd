@@ -1,6 +1,6 @@
 ---
 css:
-    - css/main.css
+    - css/kultiad.css
 
 lang: en
 title: Metro HD
