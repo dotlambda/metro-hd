@@ -2,6 +2,7 @@
 css:
     - css/main.css
 
+lang: en
 title: Metro HD
 ---
 
@@ -151,9 +152,50 @@ These take care of
 - clearing the pixels that are left over from the old position.
 
 Then, there is also a function `move` which automatically decides in which direction to move.
-For example, a monster with `movement=FOLLOW_PROTAGONIST` will automatically move towards the protagonist
+For example, a monster with `movement==FOLLOW_PROTAGONIST` will automatically move towards the protagonist
 whenever this function is called with that very monster as argument.
 
 # Sound
+We have different background tunes playing during the levels.
+Additionally, there is a characteristic music for each boss you can encounter.
+The code supports playing up to three tones at the same time.
+Additionally, sound effects are played ontop the background music
+when a rocket is shot and when a bomb explodes.
+
+Since synthesizing sound is a time-expensive task,
+this is done on a dedicated microcontroller (Atmega168)
+to which the speaker is connected through pin B1.
+
+To generate a sound wave,
+one can use [pulse-width modulation](https://en.wikipedia.org/wiki/Pulse-width_modulation).
+If the frequency of the PWM signal is too high for for the human ear to perceive,
+then the displacement of a sound wave can be determined by the pulse width:
+![](images/pwm.png)
+But instead of a sinusodial wave, we use a [saw wave](https://en.wikipedia.org/wiki/Sawtooth_wave).
+To generate this PWM signal, we use Timer1 of the Atmega168 in 8-bit Fast PWM mode.
+The `TOP` value of $255$ is reached with a frequency of $62500\,\mathrm{Hz}$.
+By setting the register `OCR1A`, we can determine the pulse width,
+because B1 is set to high at $0$ and set to low when reaching `OCR1A`.
+
+`OCR1A` is set in the interrupt of Timer2,
+which is called with a frequency of $15625\,\mathrm{Hz}$.
+To e.g. generate a tone with $440\,\mathrm{Hz}$,
+we simply need to reach the maximum pulse width ($255$) with a frequency of $440\,\mathrm{Hz}.
+To do this, the pulse width can simply be incremented by
+
+$$ \frac{255}{15625\,\mathrm{Hz} / 440\,\mathrm{Hz}} \approx 7.18 $$
+
+each time the interrupt is called.
+Because of integer overflow,
+it will automatically be set to $0$ again after reaching $255$
+if we use a `uint8_t`{.c}.
+But since we cannot represent non-integer values like $7.18$,
+we use `uint16_t`{.c}s and increment the pulse width by
+
+$$ \lfloor 7.18 \cdot 256 \rfloor = \lfloor 1838.08 \rfloor = 1838 $$
+
+which is obviously a lot more accurate.
+
+<!-- TODO: python script -->
 
 # Download
