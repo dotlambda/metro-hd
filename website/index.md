@@ -35,6 +35,33 @@ and the latter is used solely as a sound controller.
     - BSc Mathematics
     - 6th semester
 
+# Level Setup
+
+## Depth-first Search
+Since the position of the platforms and the water is chosen randomly,
+it is possible that the protagonist is not able to simply walk from left to right,
+Nevertheless, we have to ensure that he can reach the door.
+Therefore, we implemented an algorithm based on depth-first search
+that tries to find a path from left to right and also considers jumping on platforms.
+Below, we will explain the idea behind this algorithm using an exemplary level.
+
+![We start at the bottom left corner, from where we can only walk to the right.](images/dfs1.png){width=50%}
+
+![From there, we can either jump onto the platform at the left or over the water,](images/dfs2.png){width=50%}
+
+![We first consider the latter alternative. The only option is to continue walking.](images/dfs3.png){width=50%}
+
+![But now, we discover that there is no further path that we can take since the platform is too far away.](images/dfs4.png){width=50%}
+
+![Therefore, we consider the other alternative. We see that we can jump ono another platform.](images/dfs5.png){width=50%}
+
+![Now, we jump over the gap between two platforms.](images/dfs6.png){width=50%}
+
+![This goes on until we have found a path to the door.](images/dfs7.png){width=50%}
+
+If there is no path, we set the `nofloor` variale to a new random value
+and try again to find a path to the door.
+
 # Movement
 To make things simpler, we decided to move only whole pages in the vertical direction.
 Additionally, different monsters etc. are never at the same position,
@@ -46,7 +73,7 @@ We use a single C `struct` for monsters, projectiles and the protagonist.
 This enables us to reuse the functions responsible for movement for all of them,
 which saves us quite some flash space.
 
-```{.c include=../master/character.h startline=13 endline=24}
+```{.c include=../master/character.h startline=11 endline=30}
 ```
 
 First, there are the functions `moveleft`, `moveright`, `moveup` and `movedown`.
