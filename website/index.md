@@ -19,6 +19,9 @@ title: Metro HD
     - 6th semester
 
 # The Task
+Our task was it, to design and implement a game for a console resembling the Nintendo Gameboy. 
+The console should also have a sound output for music and sound effects.
+
 
 ## Hardware
 The console features two microcontrollers:
@@ -39,6 +42,19 @@ and the latter is used solely as a sound controller.
 ![](images/splash.png){width=100%}
 
 # Level Setup
+Every level consists of a number of rooms, whereby the number of rooms is a random number between one and five. 
+Furthermore the monster(s), the positions of the platforms and water are chosen randomly for every new room and the floor and ceiling sprite is chosen randomly for every new level. 
+
+To make sure that a level you have already been to looks the same as before, we choose the seed of the random number generator depending on the level and on the room the protagonist is in. There are three variables for the three different heights on which the platforms can appear and one variable for the water:
+
+
+```{.c}
+    srandom(level_seed + level_pos);
+    platforms_13 = random();
+    platforms_19 = random();
+    platforms_24 = random();
+    nofloor = random();
+``` 
 
 ## Depth-first Search
 Since the position of the platforms and the water is chosen randomly,
