@@ -2,12 +2,25 @@
 css:
     - css/main.css
 
-title: Metroid
+title: Metro HD
 ---
+
+# About Us
+![](images/wir.jpg){width=100%}
+
+* Daniela Kilian
+    - BSc Applied Computer Science
+    - 6th semester
+* Stefan Müller
+    - BSc Applied Computer Science
+    - 6th semester
+* Robert Schütz
+    - BSc Mathematics
+    - 6th semester
 
 # The Task
 
-# Hardware
+## Hardware
 The console features two microcontrollers:
 
 * [Atmega328](https://en.wikipedia.org/wiki/ATmega328) with
@@ -22,18 +35,8 @@ The console features two microcontrollers:
 where the former is responsible for the game logic and controlling the display
 and the latter is used solely as a sound controller.
 
-# About Us
-![](images/wir.jpg){width=100%}
-
-* Daniela Kilian
-    - BSc Applied Computer Science
-    - 6th semester
-* Stefan Müller
-    - BSc Applied Computer Science
-    - 6th semester
-* Robert Schütz
-    - BSc Mathematics
-    - 6th semester
+# The Game
+![](images/splash.png){width=100%}
 
 # Level Setup
 
@@ -86,3 +89,7 @@ These take care of
 Then, there is also a function `move` which automatically decides in which direction to move.
 For example, a monster with `movement=FOLLOW_PROTAGONIST` will automatically move towards the protagonist
 whenever this function is called with that very monster as argument.
+
+# Sound
+
+# Download
