@@ -27,7 +27,7 @@ The console should also have a sound output for music and sound effects.
 
 
 ## Hardware
-![The hardware](images/console.jpg){width=30%}
+![The hardware](images/console.jpg){width=50%}
 
 The console features two microcontrollers:
 
