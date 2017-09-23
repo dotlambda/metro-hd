@@ -25,7 +25,6 @@ We were supervised by Simon Kohlhepp.
 Our task was to design and implement a game for a console resembling the Nintendo Gameboy. 
 The console should also have a sound output for music and sound effects.
 
-
 ## Hardware
 ![The hardware](images/console.jpg){width=50%}
 
