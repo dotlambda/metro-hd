@@ -124,7 +124,8 @@ To make sure that a level you have already been to looks the same as before, we 
 Since the position of the platforms and the water is chosen randomly,
 it is possible that the protagonist is not able to simply walk from left to right,
 Nevertheless, we have to ensure that he can reach the door.
-Therefore, we implemented an algorithm based on depth-first search
+Therefore, we implemented an algorithm based on
+[depth-first search](https://en.wikipedia.org/wiki/Depth-first_search)
 that tries to find a path from left to right and also considers jumping on platforms.
 Below, we will explain the idea behind this algorithm using an exemplary level.
 
