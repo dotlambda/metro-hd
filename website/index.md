@@ -75,19 +75,19 @@ There are no less than 8 monster types in our game. The protagonist faces at lea
 
 ![Explore different Level layouts.](images/world3.png){width=50%}
 
-
+Additionally there are different obstacles like water or spikes in the different levels. 
 
 ![Rest in the Recharge Room.](images/world4.png){width=50%}
 
 Before every fifth level, there is a so called recharge room, where the protagonist can refill his energy and ammunition.
 
-![Fight bosses.](images/world5.png){width=50%}
+![Fight bosses.](images/world6.png){width=50%}
 
 
 After the recharge room there will be a boss encounter in which one of the 4 bosses appear.
 All the bosses have different moves and abilities, so none is like the other.
 
-![Achieve Power-Ups.](images/world6.png){width=50%}
+![Achieve Power-Ups.](images/world5.png){width=50%}
 
 
 After successfully defeating a boss the protagonist obstains a Power- Up.
