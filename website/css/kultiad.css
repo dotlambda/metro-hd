@@ -310,3 +310,11 @@ caption{display:table-caption;font-weight:300;font-size:1.3em;text-transform:upp
    font-size: 0.8rem;
    font-style: italic;
 }
+
+.figure {
+    text-align: center;
+}
+
+.figure img {
+    margin: 0 auto;
+}

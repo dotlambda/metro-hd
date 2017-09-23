@@ -1,6 +1,6 @@
 ---
-css:
-    - css/kultiad.css
+css: css/kultiad.css
+mathjax: MathJax/MathJax.js?config=TeX-AMS_CHTML
 
 lang: en
 title: Metro HD
@@ -19,12 +19,16 @@ title: Metro HD
     - BSc Mathematics
     - 6th semester
 
+We were supervised by Simon Kohlhepp.
+
 # The Task
 Our task was to design and implement a game for a console resembling the Nintendo Gameboy. 
 The console should also have a sound output for music and sound effects.
 
 
 ## Hardware
+![The hardware](images/console.jpg){width=30%}
+
 The console features two microcontrollers:
 
 * [Atmega328](https://en.wikipedia.org/wiki/ATmega328) with
@@ -38,6 +42,20 @@ The console features two microcontrollers:
 
 where the former is responsible for the game logic and controlling the display
 and the latter is used solely as a sound controller.
+
+Furthermore, it features an
+[EA DOGXL160L-7](http://www.lcd-module.com/eng/pdf/grafik/dogxl160-7e.pdf).
+This LC display has a resolution of 160×104 pixels,
+but 4 vertically adjacent pixels are grouped together in so-called pages
+and can only be written as a whole.
+Therefore, when writing to the display,
+the x coordinate must be below 160 and the y coordinate below 25.
+
+Last but not least, the 8 buttons known from the Gameboy are available:
+
+* left, right, up, down
+* A, B
+* pause, select
 
 # The Game
 ![](images/splash.png){width=100%}
@@ -81,7 +99,11 @@ which will make the game increase in difficulty after slaying Bosses.
 
 
 
+# Drawing
+<!-- TODO python script etc -->
 
+## Drawing a sprite
+<!-- TODO drawsprite() & drawsprite_px() -->
 
 # Level Setup
 Every level consists of a number of rooms, whereby the number of rooms is a random number between one and five. 
@@ -163,8 +185,10 @@ To generate a sound wave,
 one can use [pulse-width modulation](https://en.wikipedia.org/wiki/Pulse-width_modulation).
 If the frequency of the PWM signal is too high for for the human ear to perceive,
 then the displacement of a sound wave can be determined by the pulse width:
-![](images/pwm.png)
-But instead of a sinusodial wave, we use a [saw wave](https://en.wikipedia.org/wiki/Sawtooth_wave).
+
+![A PWM signal generating a sine wave](images/pwm.png)
+
+But instead of a sinusodial wave, we use [saw waves](https://en.wikipedia.org/wiki/Sawtooth_wave).
 To generate this PWM signal, we use Timer1 of the Atmega168 in 8-bit Fast PWM mode.
 The `TOP` value of $255$ is reached with a frequency of $62500\,\mathrm{Hz}$.
 By setting the register `OCR1A`, we can determine the pulse width,
