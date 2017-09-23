@@ -305,16 +305,28 @@ caption{display:table-caption;font-weight:300;font-size:1.3em;text-transform:upp
     margin-bottom: 0.25em;
 }
 
-.caption {
+figcaption {
    display: block;
    font-size: 0.8rem;
    font-style: italic;
 }
 
-.figure {
+figure {
     text-align: center;
 }
 
-.figure img {
+figure img {
     margin: 0 auto;
+}
+
+audio {
+    display: block;
+    margin-top: 0.5em;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 }
