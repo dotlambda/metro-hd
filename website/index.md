@@ -19,7 +19,7 @@ title: Metro HD
     - 6th semester
 
 # The Task
-Our task was it, to design and implement a game for a console resembling the Nintendo Gameboy. 
+Our task was to design and implement a game for a console resembling the Nintendo Gameboy. 
 The console should also have a sound output for music and sound effects.
 
 
@@ -41,44 +41,37 @@ and the latter is used solely as a sound controller.
 # The Game
 ![](images/splash.png){width=100%}
 
-We based our game on the Metroid Series, especially on Metroid Fusion.
-Thus we made this Logo, which is inspired by the actual Metroid Logo.
+We based our game on the Metroid Series, especially on Metroid Fusion which is an action-adventure jump'n'run game.
 
 
-So what is there to do in our Game?
+So what is there to do in our game?
 
 
 
 ![Fight against various Monster.](images/world2.png){width=50%}
 
 
-There are no less than 12 Monster types in our Game. At least one of them can be encountered in each Room and
-just like in the real Metroid the transition between levels happens by
-passing through doors, which can be opened by shooting them.
+There are no less than 8 monster types in our game. The protagonist faces at least one of them in each room and can kill them with his rockets or one of his bombs.
+
 
 ![Explore different Level layouts.](images/world3.png){width=50%}
 
 
-The Monsters you kill have a possibility to drop so called X-Parasites which can refill your ammunition,
-this is a reference to Metroid Fusion (X-Parasite right next to the Protagonist in the Picture).
-There is an infinite amount of levels to explore, meaning the game is endless.
 
 ![Rest in the Recharge Room.](images/world4.png){width=50%}
 
-
-Every fourth level there is a so called Recharge Room. There Energy and Ammunition can be refilled by standing in the Recharger
-in the middle of the Room.
+Before every fifth level, there is a so called recharge room, where the protagonist can refill his energy and ammunition.
 
 ![Fight bosses.](images/world5.png){width=50%}
 
 
-After the recharge room - so every fifth level - there will be a boss encounter in which one of the 4 bosses appear.
-All the bosses have different moves, so none is like the other.
+After the recharge room there will be a boss encounter in which one of the 4 bosses appear.
+All the bosses have different moves and abilities, so none is like the other.
 
 ![Achieve Power-Ups.](images/world6.png){width=50%}
 
 
-After successfully defeating a Boss Power-Ups are obtained. These will stay until death.
+After successfully defeating a boss the protagonist obstains a Power- Up.
 
 
 

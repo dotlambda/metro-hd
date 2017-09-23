@@ -1,5 +1,4 @@
-#!/usr/bin/env nix-shell
-#! nix-shell -i runghc -p 'ghc.withPackages (ps: [ ps.pandoc-types ])'
+#!/usr/bin/env runghc
 
 import Text.Pandoc.JSON
 import Data.Maybe
