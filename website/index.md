@@ -259,11 +259,8 @@ python:         109 (25.00%)
 ```
 
 # Download
-You can download the source code of this project from
-[GitHub](https://github.com/dotlambda/metro-hd).
-If you are a [Nix](https://nixos.org/nix/) user,
-you can use the provided `shell.nix` to get an environment with
-every package you need to compile and upload the code to the console.
+You can download the source code of this project from [here](static/code.zip).
+It is also available on [GitHub](https://github.com/dotlambda/metro-hd).
 
 Also have a look at the [slides](static/slides.pdf)
 of the presentation we gave at the end of the practical.
