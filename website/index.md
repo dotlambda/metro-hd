@@ -90,12 +90,10 @@ All the bosses have different moves and abilities, so none is like the other.
 ![Achieve Power-Ups.](images/world5.png){width=50%}
 
 
-After successfully defeating a boss the protagonist obstains a Power- Up.
+After successfully defeating a boss the protagonist obstains a Power-Up.
 
 
-
-The amount of Monster which can appear will increase by one after the second slain Boss and increases by one for every Boss after that,
-which will make the game increase in difficulty after slaying Bosses.
+The amount of monsters which can appear in one room will increase by one after each successful boss fight.
 
 
 
