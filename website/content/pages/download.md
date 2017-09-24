@@ -1,9 +1,9 @@
 Title: Download
 Order: 9
 
-You can download the source code of this project from [here]({filename}/downloads/code.zip).
+You can download the source code of this project from [here](downloads/code.zip).
 It is also available on [GitHub](https://github.com/dotlambda/metro-hd).
-Also have a look at the [slides]({filename}/downloads/slides.pdf)
+Also have a look at the [slides](downloads/slides.pdf)
 of the presentation we gave at the end of the practical.
 
 ## Statistics
