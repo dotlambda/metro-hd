@@ -98,9 +98,9 @@ The amount of monsters which can appear in one room will increase by one after e
 
 
 # Drawing
-The display of the game console can recognise four grey scales. Each pixel on the display is defined by two bits (00 $\widehat{=}$ white pixel, 01 $\widehat{=}$ light grey pixel, 10 $\widehat{=}$ dark grey pixel, 11 $\widehat{=}$ black pixel).
+The display of the game console can recognise four grey scales. Each pixel on the display is defined by two bits (00 ≙ white pixel, 01 ≙ light grey pixel, 10 ≙ dark grey pixel, 11 ≙ black pixel).
 
-To convert png images into code we wrote a python script, that takes a png image as input and converts it into an C array. The entries of the array are 8 bit entries, that represent the different pages (page $\widehat{=}$ four vertical pixels) of the image.
+To convert png images into code we wrote a python script, that takes a png image as input and converts it into an C array. The entries of the array are 8 bit entries, that represent the different pages (page ≙ four vertical pixels) of the image.
 
 ## Drawing a sprite
 Instead of using the `page()` function we wrote the following function, in which we used the display functionalities. 
