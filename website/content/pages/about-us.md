@@ -1,7 +1,7 @@
 Title: About Us
 Order: 0
 
-![]({filename}/images/wir.jpg){width=100%}
+![](images/wir.jpg){width=100%}
 
 * Daniela Kilian
     - BSc Applied Computer Science

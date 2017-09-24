@@ -21,8 +21,9 @@ in pkgs.stdenv.mkDerivation {
     avrdude avrgcclibc
     (python3.withPackages (ps: with ps; [
       numpy scikitimage                          # for sprites
-      pelican markdown                           # for website
+      pelican                                    # for website
     ]))
+    haskellPackages.pandoc
     (python2.withPackages (ps: with ps; [mido])) # for sound
   ];
 }
