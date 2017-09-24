@@ -16,13 +16,14 @@ let
     };
   };
 in pkgs.stdenv.mkDerivation {
-  name = "metroid";
+  name = "metro-hd";
   buildInputs = with pkgs; [
     avrdude avrgcclibc
-    (python3.withPackages (ps: with ps; [numpy scikitimage])) # for sprites
-    (python2.withPackages (ps: with ps; [mido]))              # for sound
-    haskellPackages.pandoc
-    (ghc.withPackages (ps: with ps; [ pandoc-types ]))        # for website
+    (python3.withPackages (ps: with ps; [
+      numpy scikitimage                          # for sprites
+      pelican markdown                           # for website
+    ]))
+    (python2.withPackages (ps: with ps; [mido])) # for sound
   ];
 }
 
