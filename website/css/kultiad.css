@@ -332,13 +332,22 @@ nav {
     left: 0;
     right: 0;
     width: 100%;
-    background-color: #333;
+    background-color: #57534A;
     overflow: hidden;
 }
 
-nav h1 {
+nav #title img {
+    float: left;
+    height: 25px;
+    padding: 14px 0 14px 16px;
+}
+
+nav #title h1 {
     float: left;
     margin: 0 !important;
+    font-size: 18px;
+    padding: 14px 16px;
+    color: white;
 }
 
 nav ul {
@@ -360,4 +369,9 @@ nav li a {
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+}
+
+nav li a:hover {
+    color: white;
+    background-color: #8DB359;
 }

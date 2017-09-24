@@ -4,6 +4,7 @@ mathjax: MathJax/MathJax.js?config=TeX-AMS_CHTML
 
 lang: en
 title: Metro HD
+favicon: images/samuslogo.png
 ---
 
 # About Us
