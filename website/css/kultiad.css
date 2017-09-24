@@ -40,9 +40,10 @@ body:after {
     display: table;
 }
 
-body {
+#body {
     padding-left: 4rem;
     padding-right: 4rem;
+    margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
     max-width: 44rem;
@@ -305,16 +306,58 @@ caption{display:table-caption;font-weight:300;font-size:1.3em;text-transform:upp
     margin-bottom: 0.25em;
 }
 
-.caption {
+figcaption {
    display: block;
    font-size: 0.8rem;
    font-style: italic;
 }
 
-.figure {
+figure {
     text-align: center;
 }
 
-.figure img {
+figure img {
     margin: 0 auto;
+}
+
+audio {
+    display: block;
+    margin-top: 0.5em;
+}
+
+nav {
+    position: fixed;
+    z-index: 99;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: #333;
+    overflow: hidden;
+}
+
+nav h1 {
+    float: left;
+    margin: 0 !important;
+}
+
+nav ul {
+    margin: 0;
+}
+
+nav li {
+    float: left;
+    margin: 0;
+}
+
+nav li::before {
+    content: none;
+}
+
+nav li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
 }

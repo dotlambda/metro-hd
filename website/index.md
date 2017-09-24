@@ -45,7 +45,7 @@ and the latter is used solely as a sound controller.
 Furthermore, it features an
 [EA DOGXL160L-7](http://www.lcd-module.com/eng/pdf/grafik/dogxl160-7e.pdf).
 This LC display has a resolution of 160×104 pixels,
-but 4 vertically adjacent pixels are grouped together in so-called pages
+but four vertically adjacent pixels are grouped together in so-called pages
 and can only be written as a whole.
 Therefore, when writing to the display,
 the x coordinate must be below 160 and the y coordinate below 25.
@@ -83,7 +83,7 @@ Before every fifth level, there is a so called recharge room, where the protagon
 ![Fight bosses.](images/world6.png){width=50%}
 
 
-After the recharge room there will be a boss encounter in which one of the 4 bosses appear.
+After the recharge room there will be a boss encounter in which one of the four bosses appear.
 All the bosses have different moves and abilities, so none is like the other.
 
 ![Achieve Power-Ups.](images/world5.png){width=50%}
@@ -180,7 +180,7 @@ Below, we will explain the idea behind this algorithm using an exemplary level.
 
 ![This goes on until we have found a path to the door.](images/dfs7.png){width=50%}
 
-If there is no path, we set the `nofloor` variale to a new random value
+If there is no path, we set the `nofloor` variable to a new random value
 and try again to find a path to the door.
 
 # Movement
@@ -200,7 +200,7 @@ which saves us quite some flash space.
 First, there are the functions `moveleft`, `moveright`, `moveup` and `movedown`.
 These take care of
 
-- checking if there is an obstace, e.g. a platform, in the respective direction,
+- checking if there is an obstacle, e.g. a platform, in the respective direction,
 - redrawing the character at its new position and
 - clearing the pixels that are left over from the old position.
 
@@ -277,7 +277,18 @@ const Event boss4[] PROGMEM = {
 };
 ```
 
-# Statistics
+Here, you can hear some of the music as it is played by the console:
+<audio src="static/ingame1.ogg" controls></audio>
+<audio src="static/ingame2.ogg" controls></audio>
+<audio src="static/gameover.ogg" controls></audio>
+
+# Download
+You can download the source code of this project from [here](static/code.zip).
+It is also available on [GitHub](https://github.com/dotlambda/metro-hd).
+Also have a look at the [slides](static/slides.pdf)
+of the presentation we gave at the end of the practical.
+
+## Statistics
 Our git repository has about 450 commits.
 
 Regarding the lines of code,
@@ -294,10 +305,3 @@ $ find slave/ -type f -not -name "music.*" -not -name "fx.*" | xargs sloccount
 ansic:          327 (75.00%)
 python:         109 (25.00%)
 ```
-
-# Download
-You can download the source code of this project from [here](static/code.zip).
-It is also available on [GitHub](https://github.com/dotlambda/metro-hd).
-
-Also have a look at the [slides](static/slides.pdf)
-of the presentation we gave at the end of the practical.
