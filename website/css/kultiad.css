@@ -41,8 +41,6 @@ body:after {
 }
 
 #body {
-    padding-left: 4rem;
-    padding-right: 4rem;
     margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
@@ -169,8 +167,8 @@ blockquote {
 }
 
 figure {
-	margin-left: -4.5rem;
-    margin-right: -4.5rem;
+	margin-left: 0;
+    margin-right: 0;
     margin-bottom: 2em;
     margin-top: 2em;
 }
