@@ -14,7 +14,7 @@ PAGES_SORT_ATTRIBUTE = 'order'
 PAGE_URL = '{slug}.html'
 PAGE_SAVE_AS = '{slug}.html'	
 
-STATIC_PATHS = ['images', 'downloads']
+STATIC_PATHS = ['images', 'downloads', 'extra']
 
 TIMEZONE = 'Europe/Berlin'
 
@@ -36,10 +36,12 @@ THEME = './Flex'
 JINJA_ENVIRONMENT = { }
 COPYRIGHT_NAME  = 'Daniela Kilian, Stefan Müller, Robert Schütz'
 COPYRIGHT_YEAR = 2017
+CUSTOM_CSS = 'custom.css'
+EXTRA_PATH_METADATA = {'extra/custom.css': {'path': 'custom.css'}}
 
 PLUGINS = ['pandoc_reader']
 PANDOC_ARGS = [
     '--mathjax',
-    '--smart',
+    '--highlight-style', 'pygments',
 ]
 
