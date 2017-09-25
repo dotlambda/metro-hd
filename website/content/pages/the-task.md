@@ -5,7 +5,7 @@ Our task was to design and implement a game for a console resembling the Nintend
 The console should also have a sound output for music and sound effects.
 
 # Hardware
-![The hardware](images/console.jpg){width=50%}
+![](images/console.jpg){width=50%}
 
 The console features two microcontrollers:
 
