@@ -1,5 +1,7 @@
 Title: About Us
 Order: 0
+URL:
+save_as: index.html
 
 ![](images/wir.jpg){width=100%}
 
@@ -13,4 +15,4 @@ Order: 0
     - BSc Mathematics
     - 6th semester
 
-We were supervised by Simon Kohlhepp.
+Our tutor was Simon Kohlhepp and we were supervised by Thomas Kloepfer.
