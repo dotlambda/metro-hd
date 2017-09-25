@@ -1,6 +1,6 @@
-[submodule "website/Flex"]
-	path = website/Flex
-	url = https://github.com/alexandrevicenzi/Flex.git
 [submodule "website/pandoc_reader"]
 	path = website/pandoc_reader
 	url = https://github.com/liob/pandoc_reader.git
+[submodule "website/pelican-blueidea"]
+	path = website/pelican-blueidea
+	url = https://github.com/nasskach/pelican-blueidea.git
