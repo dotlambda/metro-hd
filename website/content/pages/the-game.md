@@ -1,4 +1,4 @@
-Title: The Game
+Title: Game Idea
 Order: 2
 
 ![](images/splash.png){width=100%}
