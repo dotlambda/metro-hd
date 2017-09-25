@@ -4,3 +4,6 @@
 [submodule "website/pelican-blueidea"]
 	path = website/pelican-blueidea
 	url = https://github.com/nasskach/pelican-blueidea.git
+[submodule "website/pelican-plugins"]
+	path = website/pelican-plugins
+	url = https://github.com/getpelican/pelican-plugins.git

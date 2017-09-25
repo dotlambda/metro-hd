@@ -32,7 +32,8 @@ RELATIVE_URLS = True
 
 THEME = './pelican-blueidea'
 
-PLUGINS = ['pandoc_reader']
+PLUGIN_PATHS = ['pelican-plugins']
+PLUGINS = ['pandoc_reader', 'render_math']
 PANDOC_ARGS = [
     '--mathjax',
     '--highlight-style', 'pygments',
