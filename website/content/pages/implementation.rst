@@ -130,3 +130,94 @@ If there is no path, we set the :code:`nofloor` variable to a new random value
 and try again to find a path to the door.
 
 .. _depth-first search: https://en.wikipedia.org/wiki/Depth-first_search
+
+Movement
+========
+We use a single C :code:`struct` for monsters, projectiles and the protagonist.
+This enables us to reuse the functions responsible for movement for all of them,
+which saves us quite some flash space.
+
+.. code-block:: c
+
+   struct Character
+   {
+       uint8_t x;
+       uint8_t y;
+       enum {LOOK_MONSTER_MEMU, LOOK_PROTAGONIST, LOOK_FIREBALL, ...} look;
+       uint8_t lookstate; // to e.g. store whether the wings are turned upwards or downwards
+       uint32_t lastlookstatechg;
+       uint8_t width;// in pixels
+       uint8_t height; // in pixels
+       enum {DIRECTION_LEFT, DIRECTION_RIGHT} direction;
+       enum {DIRECTION_UP, DIRECTION_DOWN} verticaldirection;
+       int8_t jumpstate;
+       uint8_t initial_health;
+       int8_t health;
+       uint8_t damage;
+       uint8_t jumpheight;
+       enum {FOLLOW_PROTAGONIST, BACK_AND_FORTH, ...} movement;
+       uint8_t x_pace;
+       uint8_t y_pace;
+   };
+
+
+First, there are the functions :code:`moveleft()`, :code:`moveright()`, :code:`moveup()` and :code:`movedown()`.
+These take care of
+
+- checking if there is an obstacle, e.g. a platform, in the respective direction,
+- redrawing the character at its new position and
+- clearing the pixels that are left over from the old position.
+
+Then, there is also a function :code:`move()` which automatically decides in which direction to move.
+For example, a monster with :code:`movement==FOLLOW_PROTAGONIST` will automatically move towards the protagonist
+whenever this function is called with that very monster as argument.
+
+Course of the Game
+==================
+To react to user input and automatically move monsters etc.,
+we use multiple :code:`if` statements in an infinite loop
+which check whether the respective timer has expired
+and whether all preconditions are satisfied.
+
+For example, when the user presses the :code:`B_RIGHT` button,
+the protagonist is moved one pixel to the right and it is ensured that he will not move for another 50 ms.
+
+Also, if the :code:`B_A` button is pressed
+and the protagonist still has a rocket to shoot that is not yet moving,
+the rocket is drawn to the screen and the protagonist loses one of his rockets.
+To make sure that he still has the same number of rockets
+when the game is resumed after turning the console off,
+the number is in the :code:`EEPROM`.
+
+.. code-block:: c
+
+   while (1)
+   {
+       if (nextmoveevent < getMsTimer())
+       {
+           if (B_RIGHT)
+           {
+               moveright(protagonist);
+               nextmoveevent = getMsTimer() + 50;
+           }
+           ...
+       }
+       if (projectile->movement == HIDDEN
+           && num_rockets > 0
+           && nextshootevent < getMsTimer()
+           && B_A)
+       {
+           projectile->movement = PROJECTILE;
+           draw(projectile);
+           num_rockets--;
+           eeprom_write_byte(&num_rockets_stored, num_rockets);
+           nextshootevent = getMsTimer() + 500;
+       }
+       if (monster->movement != HIDDEN && collision(protagonist, monster))
+       {
+           takingdamage(monster->damage);
+       }
+       ...
+   }
+
+This is just a small excerpt of the :code:`while` loop.
