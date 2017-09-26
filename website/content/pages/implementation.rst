@@ -57,6 +57,27 @@ we wrote the :code:`drawsprite_px()` function:
        }
    }
 
+Problem: Flash Size
+-------------------
+.. figure:: {filename}/images/speicherplatz.png
+   :alt: We currently use about 95% of the available flash storage
+   :width: 50%
+
+   We currently use about 95% of the available flash storage
+
+Since the Atmega 328 only has 32 kiB of flash memory,
+we had to come up with creative ways to reduce the space used.
+First, before storing the sprites as arrays in the :code:`PROGMEM`,
+we wrote the calls to the :code:`page()` function by hand for every sprite.
+Of course, it is much more efficient to read the pages from an array.
+Second, large images tend to consist of a lot of unnecessary white pixels
+if the form of the object displayed is not rectangular.
+Therefore, we split some sprites up into smaller chunks:
+
+.. image:: {filename}/images/splashspeicher.png
+   :alt: Splash screen split up in three
+   :width: 50%
+
 .. _data sheet: http://www.lcd-module.com/eng/pdf/grafik/dogxl160-7e.pdf
 
 Level Setup
@@ -65,7 +86,6 @@ Every level consists of a number of rooms, whereby the number of rooms is a rand
 Furthermore the monster(s), the positions of the platforms and water are chosen randomly for every new room and the floor and ceiling sprite is chosen randomly for every new level.
 
 To make sure that a level you have already been to looks the same as before, we choose the seed of the random number generator depending on the level and on the room the protagonist is in.
-
 
 .. code-block:: c
 
