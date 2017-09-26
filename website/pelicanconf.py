@@ -31,6 +31,7 @@ DEFAULT_PAGINATION = False
 RELATIVE_URLS = True
 
 THEME = './pelican-blueidea'
+FAVICON = 'images/samuslogo.png'
 
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['pandoc_reader', 'render_math']

@@ -3,7 +3,7 @@
 	url = https://github.com/liob/pandoc_reader.git
 [submodule "website/pelican-blueidea"]
 	path = website/pelican-blueidea
-	url = https://github.com/nasskach/pelican-blueidea.git
+	url = https://github.com/dotlambda/pelican-blueidea.git
 [submodule "website/pelican-plugins"]
 	path = website/pelican-plugins
 	url = https://github.com/getpelican/pelican-plugins.git
