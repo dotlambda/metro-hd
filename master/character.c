@@ -633,20 +633,21 @@ void move(struct Character* character)
                 character->jumpstate = 1;
             }
             if (protagonist->x < character->x)
-                    moveleft(character);
-                else if (protagonist->x > character->x)
-                    moveright(character);
-                else
-                    draw(character);
+                moveleft(character);
+            else if (protagonist->x > character->x)
+                moveright(character);
+            else
+                draw(character);
             break;
         case BOMB:
             break;
-
         case BOSS_DRAGON_AIR:
             if (character->y < CEILING_Y + 16
                 && (character->x < 20 || character->x > DISPLAY_WIDTH - character->width - 20)
-                && really_random_below(3) == 0) // 1/5 probability to attack
+                && really_random_below(3) == 0) // 1/3 probability to attack
             {
+                // move down towards the middle of the screen,
+                // then move up again while continuing in the previous horizontal direction
                 character->movement = BOSS_DRAGON_ATTACK;
                 if (character->x > DISPLAY_WIDTH / 2)
                     character->direction = DIRECTION_LEFT;
@@ -675,7 +676,6 @@ void move(struct Character* character)
             break;
         case XPARASITE:
             break;
-
         case SECROB:
             if (character->x >= DISPLAY_WIDTH - character->width - 8)
             {

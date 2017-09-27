@@ -26,8 +26,10 @@ long obstacle(uint8_t x, uint8_t y)
 {
     if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
         return 1l;
+    // left door
     else if (doors & 0b00000010 && (x < 4 || (y >= DOOR_Y && x < 6)))
         return 1l;
+    // right door
     else if (doors & 0b00000001 && (x >= DISPLAY_WIDTH - 4 || (y >= DOOR_Y && x >= DISPLAY_WIDTH - 6)))
         return 1l;
     else if (rechargeroom && x >= DISPLAY_WIDTH/2 - 12 && x < DISPLAY_WIDTH/2 + 12 && (y >= 23*4 || y < 17*4))
@@ -36,6 +38,7 @@ long obstacle(uint8_t x, uint8_t y)
         return 1l;
     else if (rechargeroom && y <= CEILING_Y + 4*5)
         return 1l;
+    // water/spikes
     else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
         return nofloor & (3l << x / 16 * 2);
     else if (y >= 19 * 4 && y < 20 * 4)
@@ -46,7 +49,6 @@ long obstacle(uint8_t x, uint8_t y)
         return !(platforms_24 & (3l << (x / 16 * 2)));
     else
         return 0l;
-    
 }
 
 long obstacle_hill(uint8_t x)
@@ -62,13 +64,9 @@ long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
     long platforms_24 = random();
     platforms_24 |= 3l << 0; // no hill at the display boundary
     platforms_24 |= 3l << 2 * (DISPLAY_WIDTH/16 - 1); 
-    long nofloor = random();
-    //nofloor = INT32_MAX; // turn off water
-    
+
     if (y >= CEILING_Y && y < CEILING_Y + 4) // ceiling
         return 1l;
-    else if (y >= FLOOR_Y && y < FLOOR_Y + 4)
-        return nofloor & (3l << x / 16 * 2);
     else if (y >= 19 * 4 && y < 20 * 4)
         return !(platforms_19 & (3l << (x / PLATFORM_WIDTH * 2)));
     else if (y >= 13 * 4 && y < 14 * 4)
@@ -82,15 +80,15 @@ long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos)
 void redraw()
 {
     clear();
-    
+
     drawlabels();
-    
+
     // print ceiling 
     for (uint8_t x = 0; x < DISPLAY_WIDTH; x++)
     {
         page(x, 5, pgm_read_byte_near(ceilingsprite + x % 16));
     }
-    
+
     drawplatform();
     drawfloor();
 
@@ -116,17 +114,18 @@ void redraw()
     {
         draw(energytankstruct);
     }
-    
+
     if (rechargeroom)
     {
         drawrechargeroom();
     }
-    
+
     draw(protagonist);
 }
 
 void selectfloor()
 {
+    // random floor sprite
     const uint8_t* rotatedfloorsprite = NULL;
     switch (random_below(7))
     {
@@ -162,6 +161,8 @@ void selectfloor()
     ceilingsprite = floorsprite;
     leftrotatedfloorsprite = rotatedfloorsprite;
     rightrotatedfloorsprite = rotatedfloorsprite;
+
+    // select from water and spikes
     switch (random_below(2))
     {
         case 0:
@@ -181,7 +182,7 @@ void newlevelpos()
 
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         monsters[i]->look = LOOK_HIDDEN;
-    
+
     if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 2) // recharge level
         || (level < 0 && (level - 1) % BOSS_LEVEL_DISTANCE == 0))
     {
@@ -190,7 +191,7 @@ void newlevelpos()
         platforms_24 = UINT32_MAX;
         nofloor = UINT32_MAX;
         doors = 0b00000011;
-        
+
         rechargeroom = true;
     }
     else if ((level >= 0 && level % BOSS_LEVEL_DISTANCE == BOSS_LEVEL_DISTANCE - 1) // boss level
@@ -205,9 +206,9 @@ void newlevelpos()
         platforms_24 = UINT32_MAX;
         nofloor = UINT32_MAX;
         doors = 0b00000011;
-        
+
         bosslevel = true;
-        
+
         monsters[0]->direction = 1 - protagonist->direction; // look at the protagonist
 
         switch(random_below(4))
@@ -263,6 +264,7 @@ void newlevelpos()
         platforms_24 |= 1l << 0; // no hill at the display boundary
         platforms_24 |= 1l << 2 * (DISPLAY_WIDTH/16 - 1);
 
+        // set nofloor to a new random value as long as the door is not reachable
         do
         {
             nofloor = random();
@@ -277,9 +279,9 @@ void newlevelpos()
             }
         }
         while (!is_door_reachable());
-    
+
         doors = 0;
-    
+
         // draw door to previous level
         if (level_pos == 0)
         {
@@ -316,12 +318,13 @@ void newlevelpos()
         }
     }
 
+    // initialize monsters, their look, position etc.
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
         initcharacter(monsters[i]);
         if (monsters[i]->look == LOOK_HIDDEN)
             continue;
-        
+
         monsters[i]->x = (DISPLAY_WIDTH - monsters[i]->width) / 2;
         if (monsters[i]->look == LOOK_BOSS_MEGACOREX || monsters[i]->look == LOOK_BOSS_SECROB || monsters[i]->look == LOOK_BOSS_ZAZABI || monsters[i]->look == LOOK_NEO_RIDLEY_DRAGON)
         {
@@ -359,12 +362,12 @@ void newlevelpos()
             }
         }
     }
-    
+
     for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
     {
         fireballs[i]->movement = HIDDEN;
     }
-    
+
     // no water/spikes when there is a frog/sidehopper
     // these would otherwise fall into the void
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
@@ -404,16 +407,16 @@ void newlevelpos()
             }
         }
     }
-    
+
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
         xparasites[i]->movement = HIDDEN;
     }
-    
+
     if (bosslevel)
     {
+        // show a nice message informing about the boss's abilities
         redraw();
-        
         char line[2][MAX_STRING_LEN];
         switch (monsters[0]->look)
         {
@@ -451,10 +454,10 @@ void newlevelpos()
         }
         delay(1000);
     }
-    
-    redraw();
+
     left_door_open = false;
     right_door_open = false; 
+    redraw();
 }
 
 void newlevel()
@@ -464,14 +467,14 @@ void newlevel()
         uart_putc('i');
     else
         uart_putc('j');
-    
+
     eeprom_write_block(&level, &level_stored, sizeof level);
-    
+
     level_seed = initial_level + level * (2 * MAX_LEVEL_WIDTH + 1);
-    
+
     srand(level_seed);
     srandom(level_seed);
-    
+
     max_level_pos = random_below(MAX_LEVEL_WIDTH);
 
     if (protagonist->x > DISPLAY_WIDTH / 2)
@@ -488,9 +491,9 @@ void newlevel()
         protagonist->x = DISPLAY_WIDTH - 6 - protagonist->width - 1;
         protagonist->direction = DIRECTION_LEFT;
     }
-    
+
     protagonist->y = FLOOR_Y - protagonist->height;
-    
+
     selectfloor();
 
     newlevelpos();
@@ -500,7 +503,7 @@ void newgame()
 {
     protagonist->look = LOOK_PROTAGONIST;
     initcharacter(protagonist);
-    
+
     if (initial_level == 0) // start a new game
     {
         initial_level = getMsTimer();
@@ -533,18 +536,18 @@ void newgame()
         protagonist->x = 0; // make the protagonist appear on the right
     else
         protagonist->x = DISPLAY_WIDTH; // make the protagonist appear on the left
-    
+
     for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
     {
         projectiles[i]->look = LOOK_ROCKET;
         initcharacter(projectiles[i]);
     }
-    
+
     bombstruct->look = LOOK_BOMB;
     initcharacter(bombstruct);
 
     left_door_open = true;
     right_door_open = true; 
-    
+
     newlevel();
 }

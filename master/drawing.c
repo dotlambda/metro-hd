@@ -198,7 +198,6 @@ void movedoorleft()
             page(x + 33, 24, 0xFF);
         }
     }
-    
 }
 
 void movedoorright()
@@ -243,7 +242,7 @@ void drawdoorright_closed()
                 i = 0;
         }
     }
-    
+
     drawsprite(154, 20, 6, 5, doorright);
 }
 
@@ -260,7 +259,7 @@ void drawdoorleft_closed()
                 i = 0;
         }
     }
-    
+
     drawsprite(0, 20, 6, 5, doorleft);
 }
 
@@ -594,5 +593,5 @@ void drawletters(uint8_t x, uint8_t y, char* string)
             x += width + 1;
         }
     }
-} 
+}
 

@@ -33,14 +33,13 @@ uint32_t nextfireballjumpevent[NUM_FIREBALLS];
 uint32_t nextfireevent = 0;
 uint32_t nextrechargeevent = 0;
 
-
 void init();
 
 void takingdamage(uint8_t damage)
 {
     uint32_t blink_for = 650;
     protagonist->health = protagonist->health - damage;
-    if(protagonist->health > 0)
+    if (protagonist->health > 0)
     {
         eeprom_write_byte(&health_stored, protagonist->health);
         drawnumber(29, 1, protagonist->health);
@@ -53,7 +52,7 @@ void takingdamage(uint8_t damage)
         blink_for = 2000;
     }
     uint32_t blinking_time = getMsTimer();
-    while(blinking_time + blink_for >= getMsTimer())
+    while (blinking_time + blink_for >= getMsTimer())
     {
         // make protagonist and energy level blink (latter only if energy <= 0)
         hide(protagonist);
@@ -86,13 +85,11 @@ void takingdamage(uint8_t damage)
                 else if ((x == 28 || x == 131) && (y >= 17 && y < 21))
                 {
                     page (x, y, 0xFF);
-                    
-
                 }
                 else
                 {
                     page(x, y, 0);
-                    
+
                     if (y == 20 && x == DISPLAY_WIDTH - 1)
                     {
                         drawletters(40, 18, "PRESS A TO RESTART");
@@ -102,7 +99,6 @@ void takingdamage(uint8_t damage)
                 {
                     drawcolor(28, 21, 104, 1, 0b00000011);
                 }
-                
             }
             delay(30);
         }
@@ -158,7 +154,6 @@ void getAchievement()
     }
     delay(2000);
     redraw();
-        
 }
 
 bool open_door_projectile(struct Character* projectile)
@@ -275,8 +270,8 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
 
 int main(void)
 {
-	init();
- 
+    init();
+
     // show splash screen until button A is pressed
     initial_level = eeprom_read_dword(&initial_level_stored);
     drawsplash(initial_level != 0);
@@ -285,6 +280,8 @@ int main(void)
         if (B_A)
         {
             initial_level = 0; // start a new game
+
+            // show a little manual
             clear();
             drawsprite(20, 5, 8, 3, Abutton);
             drawletters(30, 5, "SHOOT A ROCKET");
@@ -303,8 +300,7 @@ int main(void)
             break;
         }
     }
-            
-    
+
     struct Character protagonist_;
     protagonist = &protagonist_;
 
@@ -314,7 +310,7 @@ int main(void)
         nextmonsterjumpevent[i] = 0;
         monsters[i] = &monsters_[i];
     }
-    
+
     for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
     {
         nextprojectilevent[i]=0;
@@ -328,25 +324,22 @@ int main(void)
     {
         xparasites[i] = &xparasites_[i];
     }
-    
+
     for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
     {
         nextfireballmoveevent[i] = 0;
         nextfireballjumpevent[i] = 0;
         fireballs[i] = &fireballs_[i];
     }
-    
+
     struct Character bomb_;
     bombstruct = &bomb_;
-    
-    left_door_open = true;
-    right_door_open = true;
-    
+
     newgame();
-    
+
     while (1)
     {
-        //monster in Bewegung
+        // monster movement
         for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         {
             if(monsters[i]->movement != HIDDEN && nextmonstermoveevent[i] < getMsTimer())
@@ -360,8 +353,9 @@ int main(void)
                 nextmonsterjumpevent[i] = getMsTimer() + monsters[i]->y_pace;
             }
         }
+        // end monster movement
         
-        //Protagonist kann sich bewegen
+        // protagonist movement
         if (nextmoveevent < getMsTimer())
         {
             if (B_RIGHT)
@@ -492,6 +486,7 @@ int main(void)
         {
             protagonist->jumpstate = 1;
         }
+        // end protagonist movement
         
         // change level when protagonist touches the door
         if (doors & 0b00000001
@@ -533,9 +528,10 @@ int main(void)
             }
         }
         
-        //PROJECTILE
+        // projectile
         for (uint8_t i = 0; i < NUM_ROCKETS; ++i)
-        {    
+        {
+            // shoot a rocket
             if (projectiles[i]->movement == HIDDEN
                 && num_rockets > 0
                 && nextshootevent < getMsTimer()
@@ -614,6 +610,8 @@ int main(void)
                     }
                 }
             }
+
+            // projecctile movement
             else if (projectiles[i]->movement != HIDDEN
                 && nextprojectilevent[i] < getMsTimer())
             {
@@ -622,6 +620,7 @@ int main(void)
                 nextprojectilevent[i] = getMsTimer() + 35;
             }
 
+            // projectile collision with monsters
             for (uint8_t j = 0; j < NUM_MONSTERS; ++j)
             {
                 if (projectiles[i]->movement != HIDDEN && monsters[j]->movement != HIDDEN && collision(projectiles[i], monsters[j]))
@@ -631,11 +630,12 @@ int main(void)
                 }
             }
         }
-        //PROJECTILE END
+        // end projectile
 
-        //BOMB
+        // bomb
         if (nextbombevent < getMsTimer())
         {
+            // bomb falls down
             if (bombstruct->movement != HIDDEN)
             {
                 jump(bombstruct);
@@ -657,6 +657,7 @@ int main(void)
                 }
                 nextbombevent = getMsTimer() + 20;
             }
+            // lay a bomb
             else if (B_B && num_bombs > 0)
             {
                 bombstruct->x = protagonist->x;
@@ -670,6 +671,7 @@ int main(void)
                 nextbombevent = getMsTimer() + 100;
             }
         }
+        // bomb explosion
         if (bombstruct->movement != HIDDEN)
         {
             if (explode < getMsTimer())
@@ -760,9 +762,10 @@ int main(void)
                 draw(bombstruct);
             }
         }
-        //BOMB END
+        // end bomb
 
-        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height) //PROTAGONIST fell into water/spikes
+        // check if protagonist fell into water/spikes
+        if (protagonist->y > DISPLAY_HEIGHT - protagonist->height)
         {
             hide(protagonist);
             drawfloor();
@@ -794,17 +797,19 @@ int main(void)
         
         for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         {
-            if (monsters[i]->movement != HIDDEN && monsters[i]->y > DISPLAY_HEIGHT - monsters[i]->height) //MONSTER fell into water/spikes
+            // check if monster fell into water/spikes
+            if (monsters[i]->movement != HIDDEN && monsters[i]->y > DISPLAY_HEIGHT - monsters[i]->height)
             {
                 hide(monsters[i]);
                 drawfloor();
             }
-            //KNOCKBACK after collision
+            // collision between protagonist and monster
             if (monsters[i]->movement != HIDDEN && collision(protagonist, monsters[i]))
             {
                 // if the monster is right of the protagonist
                 if (monsters[i]->x + monsters[i]->width/2 >= protagonist->x + protagonist->width)
                 {
+                    // knockback to the left
                     uint8_t j = 0;
                     while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monsters[i]->x)
                     {
@@ -818,14 +823,18 @@ int main(void)
                         draw(monsters[i]);
                         delay(50);
                     }
+                    // if the protagonist can't move far enough because of an obstacle,
+                    // the monster is moved to the right instead
                     while (protagonist->x + protagonist->width + DIST_AFTER_DAMAGE > monsters[i]->x)
                     {
                         if (!moveright(monsters[i]))
                             break;
                     }
                 }
+                // if the monster is left of the protagonist
                 else
                 {
+                    // knockback to the right
                     uint8_t j = 0;
                     while (monsters[i]->x + monsters[i]->width + DIST_AFTER_DAMAGE > protagonist->x)
                     {
@@ -839,6 +848,8 @@ int main(void)
                         draw(monsters[i]);
                         delay(50);
                     }
+                    // if the protagonist can't move far enough because of an obstacle,
+                    // the monster is moved to the left instead
                     while (monsters[i]->x + monsters[i]->width + DIST_AFTER_DAMAGE > protagonist->x)
                     {
                         if (!moveleft(monsters[i]))
@@ -851,6 +862,7 @@ int main(void)
         
         for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
         {
+            // collision between protagonist and xparasite
             if (xparasites[i]->movement != HIDDEN && collision(protagonist, xparasites[i]))
             {
                 hide(xparasites[i]);
@@ -875,8 +887,10 @@ int main(void)
             }
         }
 
+        // energy tank
         if(energytankstruct->movement != HIDDEN)
         {
+            // the energy tank cannot be overridden by monster sprites
             draw(energytankstruct);
         }
         if(energytankstruct->movement != HIDDEN && collision(protagonist, energytankstruct))
@@ -893,8 +907,13 @@ int main(void)
                 drawnumber(29, 1, protagonist->health);
             }
         }
-        else if (monsters[0]->look == LOOK_NEO_RIDLEY_DRAGON)
+        // end energy tank
+
+        // special things for bosses
+        // Neo Ridley shoots fireballs
+        if (monsters[0]->look == LOOK_NEO_RIDLEY_DRAGON)
         {
+            // at most 3 fireballs at a time
             for (uint8_t i = 0; i < 3; ++i)
             {
                 if (fireballs[i]->movement == HIDDEN && monsters[0]->movement != HIDDEN && monsters[0]->movement != BOSS_DRAGON_ATTACK && nextfireevent < getMsTimer())
@@ -938,11 +957,15 @@ int main(void)
                 }
             }
         }
+        // Secrob shoots arrows
         else if (monsters[0]->look == LOOK_BOSS_SECROB)
         {
-            if (really_random_below(1000) == 0 && monsters[0]->jumpstate == ON_THE_GROUND && monsters[0]->x > 6 + fireballs[0]->width && monsters[0]->x < DISPLAY_WIDTH - 6 - monsters[0]->width - fireballs[0]->width)
+            if (really_random_below(1000) == 0 &&
+                monsters[0]->jumpstate == ON_THE_GROUND &&
+                monsters[0]->x > 6 + fireballs[0]->width &&
+                monsters[0]->x < DISPLAY_WIDTH - 6 - monsters[0]->width - fireballs[0]->width)
             {
-                if(fireballs[0]->movement == HIDDEN && fireballs[1]->movement == HIDDEN && 
+                if (fireballs[0]->movement == HIDDEN && fireballs[1]->movement == HIDDEN &&
                     fireballs[2]->movement == HIDDEN && fireballs[3]->movement == HIDDEN)
                 {
                     fireballs[0]->y = fireballs[2]->y = monsters[0]->y + 4;
@@ -972,6 +995,9 @@ int main(void)
                 nextmonstermoveevent[0] = nextmonsterjumpevent[0] = getMsTimer() + 1500;
             }
         }
+        // end special things for bosses
+
+        // fireballs
         for (uint8_t i = 0; i < NUM_FIREBALLS; ++i)
         {
             if (fireballs[i]->movement != HIDDEN && nextfireballmoveevent[i] < getMsTimer())
@@ -998,7 +1024,9 @@ int main(void)
                 }
             }
         }
-        
+        // end fireballs
+
+        // recharge room
         if (rechargeroom
             && protagonist->x + protagonist->width < DISPLAY_WIDTH/2 + 12
             && protagonist->x > DISPLAY_WIDTH/2 - 11
@@ -1037,9 +1065,10 @@ int main(void)
             }
             nextrechargeevent = getMsTimer() + 100;
         }
+        // end recharge room
 
-        //PAUSE SCREEN
-        if(B_PAUSE)
+        // pause screen
+        if (B_PAUSE)
         {
             pauseTimer = 1;
             while (B_PAUSE); // wait until button is released
@@ -1050,6 +1079,7 @@ int main(void)
             redraw();
             pauseTimer = 0;
         }
+        // end pause screen
     }
 }
 

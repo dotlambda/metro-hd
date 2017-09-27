@@ -176,17 +176,14 @@ int main()
             {
                 for (uint8_t i = 0; i < EFFECT; ++i)
                 {
-                    //tmp += state[i] >> 8; // saw
-                    tmp += ((state[i] >> 8) & 0x80) << 1; // square
-                    /*if (state[i] < 0x8000) // triangle
-                        tmp += state[i] >> 7;
-                    else
-                        tmp += (0xFFFF - (state[i] & 0x7FFF << 1)) >> 8;*/
+                    // square wave
+                    tmp += ((state[i] >> 8) & 0x80) << 1;
                     state[i] += increment[i];
                 }
             }
 
             // >> 7 to make fx louder
+            // saw wave
             tmp += state[EFFECT] >> 7;
             state[EFFECT] += increment[EFFECT];
 

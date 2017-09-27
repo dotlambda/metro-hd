@@ -71,11 +71,13 @@ bool rechargeroom;
 bool recharging; 
 bool bosslevel;
 
+// whether there is an obstacle at x, y at the current level_pos
 long obstacle(uint8_t x, uint8_t y);
 
-// whether there is a platform at 96<=y<100
+// whether there is a platform at 96 <= y < 100
 long obstacle_hill(uint8_t x);
 
+// whether there is an obstacle at x, y at level_pos
 long obstacle_levelpos(uint8_t x, uint8_t y, long level_pos);
 
 void redraw();
