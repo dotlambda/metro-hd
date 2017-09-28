@@ -1,11 +1,8 @@
-#include <stdlib.h>
 #include "drawing.h"
 #include "display.h"
 #include "sprites.h"
 #include "level.h"
 #include "string.h"
-
-bool inverted = false;
 
 void drawsplash(uint8_t show_resume_option)
 {
@@ -93,10 +90,9 @@ void drawdigit2(uint8_t x, uint8_t y, uint8_t digit)
             break;
     }
     drawsprite_inverted(x, y, 3, 2, sprite);
-        
 }
 
-void drawnumber(uint8_t x, uint8_t y, uint8_t number)
+void drawnumber(uint8_t x, uint8_t y, uint8_t number, bool inverted)
 {
     uint8_t leftdigit = number / 10;
     uint8_t rightdigit = number % 10;
@@ -123,9 +119,9 @@ void drawlabels()
     // print bomb label
     drawsprite(69, 1, 14, 3, labelbomb);
     
-    drawnumber(29, 1, protagonist->health);
-    drawnumber(57, 1, num_rockets);
-    drawnumber(86, 1, num_bombs);
+    drawnumber(29, 1, protagonist->health, false);
+    drawnumber(57, 1, num_rockets, false);
+    drawnumber(86, 1, num_bombs, false);
 }
 
 void drawmonsterhealth(struct Character* monster)
@@ -174,17 +170,15 @@ void black()
 void movedoorleft()
 {
     black();
-    inverted = true;
-    drawletters(60, 15, "LEVEL");
+    drawletters(60, 15, "LEVEL", true);
     if (level < 0)
     {
-        drawnumber(85, 15, -level);
+        drawnumber(85, 15, -level, true);
     }
     else
     {
-        drawnumber(85, 15, level);
+        drawnumber(85, 15, level, true);
     }
-    inverted = false;
     drawlabels();
     for (int x = DISPLAY_WIDTH - 6; x >= -33 + 6; x--)
     {
@@ -203,17 +197,15 @@ void movedoorleft()
 void movedoorright()
 {
     black();
-    inverted = true;
-    drawletters(60, 15, "LEVEL");
+    drawletters(60, 15, "LEVEL", true);
     if (level < 0)
     {
-        drawnumber(85, 15, -level);
+        drawnumber(85, 15, -level, true);
     }
     else
     {
-        drawnumber(85, 15, level);
+        drawnumber(85, 15, level, true);
     }
-    inverted = false;
     drawlabels();
     for (int x = -33 + 6; x <= DISPLAY_WIDTH - 6; x++)
     {
@@ -347,7 +339,7 @@ void drawsprite(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8
     disable_window();
 }
 
-//color inverted
+// color inverted
 void drawsprite_inverted(uint8_t x, uint8_t y, uint8_t width, uint8_t height, const uint8_t* sprite)
 {
     enable_window(x, y, width, height);
@@ -441,24 +433,24 @@ void drawrechargeroom()
     drawsprite(DISPLAY_WIDTH/2 - 12, 23, 24, 2, mountain); 
 }
 
-void drawletters(uint8_t x, uint8_t y, char* string)
+void drawletters(uint8_t x, uint8_t y, char* string, bool inverted)
 {
     int len = strlen (string);
     for (int i = 0; i < len; i++)
     {
         if (string[i] == ' ')
         {
-            //page(x, y, 0);
-            //page(x, y + 1, 0);
-            //page(x + 1, y, 0);
-            //page(x + 1, y + 1, 0);
+            page(x, y, inverted ? 0xFF : 0);
+            page(x, y + 1, inverted ? 0xFF : 0);
+            page(x + 1, y, inverted ? 0xFF : 0);
+            page(x + 1, y + 1, inverted ? 0xFF : 0);
             x += 2;
         }
         else if (string[i] == ',')
         {
             drawsprite(x, y + 1, 2, 2, comma);
-            //page(x + 2, y, 0);
-            //page(x + 2, y + 1, 0);
+            page(x + 2, y, inverted ? 0xFF : 0);
+            page(x + 2, y + 1, inverted ? 0xFF : 0);
             x += 3; // 2 pixels for the comma, 1 for the space between letters
         }
         else
@@ -588,8 +580,8 @@ void drawletters(uint8_t x, uint8_t y, char* string)
             {
                 drawsprite(x, y, width, 2, sprite);
             }
-            //page(x + width, y, 0);
-            //page(x + width, y + 1, 0); 
+            page(x + width, y, inverted ? 0xFF : 0);
+            page(x + width, y + 1, inverted ? 0xFF : 0); 
             x += width + 1;
         }
     }

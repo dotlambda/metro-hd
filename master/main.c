@@ -42,13 +42,13 @@ void takingdamage(uint8_t damage)
     if (protagonist->health > 0)
     {
         eeprom_write_byte(&health_stored, protagonist->health);
-        drawnumber(29, 1, protagonist->health);
+        drawnumber(29, 1, protagonist->health, false);
     }
     else
     {
         initial_level = 0;
         eeprom_write_dword(&initial_level_stored, initial_level);
-        drawnumber(29, 1, 0);
+        drawnumber(29, 1, 0, false);
         blink_for = 2000;
     }
     uint32_t blinking_time = getMsTimer();
@@ -64,7 +64,7 @@ void takingdamage(uint8_t damage)
         draw(protagonist);
         if (protagonist->health <= 0)
         {    
-            drawnumber(29, 1, 0);
+            drawnumber(29, 1, 0, false);
         }
         delay(100);
     }
@@ -92,7 +92,7 @@ void takingdamage(uint8_t damage)
 
                     if (y == 20 && x == DISPLAY_WIDTH - 1)
                     {
-                        drawletters(40, 18, "PRESS A TO RESTART");
+                        drawletters(40, 18, "PRESS A TO RESTART", false);
                     }
                 }
                 if (y == 21)
@@ -141,7 +141,7 @@ void getAchievement()
     {
         buffer[i] = line1[i];
         buffer[i + 1] = '\0';
-        drawletters(10, CEILING_Y / 4 + 3, buffer);
+        drawletters(10, CEILING_Y / 4 + 3, buffer, false);
         delay(100);
     }
     len = strlen(line2);
@@ -149,7 +149,7 @@ void getAchievement()
     {
         buffer[i] = line2[i];
         buffer[i + 1] = '\0';
-        drawletters(10, CEILING_Y / 4 + 6, buffer);
+        drawletters(10, CEILING_Y / 4 + 6, buffer, false);
         delay(100);
     }
     delay(2000);
@@ -246,9 +246,9 @@ void monstertakedamage(uint8_t i, uint8_t damage) // i is the index of the monst
                 num_bombs = 10;
                 num_rockets = 30;
                 protagonist->health = 99;
-                drawnumber(29, 1, protagonist->health);
-                drawnumber(57, 1, num_rockets);
-                drawnumber(86, 1, num_bombs);
+                drawnumber(29, 1, protagonist->health, false);
+                drawnumber(57, 1, num_rockets, false);
+                drawnumber(86, 1, num_bombs, false);
             }
             else
             {
@@ -284,14 +284,14 @@ int main(void)
             // show a little manual
             clear();
             drawsprite(20, 5, 8, 3, Abutton);
-            drawletters(30, 5, "SHOOT A ROCKET");
+            drawletters(30, 5, "SHOOT A ROCKET", false);
             drawsprite(20, 10, 8, 3, BButton);
-            drawletters(30, 10, "PLACE A BOMB");
+            drawletters(30, 10, "PLACE A BOMB", false);
             drawsprite(20, 15, 8, 3, Pbutton);
-            drawletters(30, 15, "PAUSE");
-            drawletters(20, 20, "PRESS");
+            drawletters(30, 15, "PAUSE", false);
+            drawletters(20, 20, "PRESS", false);
             drawsprite(48, 20, 9, 3, UPButton);
-            drawletters(60, 20, "TO JUMP");
+            drawletters(60, 20, "TO JUMP", false);
             delay(5000);
             break;
         }
@@ -583,7 +583,7 @@ int main(void)
                     draw(projectiles[i]);
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
-                    drawnumber(57, 1, num_rockets);
+                    drawnumber(57, 1, num_rockets, false);
                     nextprojectilevent[i] = getMsTimer() + 35;
                     if (Rocket_Upgrade)
                     {
@@ -599,7 +599,7 @@ int main(void)
                     uart_putc('s');
                     num_rockets--;
                     eeprom_write_byte(&num_rockets_stored, num_rockets);
-                    drawnumber(57, 1, num_rockets);
+                    drawnumber(57, 1, num_rockets, false);
                     if (Rocket_Upgrade)
                     {
                         nextshootevent = getMsTimer() + 500;
@@ -665,7 +665,7 @@ int main(void)
                 bombstruct->movement = BOMB;
                 num_bombs--;
                 eeprom_write_byte(&num_bombs_stored, num_bombs);
-                drawnumber(86, 1, num_bombs);
+                drawnumber(86, 1, num_bombs, false);
                 checkfalling(bombstruct);
                 explode = getMsTimer() + 2000;
                 nextbombevent = getMsTimer() + 100;
@@ -871,14 +871,14 @@ int main(void)
                     num_rockets += 2;
                     if (num_rockets > 30)
                         num_rockets = 30;
-                    drawnumber(57, 1, num_rockets);
+                    drawnumber(57, 1, num_rockets, false);
                 }
                 else
                 {
                     num_bombs += 1;
                     if (num_bombs > 10)
                         num_bombs = 10;
-                    drawnumber(86, 1, num_bombs);
+                    drawnumber(86, 1, num_bombs, false);
                 }
             }
             else if (xparasites[i]->movement != HIDDEN)
@@ -899,12 +899,12 @@ int main(void)
             if(protagonist->health + 30 > 99)
             {
                 protagonist->health = 99;
-                drawnumber(29, 1, 99);
+                drawnumber(29, 1, 99, false);
             }
             else
             {
                 protagonist->health += 30;
-                drawnumber(29, 1, protagonist->health);
+                drawnumber(29, 1, protagonist->health, false);
             }
         }
         // end energy tank
@@ -1049,19 +1049,19 @@ int main(void)
             {
                 protagonist->health++;
                 eeprom_write_byte(&health_stored, protagonist->health);
-                drawnumber(29, 1, protagonist->health);
+                drawnumber(29, 1, protagonist->health, false);
             }
             if (num_rockets < 30)
             {   
                 num_rockets++;
                 eeprom_write_byte(&num_rockets_stored, num_rockets);
-                drawnumber(57, 1, num_rockets);
+                drawnumber(57, 1, num_rockets, false);
             }
             if (num_bombs < 10)
             {
                 num_bombs++;
                 eeprom_write_byte(&num_bombs_stored, num_bombs);
-                drawnumber(86, 1, num_bombs);
+                drawnumber(86, 1, num_bombs, false);
             }
             nextrechargeevent = getMsTimer() + 100;
         }

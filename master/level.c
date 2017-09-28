@@ -456,7 +456,7 @@ void newlevelpos()
             {
                 buffer[i] = line[j][i];
                 buffer[i + 1] = '\0';
-                drawletters(10, CEILING_Y / 4 + 3 + j * 3, buffer);
+                drawletters(10, CEILING_Y / 4 + 3 + j * 3, buffer, false);
                 delay(100);             
             }
         }
