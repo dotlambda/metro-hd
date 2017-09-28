@@ -30,8 +30,8 @@ because B1 is set to high at 0 and set to low when reaching :code:`OCR1A`.
 
 :code:`OCR1A` is set in the interrupt of Timer2,
 which is called with a frequency of 15625 Hz.
-To e.g. generate a tone with 440 Hz,
-we simply need to reach the maximum pulse width (255) with a frequency of 440 Hz.
+To e.g. generate a 440 Hz tone,
+we need to reach the maximum pulse width (255) with a frequency of 440 Hz.
 To do this, the pulse width can simply be incremented by
 
 .. math::
@@ -50,7 +50,7 @@ we use :code:`uint16_t` and increment the pulse width by
 which is obviously a lot more accurate.
 Additionally, Timer2 is used to keep track of the time.
 
-To make easier to write our own music for the console and use existing tunes,
+To make it easier to write our own music for the console and use existing tunes,
 we wrote a Python script that converts MIDI files
 into C arrays that are stored in the :code:`PROGMEM`.
 We use the mido_ library to read the files.

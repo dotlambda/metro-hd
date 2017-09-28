@@ -315,8 +315,8 @@ void newlevelpos()
                 bosses_killed = level / BOSS_LEVEL_DISTANCE;
             else
                 bosses_killed = (-level + 1) / BOSS_LEVEL_DISTANCE;
-            // the number of monsters that can possibly appear increases for every 2 bosses killed
-            uint8_t num_monsters = random_below(MIN(bosses_killed / 2 + 1, NUM_MONSTERS)) + 1;
+            // the number of monsters that can possibly appear increases for every boss killed
+            uint8_t num_monsters = random_below(MIN(bosses_killed + 1, NUM_MONSTERS)) + 1;
             for (uint8_t i = 1; i < num_monsters; ++i)
             {
                 monsters[i]->look = random_below(NUM_MONSTER_LOOKS);

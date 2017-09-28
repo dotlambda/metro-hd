@@ -10,12 +10,12 @@ The console should also have a sound output for music and sound effects.
 The console features two microcontrollers:
 
 * [Atmega328](https://en.wikipedia.org/wiki/ATmega328) with
-    - 32 kB flash
-    - 2 kB SRAM
-    - 1 kB EEPROM
+    - 32 KiB flash
+    - 2 KiB SRAM
+    - 1 KiB EEPROM
 * Atmega168 with
-    - 16 kB flash
-    - 1 kB SRAM
+    - 16 KiB flash
+    - 1 KiB SRAM
     - 512 B EEPROM
 
 where the former is responsible for the game logic and controlling the display

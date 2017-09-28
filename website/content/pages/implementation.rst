@@ -4,12 +4,12 @@ Implementation
 
 Drawing
 =======
-The display of the game console can recognise four grey scales.
+The display of the game console can differentiate between four grey scales.
 Each pixel on the display is defined by two bits
 (00 ≙ white pixel, 01 ≙ light grey pixel, 10 ≙ dark grey pixel, 11 ≙ black pixel).
 
-To convert png images into code we wrote a python script
-that takes a png image as input and converts it into an C array.
+To convert PNG images into code we wrote a Python script
+that takes a PNG image as input and converts it into a C array.
 The entries of the array are 8-bit entries that represent the different pages
 (page ≙ four vertical pixels) of the image.
 
@@ -28,7 +28,7 @@ The details are explained in the `data sheet`_.
        disable_window();
    }
 
-This is faster than using the :code:`page()` function, because fewer commands are send to the display.
+This is faster than using the :code:`page()` function, because fewer commands are sent to the display.
 
 In order to draw pixel-by-pixel and not only pagewise in the vertical direction,
 we wrote the :code:`drawsprite_px()` function:
@@ -60,12 +60,12 @@ we wrote the :code:`drawsprite_px()` function:
 Problem: Flash Size
 -------------------
 .. figure:: {filename}/images/speicherplatz.png
-   :alt: We currently use about 95% of the available flash storage
+   :alt: We currently use about 95% of the available flash storage.
    :width: 50%
 
-   We currently use about 95% of the available flash storage
+   We currently use about 95% of the available flash storage.
 
-Since the Atmega 328 only has 32 kiB of flash memory,
+Since the Atmega 328 only has 32 KiB of flash memory,
 we had to come up with creative ways to reduce the space used.
 First, before storing the sprites as arrays in the :code:`PROGMEM`,
 we wrote the calls to the :code:`page()` function by hand for every sprite.
@@ -82,10 +82,12 @@ Therefore, we split some sprites up into smaller chunks:
 
 Level Setup
 ===========
-Every level consists of a number of rooms, whereby the number of rooms is a random number between one and five.
-Furthermore the monster(s), the positions of the platforms and water are chosen randomly for every new room and the floor and ceiling sprite is chosen randomly for every new level.
+Every level consists of a number of rooms which is a random number between one and five.
+Furthermore the monster(s) and the positions of the platforms and water are chosen randomly
+for every new room and the floor and ceiling sprite is chosen randomly for every new level.
 
-To make sure that a level you have already been to looks the same as before, we choose the seed of the random number generator depending on the level and on the room the protagonist is in.
+To make sure that a level you have already been to looks the same as before,
+we choose the seed of the random number generator depending on the level and on the room the protagonist is in.
 
 .. code-block:: c
 
@@ -129,10 +131,10 @@ Below, we will explain the idea behind this algorithm using an exemplary level.
    But now, we discover that there is no further path that we can take since the platform is too far away.
 
 .. figure:: {filename}/images/dfs5.png
-   :alt: Therefore, we consider the other alternative. We see that we can jump ono another platform.
+   :alt: Therefore, we consider the other alternative. We see that we can jump onto another platform.
    :width: 50%
 
-   Therefore, we consider the other alternative. We see that we can jump ono another platform.
+   Therefore, we consider the other alternative. We see that we can jump onto another platform.
 
 .. figure:: {filename}/images/dfs6.png
    :alt: Now, we jump over the gap between two platforms.
@@ -190,7 +192,7 @@ These take care of
 
 Then, there is also a function :code:`move()` which automatically decides in which direction to move.
 For example, a monster with :code:`movement==FOLLOW_PROTAGONIST` will automatically move towards the protagonist
-whenever this function is called with that very monster as argument.
+whenever a pointer to that very monster is passed to the function.
 
 Course of the Game
 ==================
@@ -207,7 +209,7 @@ and the protagonist still has a rocket to shoot that is not yet moving,
 the rocket is drawn to the screen and the protagonist loses one of his rockets.
 To make sure that he still has the same number of rockets
 when the game is resumed after turning the console off,
-the number is in the :code:`EEPROM`.
+the number is also stored in the :code:`EEPROM`.
 
 .. code-block:: c
 
