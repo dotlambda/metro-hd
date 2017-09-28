@@ -28,6 +28,6 @@ and the :code:`slave` folder:
    ansic:          327 (75.00%)
    python:         109 (25.00%)
 
-.. _here: {filename}/downloads/code.zip
+.. _here: {filename}/downloads/metro-hd.zip
 .. _GitHub: https://github.com/dotlambda/metro-hd
 .. _slides: {filename}/downloads/slides.pdf

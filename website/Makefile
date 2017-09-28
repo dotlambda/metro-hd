@@ -1,0 +1,2 @@
+output/: content/*/*
+	pelican -d
