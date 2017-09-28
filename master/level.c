@@ -93,9 +93,17 @@ void redraw()
     drawfloor();
 
     if (doors & 0b00000010)
+    {
         drawdoorleft_closed();
+        if (left_door_open)
+            drawsprite(0, 20, 6, 5, doorleft_open);
+    }
     if (doors & 0b00000001)
+    {
         drawdoorright_closed();
+        if (right_door_open)
+            drawsprite(DISPLAY_WIDTH - 6, 20, 6, 5,  doorright_open);
+    }
 
     for (uint8_t i = 0; i < NUM_MONSTERS; ++i)
     {
@@ -455,8 +463,6 @@ void newlevelpos()
         delay(1000);
     }
 
-    left_door_open = false;
-    right_door_open = false; 
     redraw();
 }
 
@@ -495,6 +501,9 @@ void newlevel()
     protagonist->y = FLOOR_Y - protagonist->height;
 
     selectfloor();
+
+    left_door_open = false;
+    right_door_open = false; 
 
     newlevelpos();
 }
