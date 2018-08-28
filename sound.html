@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="images/samuslogo.png"/>
+        <title>Sound</title>
+        <link rel="stylesheet" href="./theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="./">Metro HD </a></h1>
+                <nav><ul>
+    
+                        <li><a href="./">About</a></li>
+    
+                        <li><a href="./the-task.html">The Task</a></li>
+    
+                        <li><a href="./game-idea.html">Game Idea</a></li>
+    
+                        <li><a href="./implementation.html">Implementation</a></li>
+    
+                        <li class="active"><a href="./sound.html">Sound</a></li>
+    
+                        <li><a href="./download.html">Download</a></li>
+                </ul>
+                </nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+    <h1 class="entry-title">Sound</h1>
+    
+    <p>We have different background tunes playing during the levels.
+Additionally, there is a characteristic music for each boss you can encounter.
+The code supports playing up to three tones at the same time.
+Additionally, sound effects are played ontop the background music
+when a rocket is shot and when a bomb explodes.</p>
+<p>Since synthesizing sound is a time-expensive task,
+this is done on a dedicated microcontroller (Atmega168)
+to which the speaker is connected through pin B1.</p>
+<p>To generate a sound wave, one can use <a class="reference external" href="https://en.wikipedia.org/wiki/Pulse-width_modulation">pulse-width modulation</a>.
+If the frequency of the PWM signal is too high for for the human ear to perceive,
+then the displacement of a sound wave can be determined by the pulse width:</p>
+<div class="figure">
+<img alt="A PWM signal generating a sine wave" src="./images/pwm.png" />
+<p class="caption">A PWM signal generating a sine wave</p>
+</div>
+<p>But instead of a sinusodial wave, we use <a class="reference external" href="https://en.wikipedia.org/wiki/Sawtooth_wave">saw waves</a>.
+To generate this PWM signal, we use Timer1 of the Atmega168 in 8-bit Fast PWM mode.
+The <code>TOP</code> value of 255 is reached with a frequency of 62500 Hz.
+By setting the register <code>OCR1A</code>, we can determine the pulse width,
+because B1 is set to high at 0 and set to low when reaching <code>OCR1A</code>.</p>
+<p><code>OCR1A</code> is set in the interrupt of Timer2,
+which is called with a frequency of 15625 Hz.
+To e.g. generate a 440 Hz tone,
+we need to reach the maximum pulse width (255) with a frequency of 440 Hz.
+To do this, the pulse width can simply be incremented by</p>
+<div class="math">
+\begin{equation*}
+\frac{255}{15625\,\mathrm{Hz} / 440\,\mathrm{Hz}} \approx 7.18
+\end{equation*}
+</div>
+<p>each time the interrupt is called.
+Because of integer overflow,
+it will automatically be set to 0 again after reaching 255
+if we use a <code>uint8_t</code>.
+But since we cannot represent non-integer values like 7.18,
+we use <code>uint16_t</code> and increment the pulse width by</p>
+<div class="math">
+\begin{equation*}
+\lfloor 7.18 \cdot 256 \rfloor = \lfloor 1838.08 \rfloor = 1838
+\end{equation*}
+</div>
+<p>which is obviously a lot more accurate.
+Additionally, Timer2 is used to keep track of the time.</p>
+<p>To make it easier to write our own music for the console and use existing tunes,
+we wrote a Python script that converts MIDI files
+into C arrays that are stored in the <code>PROGMEM</code>.
+We use the <a class="reference external" href="https://mido.readthedocs.io/en/latest/">mido</a> library to read the files.
+The entries of these arrays contain information about</p>
+<ul class="simple">
+<li>the track (as explained above, there are three channels for the music),</li>
+<li>the increment corresponding to the tone that should be played
+(an increment of 0 means that no tone should be playing on this track)
+and</li>
+<li>the delay until the next entry in the array should be read.</li>
+</ul>
+<p>For example, an array could look like this:</p>
+<div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">Event</span> <span class="n">boss4</span><span class="p">[]</span> <span class="n">PROGMEM</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span> <span class="p">{</span> <span class="p">.</span><span class="n">track</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">615</span><span class="p">,</span> <span class="p">.</span><span class="n">delay</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="p">{</span> <span class="p">.</span><span class="n">track</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">307</span><span class="p">,</span> <span class="p">.</span><span class="n">delay</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="p">{</span> <span class="p">.</span><span class="n">track</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">2463</span><span class="p">,</span> <span class="p">.</span><span class="n">delay</span> <span class="o">=</span> <span class="mi">2812</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="p">{</span> <span class="p">.</span><span class="n">track</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">1231</span><span class="p">,</span> <span class="p">.</span><span class="n">delay</span> <span class="o">=</span> <span class="mi">2812</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="p">{</span> <span class="p">.</span><span class="n">track</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="p">.</span><span class="n">increment</span> <span class="o">=</span> <span class="mi">1231</span><span class="p">,</span> <span class="p">.</span><span class="n">delay</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">}</span> <span class="p">},</span>
+    <span class="p">...,</span>
+    <span class="n">STOP</span>
+<span class="p">};</span>
+</pre></div>
+<p>Here, you can hear some of the music as it is played by the console:</p>
+<audio src="downloads/ingame1.ogg" controls></audio>
+<audio src="downloads/ingame2.ogg" controls></audio>
+<audio src="downloads/gameover.ogg" controls></audio><script type='text/javascript'>if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme <a href="https://github.com/blueicefield/pelican-blueidea/">blueidea</a>, inspired by the default theme.</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

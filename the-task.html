@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="images/samuslogo.png"/>
+        <title>The Task</title>
+        <link rel="stylesheet" href="./theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="./">Metro HD </a></h1>
+                <nav><ul>
+    
+                        <li><a href="./">About</a></li>
+    
+                        <li class="active"><a href="./the-task.html">The Task</a></li>
+    
+                        <li><a href="./game-idea.html">Game Idea</a></li>
+    
+                        <li><a href="./implementation.html">Implementation</a></li>
+    
+                        <li><a href="./sound.html">Sound</a></li>
+    
+                        <li><a href="./download.html">Download</a></li>
+                </ul>
+                </nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+    <h1 class="entry-title">The Task</h1>
+    
+    <p>Our task was to design and implement a game for a console resembling the Nintendo Gameboy. The console should also have a sound output for music and sound effects.</p>
+<h1 id="hardware">Hardware</h1>
+<figure>
+<img src="images/console.jpg" style="width:50.0%" />
+</figure>
+<p>The console features two microcontrollers:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/ATmega328">Atmega328</a> with
+<ul>
+<li>32 KiB flash</li>
+<li>2 KiB SRAM</li>
+<li>1 KiB EEPROM</li>
+</ul></li>
+<li>Atmega168 with
+<ul>
+<li>16 KiB flash</li>
+<li>1 KiB SRAM</li>
+<li>512 B EEPROM</li>
+</ul></li>
+</ul>
+<p>where the former is responsible for the game logic and controlling the display and the latter is used solely as a sound controller.</p>
+<p>Furthermore, it features an <a href="http://www.lcd-module.com/eng/pdf/grafik/dogxl160-7e.pdf">EA DOGXL160L-7</a>. This LC display has a resolution of 160×104 pixels, but four vertically adjacent pixels are grouped together in so-called pages and can only be written as a whole. Therefore, when writing to the display, the x coordinate must be below 160 and the y coordinate below 25.</p>
+<p>Last but not least, the 8 buttons known from the Gameboy are available:</p>
+<ul>
+<li>left, right, up, down</li>
+<li>A, B</li>
+<li>pause, select</li>
+</ul>
+
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme <a href="https://github.com/blueicefield/pelican-blueidea/">blueidea</a>, inspired by the default theme.</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

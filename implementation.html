@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="images/samuslogo.png"/>
+        <title>Implementation</title>
+        <link rel="stylesheet" href="./theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="./">Metro HD </a></h1>
+                <nav><ul>
+    
+                        <li><a href="./">About</a></li>
+    
+                        <li><a href="./the-task.html">The Task</a></li>
+    
+                        <li><a href="./game-idea.html">Game Idea</a></li>
+    
+                        <li class="active"><a href="./implementation.html">Implementation</a></li>
+    
+                        <li><a href="./sound.html">Sound</a></li>
+    
+                        <li><a href="./download.html">Download</a></li>
+                </ul>
+                </nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+    <h1 class="entry-title">Implementation</h1>
+    
+    <div class="section" id="drawing">
+<h2>Drawing</h2>
+<p>The display of the game console can differentiate between four grey scales.
+Each pixel on the display is defined by two bits
+(00 ≙ white pixel, 01 ≙ light grey pixel, 10 ≙ dark grey pixel, 11 ≙ black pixel).</p>
+<p>To convert PNG images into code we wrote a Python script
+that takes a PNG image as input and converts it into a C array.
+The entries of the array are 8-bit entries that represent the different pages
+(page ≙ four vertical pixels) of the image.</p>
+<p>Instead of using the <code>page()</code> function
+we wrote the following function,
+in which we use the window functionality of the display.
+The details are explained in the <a class="reference external" href="http://www.lcd-module.com/eng/pdf/grafik/dogxl160-7e.pdf">data sheet</a>.</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">drawsprite</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">y</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">width</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">height</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint8_t</span><span class="o">*</span> <span class="n">sprite</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">enable_window</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">uint16_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">sendbyte</span><span class="p">(</span><span class="n">pgm_read_byte_near</span><span class="p">(</span><span class="n">sprite</span> <span class="o">+</span> <span class="n">i</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">disable_window</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+<p>This is faster than using the <code>page()</code> function, because fewer commands are sent to the display.</p>
+<p>In order to draw pixel-by-pixel and not only pagewise in the vertical direction,
+we wrote the <code>drawsprite_px()</code> function:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">drawsprite_px</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">y</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">width</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">height</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint8_t</span><span class="o">*</span> <span class="n">sprite</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">offset</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">%</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">offset</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">drawsprite</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">sprite</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">enable_window</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="kt">uint16_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">width</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">sendbyte</span><span class="p">(</span><span class="n">pgm_read_byte_near</span><span class="p">(</span><span class="n">sprite</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">offset</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">width</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">sendbyte</span><span class="p">(</span><span class="n">pgm_read_byte_near</span><span class="p">(</span><span class="n">sprite</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">offset</span> <span class="o">|</span>
+                     <span class="n">pgm_read_byte_near</span><span class="p">(</span><span class="n">sprite</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="n">width</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">8</span> <span class="o">-</span> <span class="n">offset</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">height</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">width</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">sendbyte</span><span class="p">(</span><span class="n">pgm_read_byte_near</span><span class="p">(</span><span class="n">sprite</span> <span class="o">+</span> <span class="n">i</span> <span class="o">-</span> <span class="n">width</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">8</span> <span class="o">-</span> <span class="n">offset</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">disable_window</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<div class="section" id="problem-flash-size">
+<h3>Problem: Flash Size</h3>
+<div class="figure">
+<img alt="We currently use about 95% of the available flash storage." src="./images/speicherplatz.png" style="width: 50%;" />
+<p class="caption">We currently use about 95% of the available flash storage.</p>
+</div>
+<p>Since the Atmega 328 only has 32 KiB of flash memory,
+we had to come up with creative ways to reduce the space used.
+First, before storing the sprites as arrays in the <code>PROGMEM</code>,
+we wrote the calls to the <code>page()</code> function by hand for every sprite.
+Of course, it is much more efficient to read the pages from an array.
+Second, large images tend to consist of a lot of unnecessary white pixels
+if the form of the object displayed is not rectangular.
+Therefore, we split some sprites up into smaller chunks:</p>
+<img alt="Splash screen split up in three" src="./images/splashspeicher.png" style="width: 50%;" />
+</div>
+</div>
+<div class="section" id="level-setup">
+<h2>Level Setup</h2>
+<p>Every level consists of a number of rooms which is a random number between one and five.
+Furthermore the monster(s) and the positions of the platforms and water are chosen randomly
+for every new room and the floor and ceiling sprite is chosen randomly for every new level.</p>
+<p>To make sure that a level you have already been to looks the same as before,
+we choose the seed of the random number generator depending on the level and on the room the protagonist is in.</p>
+<div class="highlight"><pre><span></span><span class="n">srandom</span><span class="p">(</span><span class="n">level_seed</span> <span class="o">+</span> <span class="n">level_pos</span><span class="p">);</span>
+<span class="n">platforms_13</span> <span class="o">=</span> <span class="n">random</span><span class="p">();</span>
+<span class="n">platforms_19</span> <span class="o">=</span> <span class="n">random</span><span class="p">();</span>
+<span class="n">platforms_24</span> <span class="o">=</span> <span class="n">random</span><span class="p">();</span>
+<span class="n">nofloor</span> <span class="o">=</span> <span class="n">random</span><span class="p">();</span>
+</pre></div>
+<div class="section" id="depth-first-search">
+<h3>Depth-first Search</h3>
+<p>Since the position of the platforms and the water is chosen randomly,
+it is possible that the protagonist is not able to simply walk from left to right,
+Nevertheless, we have to ensure that he can reach the door.
+Therefore, we implemented an algorithm based on <a class="reference external" href="https://en.wikipedia.org/wiki/Depth-first_search">depth-first search</a>
+that tries to find a path from left to right and also considers jumping on platforms.
+Below, we will explain the idea behind this algorithm using an exemplary level.</p>
+<div class="figure">
+<img alt="We start at the bottom left corner, from where we can only walk to the right." src="./images/dfs1.png" style="width: 50%;" />
+<p class="caption">We start at the bottom left corner, from where we can only walk to the right.</p>
+</div>
+<div class="figure">
+<img alt="From there, we can either jump onto the platform at the left or over the water." src="./images/dfs2.png" style="width: 50%;" />
+<p class="caption">From there, we can either jump onto the platform at the left or over the water.</p>
+</div>
+<div class="figure">
+<img alt="We first consider the latter alternative. The only option is to continue walking." src="./images/dfs3.png" style="width: 50%;" />
+<p class="caption">We first consider the latter alternative. The only option is to continue walking.</p>
+</div>
+<div class="figure">
+<img alt="But now, we discover that there is no further path that we can take since the platform is too far away." src="./images/dfs4.png" style="width: 50%;" />
+<p class="caption">But now, we discover that there is no further path that we can take since the platform is too far away.</p>
+</div>
+<div class="figure">
+<img alt="Therefore, we consider the other alternative. We see that we can jump onto another platform." src="./images/dfs5.png" style="width: 50%;" />
+<p class="caption">Therefore, we consider the other alternative. We see that we can jump onto another platform.</p>
+</div>
+<div class="figure">
+<img alt="Now, we jump over the gap between two platforms." src="./images/dfs6.png" style="width: 50%;" />
+<p class="caption">Now, we jump over the gap between two platforms.</p>
+</div>
+<div class="figure">
+<img alt="This goes on until we have found a path to the door." src="./images/dfs7.png" style="width: 50%;" />
+<p class="caption">This goes on until we have found a path to the door.</p>
+</div>
+<p>If there is no path, we set the <code>nofloor</code> variable to a new random value
+and try again to find a path to the door.</p>
+</div>
+</div>
+<div class="section" id="movement">
+<h2>Movement</h2>
+<p>We use a single C <code>struct</code> for monsters, projectiles and the protagonist.
+This enables us to reuse the functions responsible for movement for all of them,
+which saves us quite some flash space.</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Character</span>
+<span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">x</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">y</span><span class="p">;</span>
+    <span class="k">enum</span> <span class="p">{</span><span class="n">LOOK_MONSTER_MEMU</span><span class="p">,</span> <span class="n">LOOK_PROTAGONIST</span><span class="p">,</span> <span class="n">LOOK_FIREBALL</span><span class="p">,</span> <span class="p">...}</span> <span class="n">look</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">lookstate</span><span class="p">;</span> <span class="c1">// to e.g. store whether the wings are turned upwards or downwards</span>
+    <span class="kt">uint32_t</span> <span class="n">lastlookstatechg</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">width</span><span class="p">;</span><span class="c1">// in pixels</span>
+    <span class="kt">uint8_t</span> <span class="n">height</span><span class="p">;</span> <span class="c1">// in pixels</span>
+    <span class="k">enum</span> <span class="p">{</span><span class="n">DIRECTION_LEFT</span><span class="p">,</span> <span class="n">DIRECTION_RIGHT</span><span class="p">}</span> <span class="n">direction</span><span class="p">;</span>
+    <span class="k">enum</span> <span class="p">{</span><span class="n">DIRECTION_UP</span><span class="p">,</span> <span class="n">DIRECTION_DOWN</span><span class="p">}</span> <span class="n">verticaldirection</span><span class="p">;</span>
+    <span class="kt">int8_t</span> <span class="n">jumpstate</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">initial_health</span><span class="p">;</span>
+    <span class="kt">int8_t</span> <span class="n">health</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">damage</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">jumpheight</span><span class="p">;</span>
+    <span class="k">enum</span> <span class="p">{</span><span class="n">FOLLOW_PROTAGONIST</span><span class="p">,</span> <span class="n">BACK_AND_FORTH</span><span class="p">,</span> <span class="p">...}</span> <span class="n">movement</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">x_pace</span><span class="p">;</span>
+    <span class="kt">uint8_t</span> <span class="n">y_pace</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+<p>First, there are the functions <code>moveleft()</code>, <code>moveright()</code>, <code>moveup()</code> and <code>movedown()</code>.
+These take care of</p>
+<ul class="simple">
+<li>checking if there is an obstacle, e.g. a platform, in the respective direction,</li>
+<li>redrawing the character at its new position and</li>
+<li>clearing the pixels that are left over from the old position.</li>
+</ul>
+<p>Then, there is also a function <code>move()</code> which automatically decides in which direction to move.
+For example, a monster with <code>movement==FOLLOW_PROTAGONIST</code> will automatically move towards the protagonist
+whenever a pointer to that very monster is passed to the function.</p>
+</div>
+<div class="section" id="course-of-the-game">
+<h2>Course of the Game</h2>
+<p>To react to user input and automatically move monsters etc.,
+we use multiple <code>if</code> statements in an infinite loop
+which check whether the respective timer has expired
+and whether all preconditions are satisfied.</p>
+<p>For example, when the user presses the <code>B_RIGHT</code> button,
+the protagonist is moved one pixel to the right and it is ensured that he will not move for another 50 ms.</p>
+<p>Also, if the <code>B_A</code> button is pressed
+and the protagonist still has a rocket to shoot that is not yet moving,
+the rocket is drawn to the screen and the protagonist loses one of his rockets.
+To make sure that he still has the same number of rockets
+when the game is resumed after turning the console off,
+the number is also stored in the <code>EEPROM</code>.</p>
+<div class="highlight"><pre><span></span><span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">nextmoveevent</span> <span class="o">&lt;</span> <span class="n">getMsTimer</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">B_RIGHT</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">moveright</span><span class="p">(</span><span class="n">protagonist</span><span class="p">);</span>
+            <span class="n">nextmoveevent</span> <span class="o">=</span> <span class="n">getMsTimer</span><span class="p">()</span> <span class="o">+</span> <span class="mi">50</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">projectile</span><span class="o">-&gt;</span><span class="n">movement</span> <span class="o">==</span> <span class="n">HIDDEN</span>
+        <span class="o">&amp;&amp;</span> <span class="n">num_rockets</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="o">&amp;&amp;</span> <span class="n">nextshootevent</span> <span class="o">&lt;</span> <span class="n">getMsTimer</span><span class="p">()</span>
+        <span class="o">&amp;&amp;</span> <span class="n">B_A</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">projectile</span><span class="o">-&gt;</span><span class="n">movement</span> <span class="o">=</span> <span class="n">PROJECTILE</span><span class="p">;</span>
+        <span class="n">draw</span><span class="p">(</span><span class="n">projectile</span><span class="p">);</span>
+        <span class="n">num_rockets</span><span class="o">--</span><span class="p">;</span>
+        <span class="n">eeprom_write_byte</span><span class="p">(</span><span class="o">&amp;</span><span class="n">num_rockets_stored</span><span class="p">,</span> <span class="n">num_rockets</span><span class="p">);</span>
+        <span class="n">nextshootevent</span> <span class="o">=</span> <span class="n">getMsTimer</span><span class="p">()</span> <span class="o">+</span> <span class="mi">500</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">monster</span><span class="o">-&gt;</span><span class="n">movement</span> <span class="o">!=</span> <span class="n">HIDDEN</span> <span class="o">&amp;&amp;</span> <span class="n">collision</span><span class="p">(</span><span class="n">protagonist</span><span class="p">,</span> <span class="n">monster</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">takingdamage</span><span class="p">(</span><span class="n">monster</span><span class="o">-&gt;</span><span class="n">damage</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+<p>This is just a small excerpt of the <code>while</code> loop.</p>
+</div>
+
+</section>
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme <a href="https://github.com/blueicefield/pelican-blueidea/">blueidea</a>, inspired by the default theme.</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
